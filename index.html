@@ -1072,11 +1072,6 @@
   </div>
   
   <!-- MODAL PARA COMPLETAR PEDIDO -->
-  <div class="order-form-modal" id="orderFormModal">
-    <div class="order-form-container">
-      <button class="close-modal" id="closeModal">&times;</button>
-      <h2 style="color:#d1477a;margin-bottom:0.5rem;">Completar Pedido</h2>
-      <p style="margin-bottom:1.5rem;color:#666;">Por favor completa tus datos para enviar el pedido por WhatsApp</p>
       
       <form id="orderForm">
         <div class="form-group">
@@ -1808,29 +1803,6 @@ Por favor confirma disponibilidad. Gracias! 🌹
       });
       
       // Eventos del admin
-      document.getElementById('adminLoginLink').addEventListener('click', function(e) {
-        e.preventDefault();
-        document.getElementById('adminLoginModal').classList.add('active');
-      });
-      
-      document.getElementById('closeAdminModal').addEventListener('click', function() {
-        document.getElementById('adminLoginModal').classList.remove('active');
-      });
-      
-      document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const email = document.getElementById('adminEmail').value;
-        const password = document.getElementById('adminPassword').value;
-        const code = document.getElementById('adminCode').value;
-        
-        if (email === CONFIG.adminCredentials.email && 
-            password === CONFIG.adminCredentials.password && 
-            code === CONFIG.adminCredentials.code) {
-          
-          APP_STATE.adminLoggedIn = true;
-          CartSystem.showNotification('✅ Acceso administrativo concedido');
-          document.getElementById('adminLoginModal').classList.remove('active');
           
           // Redirigir al panel admin (en producción sería admin.html)
           setTimeout(() => {
