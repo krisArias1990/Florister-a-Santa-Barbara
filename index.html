@@ -1770,7 +1770,7 @@
                         <span class="product-category">${productCategory}</span>
                         <h3 class="product-title">${productName}</h3>
                         <p class="product-description">${productDescription}</p>
-                        <div class="product-price">${storeConfig.currency}${productPrice.toLocaleString()}</div>
+                        <div class="product-price">${storeConfig.currency || '₡'}${productPrice.toLocaleString('es-CR')}</div>
                         <button class="add-to-cart-btn" onclick="addToCart(${product.id})">
                             <i class="fas fa-cart-plus"></i>
                             Agregar al Carrito
