@@ -1499,6 +1499,10 @@
             whatsappMessage: "¡Hola! 😊\n\nGracias por comunicarte con nosotros.\n\nQuiero hacer un pedido:"
         };
 
+        if (!storeConfig.currency) {
+            storeConfig.currency = "₡";
+        }
+        
         let selectedPayment = 'sinpe';
         let currentCarouselSlide = 0;
 
@@ -2050,22 +2054,34 @@
             
             message += `• Fecha de entrega: ${new Date(date).toLocaleDateString('es-ES')}\n`;
             message += `• Horario: ${time}\n\n`;
-            
+
+            // CON ESTA VERSIÓN MEJORADA:
             message += `📝 *PRODUCTOS SOLICITADOS*\n`;
             message += `━━━━━━━━━━━━━━━━━━━━\n`;
             
             cart.forEach((item, index) => {
                 message += `${index + 1}. *${item.name}*\n`;
                 message += `   Cantidad: ${item.quantity}\n`;
-                message += `   Precio unitario: ${storeConfig.currency}${item.price.toLocaleString()}\n`;
-                message += `   Subtotal: ${storeConfig.currency}${(item.price * item.quantity).toLocaleString()}\n`;
+                message += `   Precio unitario: ${storeConfig.currency || '₡'}${item.price.toLocaleString('es-CR')}\n`;
+                message += `   Subtotal: ${storeConfig.currency || '₡'}${(item.price * item.quantity).toLocaleString('es-CR')}\n`;
                 
-                // ✅ INCLUIR IMAGEN EN EL MENSAJE
+                // ✅ INCLUIR IMAGEN COMO ENLACE SEPARADO para mejor vista previa
                 if (item.image && item.image.startsWith('http')) {
-                    message += `   📸 ${item.image}\n`;
+                    message += `   👁️ *Ver producto:* ${item.image}\n`;
                 }
                 message += `\n`;
             });
+
+            // Y LUEGO AGREGAR AL FINAL DEL MENSAJE, ANTES DEL CIERRE:
+            if (cart.some(item => item.image && item.image.startsWith('http'))) {
+                message += `\n🖼️ *IMÁGENES DE LOS PRODUCTOS:*\n`;
+                cart.forEach((item, index) => {
+                    if (item.image && item.image.startsWith('http')) {
+                        message += `Producto ${index + 1}: ${item.image}\n`;
+                    }
+                });
+                message += `\n`;
+            }
             
             message += `💰 *RESUMEN DE PAGO*\n`;
             message += `━━━━━━━━━━━━━━━━━━━━\n`;
