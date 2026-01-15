@@ -1,0 +1,1874 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Floristería Santa Bárbara: arreglos florales para todas las ocasiones en Heredia, Costa Rica. Pedidos por WhatsApp con catálogo digital.">
+  <title>Floristería Santa Bárbara</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* ===== ESTILOS GENERALES ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #fefefe;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    /* ===== HEADER ===== */
+    .header {
+      background: linear-gradient(135deg, #d1477a 0%, #a83264 100%);
+      color: white;
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    }
+
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: white;
+    }
+
+    .logo h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .logo-icon {
+      font-size: 2.2rem;
+      color: #ffeb3b;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 1.1rem;
+      padding: 5px 10px;
+      border-radius: 4px;
+      transition: all 0.3s;
+    }
+
+    .nav-links a:hover {
+      background-color: rgba(255,255,255,0.2);
+    }
+
+    /* ===== CARRUSEL ===== */
+    .carousel {
+      position: relative;
+      overflow: hidden;
+      height: 500px;
+      margin-bottom: 2rem;
+    }
+
+    .carousel-inner {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+      height: 100%;
+    }
+
+    .carousel-link {
+      flex: 0 0 100%;
+      height: 100%;
+      text-decoration: none;
+    }
+
+    .carousel-item {
+      position: relative;
+      height: 100%;
+    }
+
+    .carousel-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.85);
+    }
+
+    .carousel-caption {
+      position: absolute;
+      bottom: 60px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      color: white;
+      padding: 20px;
+      background: linear-gradient(transparent, rgba(0,0,0,0.7));
+    }
+
+    .carousel-caption h3 {
+      font-size: 2.8rem;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+    }
+
+    .carousel-caption p {
+      font-size: 1.3rem;
+      opacity: 0.9;
+    }
+
+    .carousel-indicators {
+      display: flex;
+      justify-content: center;
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      gap: 10px;
+    }
+
+    .carousel-indicators span {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background-color: rgba(255,255,255,0.5);
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .carousel-indicators span.active {
+      background-color: #d1477a;
+    }
+
+    .carousel-controls {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 20px;
+      transform: translateY(-50%);
+    }
+
+    .carousel-controls button {
+      background-color: rgba(209, 71, 122, 0.8);
+      color: white;
+      border: none;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .carousel-controls button:hover {
+      background-color: #d1477a;
+      transform: scale(1.1);
+    }
+
+    /* ===== BANNER ===== */
+    .banner-floristeria {
+      margin: 2rem auto;
+      max-width: 1200px;
+      padding: 0 2rem;
+    }
+
+    .banner-flor-img {
+      width: 100%;
+      height: auto;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+
+    /* ===== MENÚ CATEGORÍAS ===== */
+    .nav-categorias {
+      background: linear-gradient(to right, #f8e8ee, #f5d6e2);
+      padding: 1.2rem 0;
+      margin-bottom: 2rem;
+      border-radius: 0 0 15px 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+
+    #menuCategorias {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      list-style: none;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    #menuCategorias li a {
+      background: white;
+      color: #d1477a;
+      text-decoration: none;
+      padding: 10px 25px;
+      border-radius: 50px;
+      font-weight: 600;
+      transition: all 0.3s;
+      border: 2px solid #d1477a;
+      white-space: nowrap;
+    }
+
+    #menuCategorias li a:hover {
+      background: #d1477a;
+      color: white;
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(209, 71, 122, 0.3);
+    }
+
+    /* ===== CATÁLOGO ===== */
+    #catalogo {
+      max-width: 1200px;
+      margin: 0 auto 3rem;
+      padding: 0 2rem;
+    }
+
+    .categoria {
+      margin-bottom: 3.5rem;
+    }
+
+    .categoria h2 {
+      color: #d1477a;
+      font-size: 2.2rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #f0c1d3;
+      text-align: center;
+    }
+
+    .productos {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+
+    .producto {
+      background: white;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+      position: relative;
+      border: 1px solid #f0f0f0;
+    }
+
+    .producto:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 35px rgba(209, 71, 122, 0.15);
+    }
+
+    .producto-img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      cursor: pointer;
+      transition: transform 0.5s;
+    }
+
+    .producto:hover .producto-img {
+      transform: scale(1.05);
+    }
+
+    .producto h3 {
+      color: #333;
+      font-size: 1.3rem;
+      margin: 1rem 1rem 0.5rem;
+      font-weight: 700;
+    }
+
+    .descripcion {
+      color: #666;
+      font-size: 0.95rem;
+      margin: 0 1rem 0.8rem;
+      line-height: 1.4;
+    }
+
+    .precio {
+      color: #d1477a;
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin: 0 1rem 1rem;
+    }
+
+    /* ===== BOTONES ===== */
+    .btn-pedir {
+      background: linear-gradient(to right, #25D366, #1DA851);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin: 0 1rem 1.5rem;
+      width: calc(100% - 2rem);
+    }
+
+    .btn-pedir:hover {
+      background: linear-gradient(to right, #1DA851, #25D366);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+    }
+
+    .add-to-cart-btn {
+      background: #d1477a;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      font-size: 0.95rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin: 0 1rem 1rem;
+      width: calc(100% - 2rem);
+    }
+
+    .add-to-cart-btn:hover {
+      background: #a83264;
+      transform: translateY(-2px);
+    }
+
+    /* ===== LIGHTBOX ===== */
+    .lightbox {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.9);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      cursor: pointer;
+    }
+
+    .lightbox.active {
+      display: flex;
+    }
+
+    .lightbox img {
+      max-width: 90%;
+      max-height: 80%;
+      border-radius: 10px;
+      box-shadow: 0 0 30px rgba(255,255,255,0.1);
+    }
+
+    .lightbox-text {
+      position: absolute;
+      bottom: 50px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 600px;
+      text-align: center;
+    }
+
+    /* ===== CARRITO ===== */
+    .cart-icon {
+      position: fixed;
+      top: 100px;
+      right: 25px;
+      background: #d1477a;
+      color: white;
+      width: 65px;
+      height: 65px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 1000;
+      box-shadow: 0 5px 20px rgba(209, 71, 122, 0.4);
+      transition: all 0.3s;
+    }
+
+    .cart-icon:hover {
+      background: #a83264;
+      transform: scale(1.1);
+    }
+
+    .cart-count {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: #ff4081;
+      color: white;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: bold;
+      border: 2px solid white;
+    }
+
+    .cart-sidebar {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 380px;
+      height: 100%;
+      background: white;
+      box-shadow: -5px 0 25px rgba(0,0,0,0.15);
+      transition: right 0.4s ease;
+      z-index: 999;
+      overflow-y: auto;
+    }
+
+    .cart-sidebar.active {
+      right: 0;
+    }
+
+    .cart-header {
+      background: linear-gradient(135deg, #d1477a 0%, #a83264 100%);
+      color: white;
+      padding: 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .cart-items {
+      padding: 20px;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+
+    .cart-item {
+      display: flex;
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eee;
+      align-items: center;
+    }
+
+    .cart-item img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      margin-right: 15px;
+      border-radius: 8px;
+    }
+
+    .cart-item-details {
+      flex: 1;
+    }
+
+    .cart-item-title {
+      font-weight: 700;
+      margin-bottom: 5px;
+      color: #333;
+    }
+
+    .cart-item-price {
+      color: #d1477a;
+      font-weight: 700;
+      margin: 5px 0;
+    }
+
+    .cart-item-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 5px;
+    }
+
+    .cart-item-actions button {
+      background: #f0f0f0;
+      border: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+
+    .cart-item-actions button:hover {
+      background: #ddd;
+    }
+
+    .cart-item-remove {
+      color: #ff4081;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-size: 18px;
+      margin-left: 10px;
+    }
+
+    .cart-footer {
+      padding: 25px;
+      border-top: 1px solid #eee;
+      background: white;
+    }
+
+    .cart-total {
+      display: flex;
+      justify-content: space-between;
+      font-size: 1.3rem;
+      font-weight: 800;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .cart-checkout-btn {
+      background: linear-gradient(to right, #25D366, #1DA851);
+      color: white;
+      border: none;
+      padding: 15px;
+      font-size: 1.1rem;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      font-weight: 700;
+      transition: all 0.3s;
+    }
+
+    .cart-checkout-btn:hover {
+      background: linear-gradient(to right, #1DA851, #25D366);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(37, 211, 102, 0.4);
+    }
+
+    /* ===== MODAL PEDIDO ===== */
+    .order-form-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      padding: 20px;
+    }
+
+    .order-form-modal.active {
+      display: flex;
+    }
+
+    .order-form-container {
+      background: white;
+      width: 100%;
+      max-width: 500px;
+      border-radius: 15px;
+      padding: 35px;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      font-size: 28px;
+      cursor: pointer;
+      color: #666;
+      background: none;
+      border: none;
+      transition: color 0.3s;
+    }
+
+    .close-modal:hover {
+      color: #d1477a;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%;
+      padding: 14px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border 0.3s;
+    }
+
+    .form-group input:focus, .form-group textarea:focus {
+      border-color: #d1477a;
+      outline: none;
+    }
+
+    .time-slots {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .time-slot {
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.3s;
+    }
+
+    .time-slot.selected {
+      background: #d1477a;
+      color: white;
+      border-color: #d1477a;
+    }
+
+    .urgent-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 20px 0;
+      padding: 15px;
+      background: #fff3cd;
+      border-radius: 8px;
+      border-left: 5px solid #ffc107;
+    }
+
+    .submit-order-btn {
+      background: linear-gradient(to right, #25D366, #1DA851);
+      color: white;
+      border: none;
+      padding: 16px;
+      font-size: 1.1rem;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      font-weight: 700;
+      transition: all 0.3s;
+    }
+
+    .submit-order-btn:hover {
+      background: linear-gradient(to right, #1DA851, #25D366);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+    }
+
+    /* ===== NOTIFICACIONES ===== */
+    .notification {
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      background: #d1477a;
+      color: white;
+      padding: 18px 25px;
+      border-radius: 10px;
+      z-index: 3000;
+      box-shadow: 0 8px 25px rgba(209, 71, 122, 0.3);
+      animation: slideInRight 0.3s ease;
+      max-width: 350px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    @keyframes slideInRight {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes slideOutRight {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(100%); opacity: 0; }
+    }
+
+    /* ===== BOTONES FLOTANTES ===== */
+    .whatsapp-flotante {
+      position: fixed;
+      bottom: 100px;
+      right: 25px;
+      background: #25D366;
+      color: white;
+      width: 65px;
+      height: 65px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      font-size: 30px;
+      box-shadow: 0 5px 20px rgba(37, 211, 102, 0.4);
+      z-index: 999;
+      transition: all 0.3s;
+    }
+
+    .whatsapp-flotante:hover {
+      background: #1DA851;
+      transform: scale(1.1);
+    }
+
+    .btn-inicio {
+      position: fixed;
+      bottom: 180px;
+      right: 25px;
+      background: #d1477a;
+      color: white;
+      width: 65px;
+      height: 65px;
+      border-radius: 50%;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 5px 20px rgba(209, 71, 122, 0.4);
+      z-index: 999;
+      transition: all 0.3s;
+    }
+
+    .btn-inicio:hover {
+      background: #a83264;
+      transform: scale(1.1);
+    }
+
+    .admin-link {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      background: #333;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s;
+    }
+
+    .admin-link:hover {
+      background: #444;
+      transform: translateY(-3px);
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+      color: white;
+      padding: 3rem 2rem 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2.5rem;
+      max-width: 1200px;
+      margin: 0 auto 2rem;
+    }
+
+    .footer-section h3 {
+      color: #d1477a;
+      font-size: 1.4rem;
+      margin-bottom: 1.2rem;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #d1477a;
+      display: inline-block;
+    }
+
+    .footer-section p {
+      margin-bottom: 10px;
+      color: #ccc;
+    }
+
+    .footer-section a {
+      color: #d1477a;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .footer-section a:hover {
+      color: #ff6b9d;
+      text-decoration: underline;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 1.5rem;
+      border-top: 1px solid #444;
+      color: #aaa;
+      font-size: 0.9rem;
+    }
+
+    /* ===== MODAL ADMIN ===== */
+    .admin-login-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 3000;
+    }
+
+    .admin-login-modal.active {
+      display: flex;
+    }
+
+    .admin-form-container {
+      background: white;
+      width: 90%;
+      max-width: 400px;
+      border-radius: 15px;
+      padding: 35px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 992px) {
+      .carousel {
+        height: 400px;
+      }
+      
+      .carousel-caption h3 {
+        font-size: 2.2rem;
+      }
+      
+      .products {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      }
+      
+      .nav-links {
+        gap: 1rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-container {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .carousel {
+        height: 300px;
+      }
+      
+      .carousel-caption h3 {
+        font-size: 1.8rem;
+      }
+      
+      .carousel-caption p {
+        font-size: 1rem;
+      }
+      
+      .time-slots {
+        grid-template-columns: 1fr;
+      }
+      
+      .cart-sidebar {
+        width: 100%;
+        right: -100%;
+      }
+      
+      .products {
+        grid-template-columns: 1fr;
+      }
+      
+      #menuCategorias {
+        justify-content: flex-start;
+        overflow-x: auto;
+        padding: 10px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .carousel {
+        height: 250px;
+      }
+      
+      .carousel-controls button {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+      }
+      
+      .cart-icon, .whatsapp-flotante, .btn-inicio {
+        width: 55px;
+        height: 55px;
+        font-size: 24px;
+      }
+      
+      .btn-inicio {
+        bottom: 160px;
+      }
+      
+      .whatsapp-flotante {
+        bottom: 90px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="nav-container">
+      <a href="#" class="logo">
+        <i class="fas fa-spa logo-icon"></i>
+        <h1>Floristería Santa Bárbara</h1>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#inicio">Inicio</a></li>
+        <li><a href="#catalogo">Catálogo</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- CARRUSEL -->
+  <section class="carousel" id="inicio">
+    <div class="carousel-inner" id="carousel-inner"></div>
+    <div class="carousel-indicators" id="carousel-indicators"></div>
+    <div class="carousel-controls">
+      <button class="carousel-prev">❮</button>
+      <button class="carousel-next">❯</button>
+    </div>
+  </section>
+
+  <!-- BANNER FLORISTERÍA -->
+  <section class="banner-floristeria">
+    <img src="https://raw.githubusercontent.com/krisArias1990/Florister-a-Santa-B-rbara/main/assets/banner_floristeria.jpeg" 
+         alt="Floristería Santa Bárbara" class="banner-flor-img">
+  </section>
+
+  <!-- MENÚ DE CATEGORÍAS -->
+  <nav class="nav-categorias">
+    <ul id="menuCategorias"></ul>
+  </nav>
+
+  <!-- CATÁLOGO -->
+  <main id="catalogo">
+    <p style="text-align:center;padding:3rem;color:#888;font-size:1.2rem;">
+      <i class="fas fa-spinner fa-spin"></i> Cargando catálogo...
+    </p>
+  </main>
+
+  <!-- LIGHTBOX -->
+  <div id="lightbox" class="lightbox">
+    <img id="lightbox-img" src="" alt="">
+    <div class="lightbox-text">
+      <h3 id="lightbox-nombre"></h3>
+      <p id="lightbox-categoria"></p>
+    </div>
+  </div>
+
+  <!-- MODAL ADMIN -->
+  <div class="admin-login-modal" id="adminLoginModal">
+    <div class="admin-form-container">
+      <button class="close-modal" id="closeAdminModal">&times;</button>
+      <h2 style="color:#d1477a;margin-bottom:1rem;">Acceso Administrativo</h2>
+      <p style="margin-bottom:1.5rem;color:#666;">Ingresa tus credenciales para acceder al panel de administración</p>
+      
+      <form id="adminLoginForm">
+        <div class="form-group">
+          <label for="adminEmail">Correo electrónico</label>
+          <input type="email" id="adminEmail" required placeholder="admin@floristeria.com">
+        </div>
+        
+        <div class="form-group">
+          <label for="adminPassword">Contraseña</label>
+          <input type="password" id="adminPassword" required placeholder="••••••••">
+        </div>
+        
+        <div class="form-group">
+          <label for="adminCode">Código de acceso</label>
+          <input type="text" id="adminCode" required placeholder="Código personal">
+        </div>
+        
+        <button type="submit" class="submit-order-btn">
+          <i class="fas fa-sign-in-alt"></i> Acceder al Panel
+        </button>
+        
+        <p style="margin-top:1rem;font-size:0.9rem;color:#888;text-align:center;">
+          Credenciales por defecto: admin@floristeria.com / SantaBarbara2024 / FLOR-ADMIN-123
+        </p>
+      </form>
+    </div>
+  </div>
+
+  <!-- CARRITO DE COMPRAS -->
+  <div class="cart-icon" id="cartIcon">
+    <i class="fas fa-shopping-cart"></i>
+    <span class="cart-count" id="cartCount">0</span>
+  </div>
+  
+  <div class="cart-sidebar" id="cartSidebar">
+    <div class="cart-header">
+      <h3>Tu Carrito de Flores</h3>
+      <button id="closeCart" style="background:none; border:none; color:white; font-size:24px;">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="cart-items" id="cartItems">
+      <!-- Los items del carrito se agregarán aquí dinámicamente -->
+    </div>
+    
+    <div class="cart-footer">
+      <div class="cart-total">
+        <span>Total:</span>
+        <span id="cartTotal">₡ 0.00 CRC</span>
+      </div>
+      <button class="cart-checkout-btn" id="checkoutBtn">
+        <i class="fab fa-whatsapp"></i> Ordenar por WhatsApp
+      </button>
+    </div>
+  </div>
+  
+  <!-- MODAL PARA COMPLETAR PEDIDO -->
+  <div class="order-form-modal" id="orderFormModal">
+    <div class="order-form-container">
+      <button class="close-modal" id="closeModal">&times;</button>
+      <h2 style="color:#d1477a;margin-bottom:0.5rem;">Completar Pedido</h2>
+      <p style="margin-bottom:1.5rem;color:#666;">Por favor completa tus datos para enviar el pedido por WhatsApp</p>
+      
+      <form id="orderForm">
+        <div class="form-group">
+          <label for="customerName">Nombre completo *</label>
+          <input type="text" id="customerName" required placeholder="Tu nombre completo">
+        </div>
+        
+        <div class="form-group">
+          <label for="customerPhone">Teléfono *</label>
+          <input type="tel" id="customerPhone" required placeholder="8888-8888">
+        </div>
+        
+        <div class="form-group">
+          <label for="customerAddress">Dirección de entrega *</label>
+          <textarea id="customerAddress" rows="3" required placeholder="Dirección completa para la entrega"></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label>Selecciona un horario de entrega *</label>
+          <div class="time-slots" id="timeSlots"></div>
+        </div>
+        
+        <div class="urgent-checkbox">
+          <input type="checkbox" id="urgentOrder">
+          <label for="urgentOrder" style="font-weight: bold; color: #856404;">
+            <i class="fas fa-exclamation-triangle"></i> ¡Es urgente! Necesito mi pedido lo antes posible
+          </label>
+        </div>
+        
+        <div class="form-group">
+          <label for="additionalNotes">Notas adicionales (opcional)</label>
+          <textarea id="additionalNotes" rows="3" placeholder="Instrucciones especiales, detalles del arreglo, color preferido, etc."></textarea>
+        </div>
+        
+        <button type="submit" class="submit-order-btn">
+          <i class="fab fa-whatsapp"></i> Enviar pedido por WhatsApp
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- BOTONES FLOTANTES -->
+  <a href="https://wa.me/50686053613" class="whatsapp-flotante" target="_blank">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+  <button class="btn-inicio" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <i class="fas fa-arrow-up"></i>
+  </button>
+  <a href="#adminLoginModal" class="admin-link" id="adminLoginLink">
+    <i class="fas fa-lock"></i> Admin
+  </a>
+
+  <!-- FOOTER -->
+  <footer id="contacto">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>Contáctenos</h3>
+        <p><i class="fas fa-phone"></i> WhatsApp: <a href="https://wa.me/50686053613" target="_blank">8605-3613</a></p>
+        <p><i class="fas fa-map-marker-alt"></i> Santa Bárbara, Heredia, Costa Rica</p>
+        <p>
+          <a href="https://waze.com/ul?q=Santa+B%C3%A1rbara,+Heredia" target="_blank">Waze</a> |
+          <a href="https://maps.app.goo.gl/Ns5gsNEV9rd7Ubfv8?g_st=aw" target="_blank">Google Maps</a>
+        </p>
+        <p><i class="fas fa-clock"></i> Lunes a Sábado 8am-6pm</p>
+      </div>
+      <div class="footer-section">
+        <h3>Redes Sociales</h3>
+        <p><a href="https://www.facebook.com/share/19t8Z9fFwM/" target="_blank"><i class="fab fa-facebook"></i> Facebook</a></p>
+        <p><a href="https://www.instagram.com/floristsantabarbara" target="_blank"><i class="fab fa-instagram"></i> Instagram</a></p>
+        <p><a href="https://www.tiktok.com/@florist.santabarbara" target="_blank"><i class="fab fa-tiktok"></i> TikTok</a></p>
+      </div>
+      <div class="footer-section">
+        <h3>Formas de Pago</h3>
+        <p><i class="fas fa-mobile-alt"></i> SINPE Móvil</p>
+        <p><i class="fas fa-credit-card"></i> Datáfono (tarjetas)</p>
+        <p><i class="fas fa-link"></i> Link de pago</p>
+        <p><i class="fas fa-university"></i> Transferencia bancaria</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© Floristería Santa Bárbara 2025 - Todos los derechos reservados</p>
+    </div>
+  </footer>
+
+  <script>
+    // ============================================
+    // SISTEMA COMPLETO DE FLORISTERÍA
+    // ============================================
+    
+    // Configuración
+    const CONFIG = {
+      whatsappNumber: "86053613",
+      adminCredentials: {
+        email: "admin@floristeria.com",
+        password: "SantaBarbara2024",
+        code: "FLOR-ADMIN-123"
+      },
+      deliverySlots: [
+        "9:00 AM - 11:00 AM",
+        "11:00 AM - 1:00 PM", 
+        "1:00 PM - 3:00 PM",
+        "3:00 PM - 5:00 PM",
+        "5:00 PM - 7:00 PM"
+      ],
+      storageKey: 'floristeria_santa_barbara_v2'
+    };
+    
+    // Estado de la aplicación
+    const APP_STATE = {
+      cart: [],
+      products: [],
+      categories: [],
+      orders: [],
+      adminLoggedIn: false,
+      currentCarouselIndex: 0,
+      temporadasAltas: [
+        { inicio: "2025-02-01", fin: "2025-02-15" },
+        { inicio: "2025-05-01", fin: "2025-05-15" },
+        { inicio: "2025-11-15", fin: "2025-12-31" }
+      ]
+    };
+    
+    // ============================================
+    // SISTEMA DE ALMACENAMIENTO (LocalStorage)
+    // ============================================
+    class StorageSystem {
+      static saveData() {
+        const data = {
+          products: APP_STATE.products,
+          categories: APP_STATE.categories,
+          orders: APP_STATE.orders,
+          cart: APP_STATE.cart,
+          timestamp: new Date().toISOString()
+        };
+        localStorage.setItem(CONFIG.storageKey, JSON.stringify(data));
+      }
+      
+      static loadData() {
+        const saved = localStorage.getItem(CONFIG.storageKey);
+        if (saved) {
+          try {
+            const data = JSON.parse(saved);
+            APP_STATE.products = data.products || [];
+            APP_STATE.categories = data.categories || [];
+            APP_STATE.orders = data.orders || [];
+            APP_STATE.cart = data.cart || [];
+            
+            // Si no hay productos, cargar ejemplos
+            if (APP_STATE.products.length === 0) {
+              this.loadSampleProducts();
+            }
+            
+            return true;
+          } catch (e) {
+            console.error("Error loading saved data:", e);
+            this.loadSampleProducts();
+            return false;
+          }
+        } else {
+          this.loadSampleProducts();
+          return false;
+        }
+      }
+      
+      static loadSampleProducts() {
+        APP_STATE.products = [
+          {
+            id: 'prod_001',
+            nombre: 'Ramo de Rosas Rojas',
+            descripcion: '12 rosas rojas frescas con follaje verde y envoltura especial',
+            precioBaja: 25000,
+            precioAlta: 28000,
+            categoria: 'Rosas',
+            foto: 'https://images.unsplash.com/photo-1563170351-be82bc888aa4?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+            foto_full: 'https://images.unsplash.com/photo-1563170351-be82bc888aa4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'
+          },
+          {
+            id: 'prod_002',
+            nombre: 'Arreglo de Tulipanes',
+            descripcion: 'Colorido arreglo con tulipanes de diferentes colores',
+            precioBaja: 18000,
+            precioAlta: 21000,
+            categoria: 'Tulipanes',
+            foto: 'https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+            foto_full: 'https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'
+          },
+          {
+            id: 'prod_003',
+            nombre: 'Centro de Mesa Premium',
+            descripcion: 'Elegante centro de mesa con flores mixtas y base decorativa',
+            precioBaja: 35000,
+            precioAlta: 40000,
+            categoria: 'Centros de Mesa',
+            foto: 'https://images.unsplash.com/photo-1519378058457-4c29a0a2efac?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+            foto_full: 'https://images.unsplash.com/photo-1519378058457-4c29a0a2efac?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'
+          },
+          {
+            id: 'prod_004',
+            nombre: 'Cesta de Girasoles',
+            descripcion: 'Hermosa cesta con girasoles frescos y decoración complementaria',
+            precioBaja: 22000,
+            precioAlta: 25000,
+            categoria: 'Girasoles',
+            foto: 'https://images.unsplash.com/photo-1572451479136-8c6a0f0e56c9?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
+            foto_full: 'https://images.unsplash.com/photo-1572451479136-8c6a0f0e56c9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80'
+          }
+        ];
+        
+        APP_STATE.categories = [
+          { id: 'cat_001', nombre: 'Rosas', descripcion: 'Arreglos con rosas' },
+          { id: 'cat_002', nombre: 'Tulipanes', descripcion: 'Arreglos con tulipanes' },
+          { id: 'cat_003', nombre: 'Centros de Mesa', descripcion: 'Centros de mesa para eventos' },
+          { id: 'cat_004', nombre: 'Girasoles', descripcion: 'Arreglos con girasoles' },
+          { id: 'cat_005', nombre: 'Amor y Amistad', descripcion: 'Arreglos para ocasiones especiales' },
+          { id: 'cat_006', nombre: 'Bodas', descripcion: 'Arreglos para bodas y eventos' }
+        ];
+        
+        this.saveData();
+      }
+      
+      static clearData() {
+        localStorage.removeItem(CONFIG.storageKey);
+      }
+      
+      static exportData() {
+        const data = localStorage.getItem(CONFIG.storageKey);
+        const blob = new Blob([data], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `backup_floristeria_${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+      
+      static importData(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            try {
+              const data = JSON.parse(e.target.result);
+              localStorage.setItem(CONFIG.storageKey, JSON.stringify(data));
+              resolve(true);
+            } catch (error) {
+              reject(error);
+            }
+          };
+          reader.readAsText(file);
+        });
+      }
+    }
+    
+    // ============================================
+    // SISTEMA DEL CARRITO
+    // ============================================
+    class CartSystem {
+      static addProduct(product) {
+        const existing = APP_STATE.cart.find(item => item.id === product.id);
+        
+        if (existing) {
+          existing.quantity += 1;
+        } else {
+          APP_STATE.cart.push({
+            ...product,
+            quantity: 1
+          });
+        }
+        
+        StorageSystem.saveData();
+        this.updateUI();
+        this.showNotification('✅ Producto agregado al carrito');
+      }
+      
+      static removeProduct(productId) {
+        APP_STATE.cart = APP_STATE.cart.filter(item => item.id !== productId);
+        StorageSystem.saveData();
+        this.updateUI();
+        this.showNotification('🗑️ Producto eliminado del carrito');
+      }
+      
+      static updateQuantity(productId, newQuantity) {
+        const item = APP_STATE.cart.find(item => item.id === productId);
+        if (item) {
+          if (newQuantity < 1) {
+            this.removeProduct(productId);
+          } else {
+            item.quantity = newQuantity;
+          }
+        }
+        StorageSystem.saveData();
+        this.updateUI();
+      }
+      
+      static clearCart() {
+        APP_STATE.cart = [];
+        StorageSystem.saveData();
+        this.updateUI();
+      }
+      
+      static getTotal() {
+        return APP_STATE.cart.reduce((total, item) => total + (this.getProductPrice(item) * item.quantity), 0);
+      }
+      
+      static getProductPrice(product) {
+        const hoy = new Date();
+        const esAlta = APP_STATE.temporadasAltas.some(t => 
+          hoy >= new Date(t.inicio) && hoy <= new Date(t.fin)
+        );
+        return esAlta ? product.precioAlta : product.precioBaja;
+      }
+      
+      static updateUI() {
+        // Actualizar contador
+        const totalItems = APP_STATE.cart.reduce((sum, item) => sum + item.quantity, 0);
+        document.getElementById('cartCount').textContent = totalItems;
+        
+        // Actualizar lista
+        const cartItems = document.getElementById('cartItems');
+        cartItems.innerHTML = '';
+        
+        if (APP_STATE.cart.length === 0) {
+          cartItems.innerHTML = `
+            <div style="text-align: center; padding: 40px 20px; color: #777;">
+              <i class="fas fa-shopping-cart" style="font-size: 48px; margin-bottom: 20px; color: #ddd;"></i>
+              <p>Tu carrito está vacío</p>
+              <p style="font-size: 14px; margin-top: 10px;">Agrega productos para continuar</p>
+            </div>
+          `;
+        } else {
+          APP_STATE.cart.forEach(item => {
+            const price = this.getProductPrice(item);
+            const itemTotal = price * item.quantity;
+            const cartItem = document.createElement('div');
+            cartItem.className = 'cart-item';
+            cartItem.innerHTML = `
+              <img src="${item.foto}" alt="${item.nombre}" onerror="this.src='https://via.placeholder.com/80?text=Flor'">
+              <div class="cart-item-details">
+                <div class="cart-item-title">${item.nombre}</div>
+                <div style="font-size: 12px; color: #666; margin: 5px 0;">${item.categoria}</div>
+                <div class="cart-item-price">₡ ${itemTotal.toFixed(2)} CRC</div>
+                <div class="cart-item-actions">
+                  <button onclick="CartSystem.updateQuantity('${item.id}', ${item.quantity - 1})">-</button>
+                  <span style="margin: 0 10px;">${item.quantity}</span>
+                  <button onclick="CartSystem.updateQuantity('${item.id}', ${item.quantity + 1})">+</button>
+                </div>
+              </div>
+              <button class="cart-item-remove" onclick="CartSystem.removeProduct('${item.id}')">
+                <i class="fas fa-trash"></i>
+              </button>
+            `;
+            cartItems.appendChild(cartItem);
+          });
+        }
+        
+        // Actualizar total
+        document.getElementById('cartTotal').textContent = `₡ ${this.getTotal().toFixed(2)} CRC`;
+      }
+      
+      static showNotification(message) {
+        const existing = document.querySelector('.notification');
+        if (existing) existing.remove();
+        
+        const notification = document.createElement('div');
+        notification.className = 'notification';
+        notification.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <i class="fas fa-check-circle"></i>
+            <span>${message}</span>
+          </div>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+          notification.style.animation = 'slideOutRight 0.3s ease';
+          setTimeout(() => {
+            if (notification.parentNode) {
+              document.body.removeChild(notification);
+            }
+          }, 300);
+        }, 3000);
+      }
+    }
+    
+    // ============================================
+    // SISTEMA DE PEDIDOS POR WHATSAPP
+    // ============================================
+    class WhatsAppOrderSystem {
+      static generateOrderMessage(orderData) {
+        const now = new Date();
+        const dateStr = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
+        const timeStr = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+        
+        // Generar número de pedido
+        const orderId = 'FLOR-' + now.getFullYear() + 
+          (now.getMonth() + 1).toString().padStart(2, '0') + 
+          now.getDate().toString().padStart(2, '0') + 
+          Math.floor(1000 + Math.random() * 9000);
+        
+        let message = `🌸 *PEDIDO - FLORISTERÍA SANTA BÁRBARA* 🌸\n\n`;
+        message += `📋 *Número de pedido:* ${orderId}\n`;
+        message += `📅 *Fecha:* ${dateStr}\n`;
+        message += `⏰ *Hora del pedido:* ${timeStr}\n\n`;
+        
+        message += `👤 *INFORMACIÓN DEL CLIENTE*\n`;
+        message += `• Nombre: ${orderData.name}\n`;
+        message += `• Teléfono: ${orderData.phone}\n`;
+        message += `• Dirección: ${orderData.address}\n`;
+        message += `• Horario de entrega: ${orderData.deliveryTime}\n`;
+        
+        if (orderData.urgent) {
+          message += `🚨 *¡PEDIDO URGENTE!* 🚨\n`;
+        }
+        
+        message += `\n📝 *DETALLE DEL PEDIDO*\n`;
+        
+        let subtotal = 0;
+        APP_STATE.cart.forEach(item => {
+          const price = CartSystem.getProductPrice(item);
+          const itemTotal = price * item.quantity;
+          subtotal += itemTotal;
+          message += `• x${item.quantity} ${item.nombre} - ₡${itemTotal.toFixed(2)} CRC\n`;
+        });
+        
+        message += `\n💰 *RESUMEN DE COSTOS*\n`;
+        message += `• Subtotal: ₡${subtotal.toFixed(2)} CRC\n`;
+        message += `• Total: ₡${subtotal.toFixed(2)} CRC\n\n`;
+        
+        if (orderData.notes) {
+          message += `📝 *NOTAS ADICIONALES:*\n${orderData.notes}\n\n`;
+        }
+        
+        message += `📍 *FLORISTERÍA SANTA BÁRBARA*\n`;
+        message += `📞 Teléfono: 8605-3613\n`;
+        message += `📍 Santa Bárbara, Heredia\n\n`;
+        message += `¡Gracias por tu compra! 😊`;
+        
+        return encodeURIComponent(message);
+      }
+      
+      static sendOrder(orderData) {
+        const message = this.generateOrderMessage(orderData);
+        const whatsappUrl = `https://wa.me/506${CONFIG.whatsappNumber}?text=${message}`;
+        window.open(whatsappUrl, '_blank');
+        
+        // Guardar pedido en historial
+        const order = {
+          id: 'ORD-' + Date.now(),
+          date: new Date().toISOString(),
+          customer: orderData,
+          items: [...APP_STATE.cart],
+          total: CartSystem.getTotal()
+        };
+        
+        APP_STATE.orders.push(order);
+        StorageSystem.saveData();
+        
+        // Limpiar carrito
+        CartSystem.clearCart();
+        
+        return order;
+      }
+    }
+    
+    // ============================================
+    // SISTEMA DE CATÁLOGO Y UI
+    // ============================================
+    class CatalogSystem {
+      static enTemporadaAlta(hoy) {
+        return APP_STATE.temporadasAltas.some(t => 
+          hoy >= new Date(t.inicio) && hoy <= new Date(t.fin)
+        );
+      }
+      
+      static renderCarousel() {
+        const banners = [
+          { 
+            img: "https://raw.githubusercontent.com/krisArias1990/Florister-a-Santa-B-rbara/main/flores/amor-y-amistad/full/IMG_5816.jpeg", 
+            category: "Amor y Amistad" 
+          },
+          { 
+            img: "https://raw.githubusercontent.com/krisArias1990/Florister-a-Santa-B-rbara/main/flores/arreglos/full/IMG_5825.jpeg", 
+            category: "Día de la Madre" 
+          },
+          { 
+            img: "https://raw.githubusercontent.com/krisArias1990/Florister-a-Santa-B-rbara/main/flores/bodas/full/BODAS.jpg", 
+            category: "Bodas" 
+          }
+        ];
+        
+        const inner = document.getElementById('carousel-inner');
+        const indicators = document.getElementById('carousel-indicators');
+        
+        inner.innerHTML = banners.map((b, i) => `
+          <a href="#${encodeURIComponent(b.category)}" class="carousel-link">
+            <div class="carousel-item">
+              <img src="${b.img}" alt="${b.category}" loading="lazy">
+              <div class="carousel-caption">
+                <h3>${b.category}</h3>
+                <p>WhatsApp: 8605-3613</p>
+              </div>
+            </div>
+          </a>
+        `).join('');
+        
+        indicators.innerHTML = banners.map((_, i) => 
+          `<span data-index="${i}" ${i===0?'class="active"':''}></span>`
+        ).join('');
+        
+        indicators.querySelectorAll('span').forEach(dot => 
+          dot.addEventListener('click', () => this.goToSlide(+dot.dataset.index))
+        );
+        
+        this.showSlide(0);
+      }
+      
+      static showSlide(i) {
+        const total = document.querySelectorAll('.carousel-item').length;
+        if (i >= total) i = 0; 
+        if (i < 0) i = total - 1;
+        APP_STATE.currentCarouselIndex = i;
+        document.getElementById('carousel-inner').style.transform = `translateX(-${i * 100}%)`;
+        document.querySelectorAll('.carousel-indicators span').forEach((d, idx) => 
+          d.classList.toggle('active', idx === i)
+        );
+      }
+      
+      static goToSlide(i) { 
+        this.showSlide(i); 
+      }
+      
+      static renderCatalogo() {
+        const hoy = new Date();
+        const esAlta = this.enTemporadaAlta(hoy);
+        
+        // Obtener categorías únicas
+        const categorias = [...new Set(APP_STATE.products.map(p => p.categoria))];
+        
+        // Renderizar menú de categorías
+        const menuCategorias = document.getElementById('menuCategorias');
+        menuCategorias.innerHTML = categorias.map(c => 
+          `<li><a href="#${encodeURIComponent(c)}">${c}</a></li>`
+        ).join('');
+        
+        // Agrupar productos por categoría
+        const grupos = {};
+        APP_STATE.products.forEach(p => {
+          if (!grupos[p.categoria]) grupos[p.categoria] = [];
+          grupos[p.categoria].push(p);
+        });
+        
+        // Renderizar catálogo
+        const catalogo = document.getElementById('catalogo');
+        catalogo.innerHTML = Object.entries(grupos).map(([cat, prods]) => `
+          <section class="categoria" id="${encodeURIComponent(cat)}">
+            <h2>${cat}</h2>
+            <div class="productos">
+              ${prods.map(p => {
+                const precio = esAlta ? p.precioAlta : p.precioBaja;
+                const foto = p.foto_full || p.foto;
+                return `
+                  <div class="producto">
+                    <img src="${p.foto}" alt="${p.nombre}" class="producto-img" 
+                         onclick='abrirLightbox(${JSON.stringify(p).replace(/"/g, '&quot;')})' loading="lazy">
+                    <h3>${p.nombre}</h3>
+                    <p class="descripcion">${p.descripcion || ''}</p>
+                    <p class="precio">₡${precio.toLocaleString()} CRC</p>
+                    <button class="add-to-cart-btn" onclick="CartSystem.addProduct(${JSON.stringify(p).replace(/"/g, '&quot;')})">
+                      <i class="fas fa-cart-plus"></i> Agregar al carrito
+                    </button>
+                    <button class="btn-pedir" onclick='generarPedidoIndividual(${JSON.stringify(p).replace(/"/g, '&quot;')}, ${precio})'>
+                      <i class="fab fa-whatsapp"></i> Pedir por WhatsApp
+                    </button>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </section>
+        `).join('');
+      }
+    }
+    
+    // ============================================
+    // FUNCIONES GLOBALES
+    // ============================================
+    function abrirLightbox(p) {
+      document.getElementById('lightbox-img').src = p.foto_full || p.foto;
+      document.getElementById('lightbox-nombre').textContent = p.nombre;
+      document.getElementById('lightbox-categoria').textContent = p.categoria;
+      document.getElementById('lightbox').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function cerrarLightbox() {
+      document.getElementById('lightbox').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+    
+    function generarPedidoIndividual(producto, precio) {
+      const categoriaId = encodeURIComponent(producto.categoria);
+      const productoId = encodeURIComponent(producto.nombre);
+      const enlaceDirecto = window.location.origin + window.location.pathname + `#${categoriaId}_${productoId}`;
+      const fotoUrl = producto.foto_full || producto.foto;
+      
+      const hoy = new Date();
+      const esAlta = APP_STATE.temporadasAltas.some(t => 
+        hoy >= new Date(t.inicio) && hoy <= new Date(t.fin)
+      );
+      const precioFinal = esAlta ? producto.precioAlta : producto.precioBaja;
+      
+      const mensaje = `¡Hola! Quisiera pedir el "${producto.nombre}" de ${producto.categoria}.
+
+${producto.descripcion || ''}
+
+Precio: ₡${precioFinal.toLocaleString()} CRC
+
+Imagen: ${fotoUrl} (clic para ver grande)
+
+Ver producto: ${enlaceDirecto}
+
+Por favor confirma disponibilidad. Gracias! 🌹
+
+— Floristería Santa Bárbara`;
+      
+      const url = `https://wa.me/506${CONFIG.whatsappNumber}?text=${encodeURIComponent(mensaje)}`;
+      window.open(url, '_blank');
+    }
+    
+    function generarTimeSlots() {
+      const timeSlotsContainer = document.getElementById('timeSlots');
+      timeSlotsContainer.innerHTML = '';
+      
+      CONFIG.deliverySlots.forEach(slot => {
+        const slotElement = document.createElement('div');
+        slotElement.className = 'time-slot';
+        slotElement.textContent = slot;
+        slotElement.addEventListener('click', function() {
+          document.querySelectorAll('.time-slot').forEach(s => {
+            s.classList.remove('selected');
+          });
+          this.classList.add('selected');
+        });
+        timeSlotsContainer.appendChild(slotElement);
+      });
+      
+      if (timeSlotsContainer.firstChild) {
+        timeSlotsContainer.firstChild.classList.add('selected');
+      }
+    }
+    
+    // ============================================
+    // INICIALIZACIÓN
+    // ============================================
+    document.addEventListener('DOMContentLoaded', function() {
+      // Cargar datos
+      StorageSystem.loadData();
+      
+      // Inicializar sistemas
+      CatalogSystem.renderCarousel();
+      CatalogSystem.renderCatalogo();
+      CartSystem.updateUI();
+      generarTimeSlots();
+      
+      // Configurar carrusel automático
+      setInterval(() => {
+        CatalogSystem.showSlide(APP_STATE.currentCarouselIndex + 1);
+      }, 5000);
+      
+      // Eventos del carrusel
+      document.querySelector('.carousel-prev').addEventListener('click', () => {
+        CatalogSystem.showSlide(APP_STATE.currentCarouselIndex - 1);
+      });
+      
+      document.querySelector('.carousel-next').addEventListener('click', () => {
+        CatalogSystem.showSlide(APP_STATE.currentCarouselIndex + 1);
+      });
+      
+      // Eventos del carrito
+      document.getElementById('cartIcon').addEventListener('click', function() {
+        document.getElementById('cartSidebar').classList.add('active');
+      });
+      
+      document.getElementById('closeCart').addEventListener('click', function() {
+        document.getElementById('cartSidebar').classList.remove('active');
+      });
+      
+      // Eventos del modal de pedido
+      document.getElementById('checkoutBtn').addEventListener('click', function() {
+        if (APP_STATE.cart.length === 0) {
+          CartSystem.showNotification('Tu carrito está vacío');
+          return;
+        }
+        document.getElementById('orderFormModal').classList.add('active');
+      });
+      
+      document.getElementById('closeModal').addEventListener('click', function() {
+        document.getElementById('orderFormModal').classList.remove('active');
+      });
+      
+      // Enviar formulario de pedido
+      document.getElementById('orderForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const selectedTimeSlot = document.querySelector('.time-slot.selected');
+        if (!selectedTimeSlot) {
+          CartSystem.showNotification('Por favor selecciona un horario de entrega');
+          return;
+        }
+        
+        const orderData = {
+          name: document.getElementById('customerName').value,
+          phone: document.getElementById('customerPhone').value,
+          address: document.getElementById('customerAddress').value,
+          deliveryTime: selectedTimeSlot.textContent,
+          urgent: document.getElementById('urgentOrder').checked,
+          notes: document.getElementById('additionalNotes').value
+        };
+        
+        // Enviar por WhatsApp
+        WhatsAppOrderSystem.sendOrder(orderData);
+        
+        // Cerrar modales
+        document.getElementById('orderFormModal').classList.remove('active');
+        document.getElementById('cartSidebar').classList.remove('active');
+        
+        // Limpiar formulario
+        this.reset();
+        generarTimeSlots();
+      });
+      
+      // Eventos del admin
+      document.getElementById('adminLoginLink').addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('adminLoginModal').classList.add('active');
+      });
+      
+      document.getElementById('closeAdminModal').addEventListener('click', function() {
+        document.getElementById('adminLoginModal').classList.remove('active');
+      });
+      
+      document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const email = document.getElementById('adminEmail').value;
+        const password = document.getElementById('adminPassword').value;
+        const code = document.getElementById('adminCode').value;
+        
+        if (email === CONFIG.adminCredentials.email && 
+            password === CONFIG.adminCredentials.password && 
+            code === CONFIG.adminCredentials.code) {
+          
+          APP_STATE.adminLoggedIn = true;
+          CartSystem.showNotification('✅ Acceso administrativo concedido');
+          document.getElementById('adminLoginModal').classList.remove('active');
+          
+          // Redirigir al panel admin (en producción sería admin.html)
+          setTimeout(() => {
+            alert('Panel administrativo cargado. En producción, esto abriría el panel completo con funciones de CRUD.');
+            // window.location.href = 'admin.html';
+          }, 500);
+          
+        } else {
+          CartSystem.showNotification('❌ Credenciales incorrectas');
+        }
+      });
+      
+      // Cerrar lightbox al hacer clic fuera
+      document.getElementById('lightbox').addEventListener('click', function(e) {
+        if (e.target === this) {
+          cerrarLightbox();
+        }
+      });
+      
+      // Cerrar modales al hacer clic fuera
+      document.getElementById('orderFormModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+          this.classList.remove('active');
+        }
+      });
+      
+      document.getElementById('adminLoginModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+          this.classList.remove('active');
+        }
+      });
+    });
+    
+    // Hacer funciones disponibles globalmente
+    window.abrirLightbox = abrirLightbox;
+    window.cerrarLightbox = cerrarLightbox;
+    window.generarPedidoIndividual = generarPedidoIndividual;
+    window.CartSystem = CartSystem;
+  </script>
+</body>
+</html>
