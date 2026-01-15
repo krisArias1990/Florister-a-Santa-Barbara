@@ -1489,7 +1489,7 @@
 
         // Variables globales
         let cart = JSON.parse(localStorage.getItem('floristeria_cart')) || [];
-        let products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
+        let products = [];
         let categories = JSON.parse(localStorage.getItem('floristeria_categories')) || [];
         let storeConfig = JSON.parse(localStorage.getItem('floristeria_config')) || {
             storeName: "Floristería Santa Bárbara",
@@ -1583,9 +1583,14 @@
                 categories = ['Rosas', 'Arreglos', 'Tulipanes', 'Orquídeas', 'Girasoles', 'Lirios'];
                 localStorage.setItem('floristeria_categories', JSON.stringify(categories));
             }
+        }
+
+        function loadProducts() {
+            // Obtener productos desde localStorage
+            products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
             
-            // Si no hay productos, crear algunos de ejemplo
             if (products.length === 0) {
+                // Crear productos de ejemplo si no hay ninguno
                 products = [
                     {
                         id: 1,
@@ -1614,6 +1619,8 @@
                 ];
                 localStorage.setItem('floristeria_products', JSON.stringify(products));
             }
+            
+            renderProducts(products);
         }
 
         function setupEventListeners() {
@@ -1758,44 +1765,6 @@
         // PRODUCTOS
         // ============================================
 
-        function loadProducts() {
-            // Obtener productos desde localStorage
-            products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
-            
-            if (products.length === 0) {
-                // Crear productos de ejemplo si no hay ninguno
-                products = [
-                    {
-                        id: 1,
-                        name: "Ramos de Rosas Rojas Premium",
-                        nombre: "Ramos de Rosas Rojas Premium",
-                        category: "Rosas",
-                        categoria: "Rosas",
-                        description: "Elegante ramo con 24 rosas rojas frescas, perfecto para aniversarios.",
-                        price: 25000,
-                        precio: 25000,
-                        image: "https://images.unsplash.com/photo-1519378058457-4c29a0a2efac?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                        stock: 10
-                    },
-                    {
-                        id: 2,
-                        name: "Centro de Mesa Mixto Grande",
-                        nombre: "Centro de Mesa Mixto Grande",
-                        category: "Arreglos",
-                        categoria: "Arreglos",
-                        description: "Colorido centro de mesa para eventos con flores de temporada.",
-                        price: 35000,
-                        precio: 35000,
-                        image: "https://images.unsplash.com/photo-1457089328109-e5d9bd499191?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                        stock: 5
-                    }
-                ];
-                localStorage.setItem('floristeria_products', JSON.stringify(products));
-            }
-            
-            renderProducts(products);
-        }
-
         function renderProducts(productsToRender) {
             const productsGrid = document.getElementById('productsGrid');
             
@@ -1821,7 +1790,7 @@
                 const productCategory = product.categoria || product.category || 'General';
                 const productDescription = product.descripcion || product.description || 'Producto de calidad';
                 // CORRECCIÓN: Asegurar que siempre tengamos un precio válido
-                const productPrice = product.precio || product.price || 0;
+                const productPrice = parseFloat(product.precio || product.price || 0);
                 const productImage = product.imagen || product.image || 'https://images.unsplash.com/photo-1560749003-f4b1e17e2dff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80';
                 const productStock = product.stock || 0;
                 
@@ -1831,7 +1800,7 @@
                         <img src="${productImage}" 
                              alt="${productName}" 
                              class="product-image"
-                             onclick="openImageModal('${productImage}')">
+                             onclick="openImageModal('${productImage.replace(/'/g, "\\'")}')">
                     </div>
                     <div class="product-info">
                         <span class="product-category">${productCategory}</span>
@@ -1879,7 +1848,7 @@
                 showNotification('Producto no encontrado', 'error');
                 return;
             }
-        
+
             const existingItem = cart.find(item => item.id == productId);
             
             if (existingItem) {
@@ -1897,7 +1866,7 @@
                     quantity: 1
                 });
             }
-        
+
             localStorage.setItem('floristeria_cart', JSON.stringify(cart));
             updateCartCount();
             showNotification(`${product.nombre || product.name} agregado al carrito`);
@@ -1990,7 +1959,7 @@
             
             // Calcular envío - CORRECCIÓN CRÍTICA AQUÍ
             const deliveryType = document.querySelector('input[name="deliveryType"]:checked');
-            const shipping = deliveryType && deliveryType.value === 'delivery' ? (storeConfig.shippingCost || 0) : 0;
+            const shipping = deliveryType && deliveryType.value === 'delivery' ? (storeConfig.shippingCost || 3000) : 0;
             const total = subtotal + shipping;
             
             // CORRECCIÓN: Usar moneda segura y formato español
@@ -2129,8 +2098,8 @@
                 message += `${index + 1}. *${item.name}*\n`;
                 message += `   Cantidad: ${item.quantity}\n`;
                 // CORRECCIÓN: Usar moneda segura y formato español
-                message += `   Precio unitario: ${storeConfig.currency || '₡'}${item.price.toLocaleString('es-CR')}\n`;
-                message += `   Subtotal: ${storeConfig.currency || '₡'}${(item.price * item.quantity).toLocaleString('es-CR')}\n`;
+                message += `   Precio unitario: ${storeConfig.currency || '₡'}${(parseFloat(item.price) || 0).toLocaleString('es-CR')}\n`;
+                message += `   Subtotal: ${storeConfig.currency || '₡'}${((parseFloat(item.price) || 0) * item.quantity).toLocaleString('es-CR')}\n`;
                 
                 // ✅ INCLUIR IMAGEN COMO ENLACE SEPARADO para mejor vista previa
                 if (item.image && item.image.startsWith('http')) {
@@ -2157,8 +2126,8 @@
             message += `💰 *RESUMEN DE PAGO*\n`;
             message += `━━━━━━━━━━━━━━━━━━━━\n`;
             
-            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const shipping = deliveryType === 'delivery' ? storeConfig.shippingCost : 0;
+            const subtotal = cart.reduce((sum, item) => sum + ((parseFloat(item.price) || 0) * item.quantity), 0);
+            const shipping = deliveryType === 'delivery' ? (storeConfig.shippingCost || 0) : 0;
             const total = subtotal + shipping;
             
             // CORRECCIÓN: Usar moneda segura y formato español
@@ -2211,7 +2180,7 @@
                 items: cart.map(item => ({
                     name: item.name,
                     quantity: item.quantity,
-                    price: item.price,
+                    price: parseFloat(item.price) || 0,
                     image: item.image
                 })),
                 subtotal: subtotal,
@@ -2308,9 +2277,14 @@
             }, 3000);
         }
 
+        // ============================================
+        // DEBUG FUNCTIONS
+        // ============================================
+
         function debugSystem() {
             console.log("=== DEBUG FLORISTERÍA ===");
             console.log("Productos en localStorage:", JSON.parse(localStorage.getItem('floristeria_products'))?.length || 0);
+            console.log("Productos cargados:", products.length);
             console.log("Carrito actual:", cart);
             console.log("Store Config:", storeConfig);
             console.log("Currency:", storeConfig.currency);
@@ -2326,9 +2300,6 @@
                 console.log("Total calculado:", total);
             }
         }
-        
-        // Llamar para debug
-        setTimeout(debugSystem, 2000);
 
         // ============================================
         // FUNCIONES GLOBALES
@@ -2349,6 +2320,7 @@
         window.filterProducts = filterProducts;
         window.fixCurrencyIssues = fixCurrencyIssues;
         window.optimizeStorage = optimizeStorage;
+        window.debugSystem = debugSystem;
     </script>
 </body>
 </html>
