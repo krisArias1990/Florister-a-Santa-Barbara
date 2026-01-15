@@ -1499,8 +1499,10 @@
             whatsappMessage: "¡Hola! 😊\n\nGracias por comunicarte con nosotros.\n\nQuiero hacer un pedido:"
         };
 
-        if (!storeConfig.currency) {
+        // CORRECCIÓN CRÍTICA: Asegurar que currency siempre esté definido
+        if (!storeConfig.currency || storeConfig.currency === 'undefined') {
             storeConfig.currency = "₡";
+            localStorage.setItem('floristeria_config', JSON.stringify(storeConfig));
         }
         
         let selectedPayment = 'sinpe';
@@ -1513,6 +1515,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Cargar datos
             loadStoreData();
+            fixCurrencyIssues(); // CORRECCIÓN: Llamar función de reparación
             
             // Inicializar componentes
             initCarousel();
@@ -1528,13 +1531,39 @@
             
             // Seleccionar SINPE por defecto
             selectPayment('sinpe');
+            
+            // Optimizar almacenamiento
+            setTimeout(optimizeStorage, 3000);
         });
+
+        // CORRECCIÓN: Función para reparar problemas de moneda
+        function fixCurrencyIssues() {
+            // 1. Asegurar que storeConfig.currency siempre existe
+            if (!storeConfig.currency || storeConfig.currency === 'undefined') {
+                storeConfig.currency = "₡";
+                localStorage.setItem('floristeria_config', JSON.stringify(storeConfig));
+                console.log("✅ Moneda corregida a:", storeConfig.currency);
+            }
+            
+            // 2. Verificar que los cálculos del carrito funcionen
+            const testCart = JSON.parse(localStorage.getItem('floristeria_cart')) || [];
+            if (testCart.length > 0) {
+                const testSubtotal = testCart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                console.log("✅ Carrito test - Productos:", testCart.length, "Subtotal:", storeConfig.currency + testSubtotal.toLocaleString('es-CR'));
+            }
+        }
 
         function loadStoreData() {
             // Cargar configuración
             const savedConfig = localStorage.getItem('floristeria_config');
             if (savedConfig) {
                 storeConfig = JSON.parse(savedConfig);
+            }
+            
+            // CORRECCIÓN: Asegurar moneda
+            if (!storeConfig.currency || storeConfig.currency === 'undefined') {
+                storeConfig.currency = "₡";
+                localStorage.setItem('floristeria_config', JSON.stringify(storeConfig));
             }
             
             // Cargar productos
@@ -1872,19 +1901,19 @@
             const cartTotal = document.getElementById('cartTotal');
             
             if (cart.length === 0) {
-            container.innerHTML = `
-                <div class="cart-empty">
-                    <i class="fas fa-shopping-cart" style="font-size: 4rem; color: var(--gray-light); margin-bottom: 1rem;"></i>
-                    <h3 style="color: var(--gray); margin-bottom: 0.5rem;">Tu carrito está vacío</h3>
-                    <p style="color: var(--gray); margin-bottom: 1.5rem;">Agrega algunos productos para comenzar</p>
-                    <button class="btn btn-primary" onclick="closeCart()" style="padding: 10px 20px;">
-                        <i class="fas fa-store"></i> Explorar Catálogo
-                    </button>
-                </div>
+                container.innerHTML = `
+                    <div class="cart-empty">
+                        <i class="fas fa-shopping-cart" style="font-size: 4rem; color: var(--gray-light); margin-bottom: 1rem;"></i>
+                        <h3 style="color: var(--gray); margin-bottom: 0.5rem;">Tu carrito está vacío</h3>
+                        <p style="color: var(--gray); margin-bottom: 1.5rem;">Agrega algunos productos para comenzar</p>
+                        <button class="btn btn-primary" onclick="closeCart()" style="padding: 10px 20px;">
+                            <i class="fas fa-store"></i> Explorar Catálogo
+                        </button>
+                    </div>
                 `;
-                cartSubtotal.textContent = `${storeConfig.currency}0`;
-                cartShipping.textContent = `${storeConfig.currency}0`;
-                cartTotal.textContent = `${storeConfig.currency}0`;
+                cartSubtotal.textContent = `${storeConfig.currency || '₡'}0`;
+                cartShipping.textContent = `${storeConfig.currency || '₡'}0`;
+                cartTotal.textContent = `${storeConfig.currency || '₡'}0`;
                 return;
             }
             
@@ -1901,7 +1930,7 @@
                              alt="${item.name}" class="cart-item-image">
                         <div class="cart-item-details">
                             <div class="cart-item-title">${item.name}</div>
-                            <div class="cart-item-price">${storeConfig.currency}${item.price.toLocaleString()} c/u</div>
+                            <div class="cart-item-price">${storeConfig.currency || '₡'}${item.price.toLocaleString('es-CR')} c/u</div>
                         </div>
                         <div class="cart-item-actions">
                             <button class="quantity-btn" onclick="updateQuantity(${item.id}, -1)">
@@ -1927,9 +1956,10 @@
             const shipping = deliveryType.value === 'delivery' ? storeConfig.shippingCost : 0;
             const total = subtotal + shipping;
             
-            cartSubtotal.textContent = `${storeConfig.currency}${subtotal.toLocaleString()}`;
-            cartShipping.textContent = `${storeConfig.currency}${shipping.toLocaleString()}`;
-            cartTotal.textContent = `${storeConfig.currency}${total.toLocaleString()}`;
+            // CORRECCIÓN: Usar moneda segura y formato español
+            cartSubtotal.textContent = `${storeConfig.currency || '₡'}${subtotal.toLocaleString('es-CR')}`;
+            cartShipping.textContent = `${storeConfig.currency || '₡'}${shipping.toLocaleString('es-CR')}`;
+            cartTotal.textContent = `${storeConfig.currency || '₡'}${total.toLocaleString('es-CR')}`;
         }
 
         function updateQuantity(productId, change) {
@@ -1956,7 +1986,7 @@
             showNotification('Producto eliminado del carrito');
         }
 
-       function clearCart() {
+        function clearCart() {
             if (cart.length === 0) {
                 showNotification('El carrito ya está vacío', 'warning');
                 return;
@@ -1969,7 +1999,7 @@
                 loadCartItems();
                 showNotification('Carrito vaciado correctamente');
             }
-        } 
+        }
 
         // ============================================
         // FORMULARIO DE PEDIDO
@@ -2055,13 +2085,13 @@
             message += `• Fecha de entrega: ${new Date(date).toLocaleDateString('es-ES')}\n`;
             message += `• Horario: ${time}\n\n`;
 
-            // CON ESTA VERSIÓN MEJORADA:
             message += `📝 *PRODUCTOS SOLICITADOS*\n`;
             message += `━━━━━━━━━━━━━━━━━━━━\n`;
             
             cart.forEach((item, index) => {
                 message += `${index + 1}. *${item.name}*\n`;
                 message += `   Cantidad: ${item.quantity}\n`;
+                // CORRECCIÓN: Usar moneda segura y formato español
                 message += `   Precio unitario: ${storeConfig.currency || '₡'}${item.price.toLocaleString('es-CR')}\n`;
                 message += `   Subtotal: ${storeConfig.currency || '₡'}${(item.price * item.quantity).toLocaleString('es-CR')}\n`;
                 
@@ -2072,15 +2102,19 @@
                 message += `\n`;
             });
 
-            // Y LUEGO AGREGAR AL FINAL DEL MENSAJE, ANTES DEL CIERRE:
-            if (cart.some(item => item.image && item.image.startsWith('http'))) {
+            // Sección de imágenes para WhatsApp mejorada
+            if (cart.some(item => item.image)) {
                 message += `\n🖼️ *IMÁGENES DE LOS PRODUCTOS:*\n`;
+                message += `━━━━━━━━━━━━━━━━━━━━\n`;
+                
                 cart.forEach((item, index) => {
-                    if (item.image && item.image.startsWith('http')) {
-                        message += `Producto ${index + 1}: ${item.image}\n`;
+                    if (item.image) {
+                        if (item.image.startsWith('http') || item.image.startsWith('data:image')) {
+                            message += `📸 *${item.name}:*\n`;
+                            message += `${item.image}\n\n`;
+                        }
                     }
                 });
-                message += `\n`;
             }
             
             message += `💰 *RESUMEN DE PAGO*\n`;
@@ -2090,9 +2124,10 @@
             const shipping = deliveryType === 'delivery' ? storeConfig.shippingCost : 0;
             const total = subtotal + shipping;
             
-            message += `• Subtotal: ${storeConfig.currency}${subtotal.toLocaleString()}\n`;
-            message += `• Costo de envío: ${storeConfig.currency}${shipping.toLocaleString()}\n`;
-            message += `• *TOTAL A PAGAR: ${storeConfig.currency}${total.toLocaleString()}*\n\n`;
+            // CORRECCIÓN: Usar moneda segura y formato español
+            message += `• Subtotal: ${storeConfig.currency || '₡'}${subtotal.toLocaleString('es-CR')}\n`;
+            message += `• Costo de envío: ${storeConfig.currency || '₡'}${shipping.toLocaleString('es-CR')}\n`;
+            message += `• *TOTAL A PAGAR: ${storeConfig.currency || '₡'}${total.toLocaleString('es-CR')}*\n\n`;
             
             message += `💳 *MÉTODO DE PAGO*\n`;
             message += `━━━━━━━━━━━━━━━━━━━━\n`;
@@ -2179,6 +2214,46 @@
         }
 
         // ============================================
+        // OPTIMIZACIÓN DE ALMACENAMIENTO
+        // ============================================
+
+        function optimizeStorage() {
+            // Limpiar carritos viejos (más de 7 días)
+            const cart = JSON.parse(localStorage.getItem('floristeria_cart')) || [];
+            
+            // Si el carrito está vacío por más de 7 días, limpiarlo
+            if (cart.length === 0) {
+                const lastCartUpdate = localStorage.getItem('floristeria_cart_last_update');
+                if (lastCartUpdate) {
+                    const daysSinceUpdate = (Date.now() - parseInt(lastCartUpdate)) / (1000 * 60 * 60 * 24);
+                    if (daysSinceUpdate > 7) {
+                        localStorage.removeItem('floristeria_cart');
+                        localStorage.removeItem('floristeria_cart_last_update');
+                    }
+                }
+            } else {
+                // Actualizar timestamp del carrito
+                localStorage.setItem('floristeria_cart_last_update', Date.now().toString());
+            }
+            
+            // Verificar tamaño total
+            const totalSize = JSON.stringify(localStorage).length;
+            const maxSize = 5 * 1024 * 1024; // 5MB máximo
+            
+            if (totalSize > maxSize * 0.8) {
+                console.log('⚠️ Almacenamiento cerca del límite. Limpiando datos temporales...');
+                
+                // Limpiar datos temporales de sesión
+                sessionStorage.clear();
+                
+                // Notificar al usuario si está en admin
+                if (window.location.href.includes('admin.html')) {
+                    showNotification('⚠️ Almacenamiento optimizado automáticamente', 'warning');
+                }
+            }
+        }
+
+        // ============================================
         // NOTIFICACIONES
         // ============================================
 
@@ -2213,6 +2288,8 @@
         window.nextSlide = nextSlide;
         window.goToSlide = goToSlide;
         window.filterProducts = filterProducts;
+        window.fixCurrencyIssues = fixCurrencyIssues;
+        window.optimizeStorage = optimizeStorage;
     </script>
 </body>
 </html>
