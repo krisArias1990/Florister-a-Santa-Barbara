@@ -1959,7 +1959,7 @@
             
             // Calcular envío - CORRECCIÓN CRÍTICA AQUÍ
             const deliveryType = document.querySelector('input[name="deliveryType"]:checked');
-            const shipping = deliveryType && deliveryType.value === 'delivery' ? (storeConfig.shippingCost || 3000) : 0;
+            const shipping = deliveryType && deliveryType.value === 'delivery' ? (storeConfig.shippingCost || 0) : 0;
             const total = subtotal + shipping;
             
             // CORRECCIÓN: Usar moneda segura y formato español
