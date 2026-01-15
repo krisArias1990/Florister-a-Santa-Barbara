@@ -562,8 +562,8 @@
         
         function logout() {
             localStorage.removeItem('floristeria_admin_logged_in');
-            localStorage.removeItem('floristeria_admin_email');
-            location.reload();
+            // Redirigir al sitio principal
+            window.location.href = 'index.html';
         }
         
         // ============================================
