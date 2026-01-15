@@ -1199,7 +1199,7 @@
                     <div class="form-row">
                         <div>
                             <label>Costo de Envío (₡) *</label>
-                            <input type="number" id="storeShipping" class="form-control" value="3000" required>
+                            <input type="number" id="storeShipping" class="form-control" value="₡0" required>
                         </div>
                         <div>
                             <label>Símbolo de Moneda</label>
@@ -2525,7 +2525,7 @@ Quiero hacer un pedido:</textarea>
             document.getElementById('storePhone').value = config.phoneNumber || "50686053613";
             document.getElementById('storeAddress').value = config.address || "Santa Bárbara, Heredia, Costa Rica";
             document.getElementById('storeEmail').value = config.email || "ventas@floristeriasantabarbara.com";
-            document.getElementById('storeShipping').value = config.shippingCost || 3000;
+            document.getElementById('storeShipping').value = config.shippingCost || 0;
             document.getElementById('storeCurrency').value = config.currency || "₡";
             document.getElementById('storeWhatsapp').value = config.whatsappMessage || "¡Hola Floristería Santa Bárbara! 😊\n\nGracias por comunicarte con nosotros.\n\nQuiero hacer un pedido:";
         }
@@ -2536,7 +2536,7 @@ Quiero hacer un pedido:</textarea>
                 phoneNumber: document.getElementById('storePhone').value.trim(),
                 address: document.getElementById('storeAddress').value.trim(),
                 email: document.getElementById('storeEmail').value.trim(),
-                shippingCost: parseInt(document.getElementById('storeShipping').value) || 3000,
+                shippingCost: parseInt(document.getElementById('storeShipping').value) || 0,
                 currency: document.getElementById('storeCurrency').value.trim() || "₡",
                 whatsappMessage: document.getElementById('storeWhatsapp').value.trim()
             };
