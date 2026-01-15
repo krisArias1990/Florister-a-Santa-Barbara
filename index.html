@@ -2160,6 +2160,11 @@
             // Codificar mensaje para URL
             const encodedMessage = encodeURIComponent(message);
             const whatsappUrl = `https://wa.me/${storeConfig.phoneNumber}?text=${encodedMessage}`;
+
+            <small style="color: var(--gray); display: block; margin-top: 0.5rem;">
+                <strong>💡 Recomendación:</strong> Las imágenes subidas se guardarán permanentemente en Base64.
+                Para imágenes grandes, usa URLs externas como Unsplash.
+            </small>
             
             // Guardar pedido en historial
             saveOrderToHistory({
