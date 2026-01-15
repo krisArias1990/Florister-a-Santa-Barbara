@@ -6,2035 +6,631 @@
     <title>Panel Administrativo - Floristería Santa Bárbara</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* ===== ESTILOS GENERALES ===== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        /* ===== CONTENEDOR PRINCIPAL ===== */
-        .admin-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            overflow: hidden;
-        }
-
-        /* ===== HEADER ADMIN ===== */
-        .admin-header {
-            background: linear-gradient(135deg, #d1477a 0%, #a83264 100%);
-            color: white;
-            padding: 25px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 5px solid rgba(255,255,255,0.2);
-        }
-
-        .admin-header h1 {
-            font-size: 2.2rem;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .admin-header h1 i {
-            color: #ffeb3b;
-        }
-
-        .admin-actions {
-            display: flex;
-            gap: 15px;
-        }
-
-        .btn {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 16px;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .btn-primary {
-            background: #25D366;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #1da851;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
-        }
-
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background: #5a6268;
-            transform: translateY(-2px);
-        }
-
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #c82333;
-            transform: translateY(-2px);
-        }
-
-        .btn-warning {
-            background: #ffc107;
-            color: #212529;
-        }
-
-        .btn-warning:hover {
-            background: #e0a800;
-            transform: translateY(-2px);
-        }
-
-        .btn-logout {
-            background: #333;
-            color: white;
-        }
-
-        .btn-logout:hover {
-            background: #222;
-            transform: translateY(-2px);
-        }
-
-        /* ===== TABS DE NAVEGACIÓN ===== */
-        .admin-tabs {
-            display: flex;
-            background: #f8f9fa;
-            border-bottom: 2px solid #dee2e6;
-            padding: 0 40px;
-        }
-
-        .admin-tab {
-            padding: 18px 30px;
-            background: none;
-            border: none;
-            border-bottom: 3px solid transparent;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #666;
-            cursor: pointer;
-            transition: all 0.3s;
-            position: relative;
-        }
-
-        .admin-tab:hover {
-            color: #d1477a;
-            background: rgba(209, 71, 122, 0.05);
-        }
-
-        .admin-tab.active {
-            color: #d1477a;
-            border-bottom: 3px solid #d1477a;
-            background: rgba(209, 71, 122, 0.1);
-        }
-
-        .admin-tab i {
-            margin-right: 10px;
-            font-size: 1.2rem;
-        }
-
-        .tab-badge {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: #dc3545;
-            color: white;
-            font-size: 0.7rem;
-            padding: 2px 6px;
-            border-radius: 10px;
-            min-width: 20px;
-            text-align: center;
-        }
-
-        /* ===== CONTENIDO DE LAS PESTAÑAS ===== */
-        .admin-content {
-            padding: 30px 40px;
-            min-height: 600px;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ===== FORMULARIOS ===== */
-        .form-section {
-            background: #f8f9fa;
-            padding: 30px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            border: 1px solid #e9ecef;
-        }
-
-        .form-section h3 {
-            color: #d1477a;
-            margin-bottom: 25px;
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            margin-bottom: 25px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #495057;
-            font-size: 1rem;
-        }
-
-        .form-group label.required::after {
-            content: " *";
-            color: #dc3545;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 14px;
-            border: 2px solid #ced4da;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: all 0.3s;
-            background: white;
-        }
-
-        .form-control:focus {
-            border-color: #d1477a;
-            box-shadow: 0 0 0 0.2rem rgba(209, 71, 122, 0.25);
-            outline: none;
-        }
-
-        .form-control.small {
-            max-width: 150px;
-        }
-
-        .form-textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        .form-actions {
-            display: flex;
-            gap: 15px;
-            margin-top: 25px;
-            padding-top: 25px;
-            border-top: 1px solid #dee2e6;
-        }
-
-        /* ===== LISTAS DE ELEMENTOS ===== */
-        .items-container {
-            background: white;
-            border-radius: 15px;
-            border: 1px solid #e9ecef;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        }
-
-        .items-header {
-            display: grid;
-            grid-template-columns: 2fr 1fr 2fr 1fr auto;
-            gap: 15px;
-            padding: 20px;
-            background: #f8f9fa;
-            font-weight: 600;
-            color: #495057;
-            border-bottom: 2px solid #dee2e6;
-        }
-
-        .item-row {
-            display: grid;
-            grid-template-columns: 2fr 1fr 2fr 1fr auto;
-            gap: 15px;
-            padding: 20px;
-            border-bottom: 1px solid #e9ecef;
-            align-items: center;
-            transition: background 0.3s;
-        }
-
-        .item-row:hover {
-            background: #f8f9fa;
-        }
-
-        .item-row:last-child {
-            border-bottom: none;
-        }
-
-        .item-image {
-            width: 60px;
-            height: 60px;
-            object-fit: cover;
-            border-radius: 8px;
-            border: 2px solid #dee2e6;
-        }
-
-        .item-name {
-            font-weight: 600;
-            color: #212529;
-        }
-
-        .item-price {
-            color: #d1477a;
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
-
-        .item-category {
-            background: #e9ecef;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            display: inline-block;
-        }
-
-        .item-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .item-actions button {
-            padding: 8px 12px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: all 0.3s;
-        }
-
-        .btn-edit {
-            background: #ffc107;
-            color: #212529;
-        }
-
-        .btn-edit:hover {
-            background: #e0a800;
-        }
-
-        .btn-delete {
-            background: #dc3545;
-            color: white;
-        }
-
-        .btn-delete:hover {
-            background: #c82333;
-        }
-
-        /* ===== ESTADÍSTICAS ===== */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            border-top: 5px solid #d1477a;
-            transition: transform 0.3s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .stat-card h4 {
-            color: #6c757d;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 10px;
-        }
-
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: #d1477a;
-            line-height: 1;
-        }
-
-        .stat-change {
-            font-size: 0.9rem;
-            color: #28a745;
-            margin-top: 10px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .stat-change.negative {
-            color: #dc3545;
-        }
-
-        /* ===== TABLA DE PEDIDOS ===== */
-        .orders-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        .orders-table th {
-            background: #f8f9fa;
-            padding: 15px;
-            text-align: left;
-            font-weight: 600;
-            color: #495057;
-            border-bottom: 2px solid #dee2e6;
-        }
-
-        .orders-table td {
-            padding: 15px;
-            border-bottom: 1px solid #e9ecef;
-            vertical-align: top;
-        }
-
-        .order-status {
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .status-pending {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .status-processing {
-            background: #cce5ff;
-            color: #004085;
-        }
-
-        .status-delivered {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .status-cancelled {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .order-items {
-            max-width: 300px;
-        }
-
-        .order-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
-            padding-bottom: 5px;
-            border-bottom: 1px dashed #dee2e6;
-        }
-
-        .order-item:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-        }
-
-        /* ===== BACKUP/RESTORE ===== */
-        .backup-section {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 30px;
-            margin-top: 30px;
-        }
-
-        .backup-card {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            text-align: center;
-            border: 2px dashed #dee2e6;
-        }
-
-        .backup-card h3 {
-            color: #d1477a;
-            margin-bottom: 15px;
-            font-size: 1.3rem;
-        }
-
-        .backup-card p {
-            color: #6c757d;
-            margin-bottom: 25px;
-            line-height: 1.6;
-        }
-
-        .backup-card .btn {
-            margin: 0 auto;
-        }
-
-        /* ===== MODALES ===== */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .modal.active {
-            display: flex;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .modal-content {
-            background: white;
-            width: 100%;
-            max-width: 600px;
-            border-radius: 15px;
-            padding: 40px;
-            position: relative;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: none;
-            border: none;
-            font-size: 28px;
-            color: #6c757d;
-            cursor: pointer;
-            transition: color 0.3s;
-        }
-
-        .modal-close:hover {
-            color: #dc3545;
-        }
-
-        .modal-title {
-            color: #d1477a;
-            margin-bottom: 20px;
-            font-size: 1.8rem;
-        }
-
-        .modal-body {
-            margin: 20px 0;
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #dee2e6;
-        }
-
-        /* ===== NOTIFICACIONES ===== */
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #d1477a;
-            color: white;
-            padding: 15px 25px;
-            border-radius: 10px;
-            z-index: 2000;
-            box-shadow: 0 5px 20px rgba(209, 71, 122, 0.3);
-            animation: slideInRight 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            max-width: 400px;
-        }
-
-        @keyframes slideInRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        @keyframes slideOutRight {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(100%); opacity: 0; }
-        }
-
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 1200px) {
-            .admin-container {
-                margin: 0 10px;
-            }
-        }
-
-        @media (max-width: 992px) {
-            .admin-tabs {
-                padding: 0 20px;
-                flex-wrap: wrap;
-            }
-            
-            .admin-tab {
-                padding: 15px 20px;
-                flex: 1;
-                min-width: 120px;
-                text-align: center;
-            }
-            
-            .admin-tab i {
-                margin-right: 5px;
-            }
-            
-            .item-row, .items-header {
-                grid-template-columns: 2fr 1fr auto;
-            }
-            
-            .item-row > :nth-child(3),
-            .items-header > :nth-child(3) {
-                display: none;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .admin-header {
-                flex-direction: column;
-                gap: 20px;
-                text-align: center;
-                padding: 20px;
-            }
-            
-            .admin-actions {
-                width: 100%;
-                justify-content: center;
-                flex-wrap: wrap;
-            }
-            
-            .btn {
-                padding: 10px 20px;
-                font-size: 14px;
-            }
-            
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-            
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .backup-section {
-                grid-template-columns: 1fr;
-            }
-            
-            .orders-table {
-                display: block;
-                overflow-x: auto;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .admin-content {
-                padding: 20px;
-            }
-            
-            .form-section {
-                padding: 20px;
-            }
-            
-            .item-row, .items-header {
-                grid-template-columns: 1fr auto;
-            }
-            
-            .item-row > :nth-child(2),
-            .items-header > :nth-child(2) {
-                display: none;
-            }
-            
-            .modal-content {
-                padding: 30px 20px;
-            }
-        }
-
-        /* ===== UTILIDADES ===== */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #6c757d;
-        }
-
-        .empty-state i {
-            font-size: 4rem;
-            color: #dee2e6;
-            margin-bottom: 20px;
-        }
-
-        .empty-state h3 {
-            color: #adb5bd;
-            margin-bottom: 10px;
-        }
-
-        .loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 200px;
-        }
-
-        .loading i {
-            font-size: 3rem;
-            color: #d1477a;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        /* ESTILOS DEL PANEL ADMIN - IGUAL QUE TE ENVIÉ ANTES */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .admin-container { max-width: 1400px; margin: 0 auto; background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; }
+        .admin-header { background: linear-gradient(135deg, #d1477a 0%, #a83264 100%); color: white; padding: 25px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 5px solid rgba(255,255,255,0.2); }
+        .admin-header h1 { font-size: 2.2rem; display: flex; align-items: center; gap: 15px; }
+        .admin-header h1 i { color: #ffeb3b; }
+        .admin-actions { display: flex; gap: 15px; }
+        .btn { padding: 12px 25px; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 16px; transition: all 0.3s; display: flex; align-items: center; gap: 10px; }
+        .btn-primary { background: #25D366; color: white; }
+        .btn-primary:hover { background: #1da851; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4); }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn-secondary:hover { background: #5a6268; transform: translateY(-2px); }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-danger:hover { background: #c82333; transform: translateY(-2px); }
+        .btn-logout { background: #333; color: white; }
+        .btn-logout:hover { background: #222; transform: translateY(-2px); }
+        .admin-tabs { display: flex; background: #f8f9fa; border-bottom: 2px solid #dee2e6; padding: 0 40px; }
+        .admin-tab { padding: 18px 30px; background: none; border: none; border-bottom: 3px solid transparent; font-size: 1.1rem; font-weight: 600; color: #666; cursor: pointer; transition: all 0.3s; position: relative; }
+        .admin-tab:hover { color: #d1477a; background: rgba(209, 71, 122, 0.05); }
+        .admin-tab.active { color: #d1477a; border-bottom: 3px solid #d1477a; background: rgba(209, 71, 122, 0.1); }
+        .admin-tab i { margin-right: 10px; font-size: 1.2rem; }
+        .admin-content { padding: 30px 40px; min-height: 600px; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .form-section { background: #f8f9fa; padding: 30px; border-radius: 15px; margin-bottom: 30px; border: 1px solid #e9ecef; }
+        .form-section h3 { color: #d1477a; margin-bottom: 25px; font-size: 1.5rem; display: flex; align-items: center; gap: 10px; }
+        .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 25px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #495057; font-size: 1rem; }
+        .form-control { width: 100%; padding: 14px; border: 2px solid #ced4da; border-radius: 8px; font-size: 16px; transition: all 0.3s; background: white; }
+        .form-control:focus { border-color: #d1477a; box-shadow: 0 0 0 0.2rem rgba(209, 71, 122, 0.25); outline: none; }
+        .form-textarea { min-height: 120px; resize: vertical; }
+        .form-actions { display: flex; gap: 15px; margin-top: 25px; padding-top: 25px; border-top: 1px solid #dee2e6; }
+        .items-container { background: white; border-radius: 15px; border: 1px solid #e9ecef; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .items-header { display: grid; grid-template-columns: 2fr 1fr 2fr 1fr auto; gap: 15px; padding: 20px; background: #f8f9fa; font-weight: 600; color: #495057; border-bottom: 2px solid #dee2e6; }
+        .item-row { display: grid; grid-template-columns: 2fr 1fr 2fr 1fr auto; gap: 15px; padding: 20px; border-bottom: 1px solid #e9ecef; align-items: center; transition: background 0.3s; }
+        .item-row:hover { background: #f8f9fa; }
+        .item-image { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 2px solid #dee2e6; }
+        .item-name { font-weight: 600; color: #212529; }
+        .item-price { color: #d1477a; font-weight: 700; font-size: 1.1rem; }
+        .item-category { background: #e9ecef; padding: 5px 12px; border-radius: 20px; font-size: 0.9rem; display: inline-block; }
+        .item-actions { display: flex; gap: 10px; }
+        .btn-edit { background: #ffc107; color: #212529; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
+        .btn-delete { background: #dc3545; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; margin-bottom: 40px; }
+        .stat-card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.08); border-top: 5px solid #d1477a; }
+        .stat-value { font-size: 2.5rem; font-weight: 800; color: #d1477a; line-height: 1; }
+        .empty-state { text-align: center; padding: 60px 20px; color: #6c757d; }
+        .notification { position: fixed; top: 20px; right: 20px; background: #d1477a; color: white; padding: 15px 25px; border-radius: 10px; z-index: 2000; box-shadow: 0 5px 20px rgba(209, 71, 122, 0.3); animation: slideInRight 0.3s ease; display: flex; align-items: center; gap: 12px; max-width: 400px; }
+        @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @media (max-width: 768px) { .admin-header { flex-direction: column; gap: 20px; } .form-row { grid-template-columns: 1fr; } .items-header, .item-row { grid-template-columns: 1fr auto; } }
     </style>
 </head>
 <body>
-    <!-- CONTENEDOR PRINCIPAL -->
     <div class="admin-container">
-        <!-- HEADER -->
         <div class="admin-header">
-            <h1>
-                <i class="fas fa-spa"></i>
-                Panel Administrativo - Floristería Santa Bárbara
-            </h1>
+            <h1><i class="fas fa-spa"></i> Panel Administrativo</h1>
             <div class="admin-actions">
-                <button class="btn btn-primary" onclick="exportBackup()">
-                    <i class="fas fa-download"></i> Exportar Backup
-                </button>
-                <button class="btn btn-secondary" onclick="document.getElementById('importModal').classList.add('active')">
-                    <i class="fas fa-upload"></i> Importar Backup
-                </button>
-                <button class="btn btn-danger" onclick="clearData()">
-                    <i class="fas fa-trash"></i> Limpiar Datos
-                </button>
-                <button class="btn btn-logout" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-                </button>
+                <button class="btn btn-primary" onclick="exportBackup()"><i class="fas fa-download"></i> Exportar</button>
+                <button class="btn btn-secondary" onclick="importBackup()"><i class="fas fa-upload"></i> Importar</button>
+                <button class="btn btn-logout" onclick="window.location.href='index.html'"><i class="fas fa-home"></i> Volver al Sitio</button>
             </div>
         </div>
-
-        <!-- PESTAÑAS DE NAVEGACIÓN -->
+        
         <div class="admin-tabs">
-            <button class="admin-tab active" data-tab="dashboard">
-                <i class="fas fa-tachometer-alt"></i> Dashboard
-            </button>
-            <button class="admin-tab" data-tab="products">
-                <i class="fas fa-shopping-bag"></i> Productos
-                <span class="tab-badge" id="productsCount">0</span>
-            </button>
-            <button class="admin-tab" data-tab="categories">
-                <i class="fas fa-tags"></i> Categorías
-                <span class="tab-badge" id="categoriesCount">0</span>
-            </button>
-            <button class="admin-tab" data-tab="orders">
-                <i class="fas fa-clipboard-list"></i> Pedidos
-                <span class="tab-badge" id="ordersCount">0</span>
-            </button>
-            <button class="admin-tab" data-tab="backup">
-                <i class="fas fa-database"></i> Backup
-            </button>
-            <button class="admin-tab" data-tab="settings">
-                <i class="fas fa-cog"></i> Configuración
-            </button>
+            <button class="admin-tab active" onclick="showTab('dashboard')"><i class="fas fa-tachometer-alt"></i> Dashboard</button>
+            <button class="admin-tab" onclick="showTab('products')"><i class="fas fa-shopping-bag"></i> Productos</button>
+            <button class="admin-tab" onclick="showTab('categories')"><i class="fas fa-tags"></i> Categorías</button>
+            <button class="admin-tab" onclick="showTab('orders')"><i class="fas fa-clipboard-list"></i> Pedidos</button>
+            <button class="admin-tab" onclick="showTab('settings')"><i class="fas fa-cog"></i> Configuración</button>
         </div>
-
-        <!-- CONTENIDO PRINCIPAL -->
+        
         <div class="admin-content">
             <!-- DASHBOARD -->
             <div id="dashboard" class="tab-content active">
                 <div class="stats-grid">
                     <div class="stat-card">
                         <h4>Total de Productos</h4>
-                        <div class="stat-value" id="statsProducts">0</div>
-                        <div class="stat-change">
-                            <i class="fas fa-arrow-up"></i> 12% este mes
-                        </div>
+                        <div class="stat-value" id="totalProducts">0</div>
                     </div>
                     <div class="stat-card">
                         <h4>Pedidos Totales</h4>
-                        <div class="stat-value" id="statsOrders">0</div>
-                        <div class="stat-change">
-                            <i class="fas fa-arrow-up"></i> 25% este mes
-                        </div>
+                        <div class="stat-value" id="totalOrders">0</div>
                     </div>
                     <div class="stat-card">
                         <h4>Ventas Totales</h4>
-                        <div class="stat-value" id="statsSales">₡ 0</div>
-                        <div class="stat-change">
-                            <i class="fas fa-arrow-up"></i> 18% este mes
-                        </div>
+                        <div class="stat-value" id="totalSales">₡ 0</div>
                     </div>
                     <div class="stat-card">
-                        <h4>Categorías Activas</h4>
-                        <div class="stat-value" id="statsCategories">0</div>
-                        <div class="stat-change">
-                            <i class="fas fa-arrow-up"></i> 2 nuevas
-                        </div>
+                        <h4>Categorías</h4>
+                        <div class="stat-value" id="totalCategories">0</div>
                     </div>
                 </div>
-
+                
                 <div class="form-section">
-                    <h3><i class="fas fa-chart-line"></i> Resumen de Actividad</h3>
-                    <div style="text-align: center; padding: 40px;">
-                        <i class="fas fa-chart-bar" style="font-size: 4rem; color: #dee2e6;"></i>
-                        <h3 style="color: #adb5bd; margin-top: 20px;">Gráficos de Ventas</h3>
-                        <p style="color: #6c757d;">(Se implementarían gráficos reales con una base de datos)</p>
-                    </div>
-                </div>
-
-                <div class="form-section">
-                    <h3><i class="fas fa-bell"></i> Actividad Reciente</h3>
-                    <div class="items-container">
-                        <div id="recentActivity">
-                            <!-- Se llenará con JavaScript -->
-                        </div>
-                    </div>
+                    <h3><i class="fas fa-question-circle"></i> ¿Cómo usar el panel?</h3>
+                    <p><strong>1. PRODUCTOS:</strong> Agrega todos tus arreglos florales con fotos y precios.</p>
+                    <p><strong>2. CATEGORÍAS:</strong> Organiza por tipo (Rosas, Bodas, Cumpleaños, etc.).</p>
+                    <p><strong>3. PEDIDOS:</strong> Revisa los pedidos recibidos por WhatsApp.</p>
+                    <p><strong>4. CONFIGURACIÓN:</strong> Cambia número de WhatsApp, horarios, etc.</p>
+                    <p><strong>💡 Tip:</strong> Siempre haz Backup antes de hacer cambios importantes.</p>
                 </div>
             </div>
-
+            
             <!-- PRODUCTOS -->
             <div id="products" class="tab-content">
                 <div class="form-section">
-                    <h3><i class="fas fa-plus-circle"></i> Agregar Nuevo Producto</h3>
+                    <h3><i class="fas fa-plus-circle"></i> Agregar Producto</h3>
                     <form id="productForm">
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="productName" class="required">Nombre del Producto</label>
-                                <input type="text" id="productName" class="form-control" required>
+                                <label>Nombre del Producto</label>
+                                <input type="text" id="prodName" class="form-control" placeholder="Ej: Ramo de Rosas Rojas" required>
                             </div>
                             <div class="form-group">
-                                <label for="productCategory" class="required">Categoría</label>
-                                <select id="productCategory" class="form-control" required>
-                                    <option value="">Seleccionar categoría</option>
+                                <label>Categoría</label>
+                                <select id="prodCategory" class="form-control" required>
+                                    <option value="">Seleccionar...</option>
                                 </select>
                             </div>
                         </div>
-
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="productPriceBaja" class="required">Precio Normal (₡)</label>
-                                <input type="number" id="productPriceBaja" class="form-control" min="0" step="100" required>
+                                <label>Precio Normal (₡)</label>
+                                <input type="number" id="prodPriceNormal" class="form-control" min="0" required>
                             </div>
                             <div class="form-group">
-                                <label for="productPriceAlta" class="required">Precio Temporada Alta (₡)</label>
-                                <input type="number" id="productPriceAlta" class="form-control" min="0" step="100" required>
+                                <label>Precio Temporada Alta (₡)</label>
+                                <input type="number" id="prodPriceHigh" class="form-control" min="0" required>
                             </div>
                         </div>
-
                         <div class="form-group">
-                            <label for="productDescription" class="required">Descripción</label>
-                            <textarea id="productDescription" class="form-control form-textarea" required></textarea>
+                            <label>Descripción</label>
+                            <textarea id="prodDescription" class="form-control form-textarea" placeholder="Describe el arreglo floral..." required></textarea>
                         </div>
-
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="productImage" class="required">URL Imagen Pequeña</label>
-                                <input type="url" id="productImage" class="form-control" placeholder="https://ejemplo.com/imagen.jpg" required>
+                                <label>URL Imagen Pequeña</label>
+                                <input type="url" id="prodImage" class="form-control" placeholder="https://..." required>
                             </div>
                             <div class="form-group">
-                                <label for="productImageFull" class="required">URL Imagen Grande</label>
-                                <input type="url" id="productImageFull" class="form-control" placeholder="https://ejemplo.com/imagen-grande.jpg" required>
+                                <label>URL Imagen Grande</label>
+                                <input type="url" id="prodImageFull" class="form-control" placeholder="https://..." required>
                             </div>
                         </div>
-
                         <div class="form-actions">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Guardar Producto
-                            </button>
-                            <button type="button" class="btn btn-secondary" onclick="resetProductForm()">
-                                <i class="fas fa-redo"></i> Limpiar Formulario
-                            </button>
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar Producto</button>
                         </div>
                     </form>
                 </div>
-
+                
                 <div class="form-section">
                     <h3><i class="fas fa-boxes"></i> Lista de Productos</h3>
-                    <div class="items-container">
-                        <div class="items-header">
-                            <div>Producto</div>
-                            <div>Precio</div>
-                            <div>Categoría</div>
-                            <div>Imagen</div>
-                            <div>Acciones</div>
-                        </div>
-                        <div id="productsList">
-                            <!-- Se llenará con JavaScript -->
-                        </div>
+                    <div class="items-container" id="productsListContainer">
+                        <!-- Los productos se cargarán aquí -->
                     </div>
                 </div>
             </div>
-
+            
             <!-- CATEGORÍAS -->
             <div id="categories" class="tab-content">
                 <div class="form-section">
-                    <h3><i class="fas fa-plus-circle"></i> Agregar Nueva Categoría</h3>
+                    <h3><i class="fas fa-plus-circle"></i> Agregar Categoría</h3>
                     <form id="categoryForm">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="categoryName" class="required">Nombre de la Categoría</label>
-                                <input type="text" id="categoryName" class="form-control" required>
-                            </div>
-                        </div>
-
                         <div class="form-group">
-                            <label for="categoryDescription">Descripción (Opcional)</label>
-                            <textarea id="categoryDescription" class="form-control form-textarea"></textarea>
+                            <label>Nombre de Categoría</label>
+                            <input type="text" id="catName" class="form-control" placeholder="Ej: Rosas, Bodas, Cumpleaños" required>
                         </div>
-
+                        <div class="form-group">
+                            <label>Descripción (opcional)</label>
+                            <textarea id="catDescription" class="form-control form-textarea"></textarea>
+                        </div>
                         <div class="form-actions">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Guardar Categoría
-                            </button>
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar Categoría</button>
                         </div>
                     </form>
                 </div>
-
+                
                 <div class="form-section">
-                    <h3><i class="fas fa-tags"></i> Lista de Categorías</h3>
-                    <div class="items-container">
-                        <div class="items-header">
-                            <div>Categoría</div>
-                            <div>Descripción</div>
-                            <div>Productos</div>
-                            <div>Acciones</div>
-                        </div>
-                        <div id="categoriesList">
-                            <!-- Se llenará con JavaScript -->
-                        </div>
+                    <h3><i class="fas fa-tags"></i> Categorías Existentes</h3>
+                    <div class="items-container" id="categoriesListContainer">
+                        <!-- Las categorías se cargarán aquí -->
                     </div>
                 </div>
             </div>
-
+            
             <!-- PEDIDOS -->
             <div id="orders" class="tab-content">
                 <div class="form-section">
-                    <h3><i class="fas fa-shopping-cart"></i> Historial de Pedidos</h3>
-                    
-                    <div style="margin-bottom: 20px;">
-                        <label for="orderFilter">Filtrar por estado:</label>
-                        <select id="orderFilter" class="form-control small" onchange="filterOrders(this.value)">
-                            <option value="all">Todos los pedidos</option>
-                            <option value="pending">Pendientes</option>
-                            <option value="processing">En proceso</option>
-                            <option value="delivered">Entregados</option>
-                            <option value="cancelled">Cancelados</option>
-                        </select>
-                    </div>
-
+                    <h3><i class="fas fa-shopping-cart"></i> Pedidos Recibidos</h3>
                     <div class="items-container">
-                        <table class="orders-table">
-                            <thead>
-                                <tr>
-                                    <th>ID Pedido</th>
-                                    <th>Fecha</th>
-                                    <th>Cliente</th>
-                                    <th>Productos</th>
-                                    <th>Total</th>
-                                    <th>Estado</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="ordersList">
-                                <!-- Se llenará con JavaScript -->
-                            </tbody>
-                        </table>
+                        <div class="items-header">
+                            <div>Fecha</div>
+                            <div>Cliente</div>
+                            <div>Productos</div>
+                            <div>Total</div>
+                            <div>Estado</div>
+                        </div>
+                        <div id="ordersListContainer">
+                            <!-- Los pedidos se cargarán aquí -->
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <!-- BACKUP -->
-            <div id="backup" class="tab-content">
-                <div class="backup-section">
-                    <div class="backup-card">
-                        <h3><i class="fas fa-download"></i> Exportar Datos</h3>
-                        <p>Exporta toda la información de tu tienda (productos, categorías, pedidos) a un archivo JSON que puedes guardar en tu computadora.</p>
-                        <button class="btn btn-primary" onclick="exportBackup()">
-                            <i class="fas fa-file-export"></i> Exportar Backup
-                        </button>
-                    </div>
-
-                    <div class="backup-card">
-                        <h3><i class="fas fa-upload"></i> Importar Datos</h3>
-                        <p>Importa datos desde un archivo JSON previamente exportado. Esto sobrescribirá todos los datos actuales.</p>
-                        <button class="btn btn-secondary" onclick="document.getElementById('importModal').classList.add('active')">
-                            <i class="fas fa-file-import"></i> Importar Backup
-                        </button>
-                    </div>
-                </div>
-
-                <div class="form-section">
-                    <h3><i class="fas fa-trash-alt"></i> Limpiar Datos</h3>
-                    <p style="color: #dc3545; margin-bottom: 20px;">
-                        <i class="fas fa-exclamation-triangle"></i> <strong>Advertencia:</strong> Esta acción eliminará todos los datos de la aplicación (productos, categorías, pedidos). Esta acción no se puede deshacer.
-                    </p>
-                    <button class="btn btn-danger" onclick="showClearDataModal()">
-                        <i class="fas fa-trash"></i> Limpiar Todos los Datos
-                    </button>
-                </div>
-            </div>
-
+            
             <!-- CONFIGURACIÓN -->
             <div id="settings" class="tab-content">
                 <div class="form-section">
-                    <h3><i class="fas fa-cog"></i> Configuración General</h3>
+                    <h3><i class="fas fa-cog"></i> Configuración de la Tienda</h3>
                     <form id="settingsForm">
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="settingWhatsApp" class="required">Número de WhatsApp</label>
-                                <input type="text" id="settingWhatsApp" class="form-control" required>
+                                <label>Número de WhatsApp</label>
+                                <input type="text" id="whatsappNumber" class="form-control" value="86053613" required>
                             </div>
                             <div class="form-group">
-                                <label for="settingStoreName" class="required">Nombre de la Tienda</label>
-                                <input type="text" id="settingStoreName" class="form-control" required>
+                                <label>Nombre de la Tienda</label>
+                                <input type="text" id="storeName" class="form-control" value="Floristería Santa Bárbara" required>
                             </div>
                         </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="settingAddress" class="required">Dirección</label>
-                                <textarea id="settingAddress" class="form-control" rows="2" required></textarea>
-                            </div>
+                        <div class="form-group">
+                            <label>Dirección</label>
+                            <textarea id="storeAddress" class="form-control" rows="2">Santa Bárbara, Heredia, Costa Rica</textarea>
                         </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="settingBusinessHours" class="required">Horario de Atención</label>
-                                <input type="text" id="settingBusinessHours" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="settingCurrency" class="required">Moneda</label>
-                                <select id="settingCurrency" class="form-control" required>
-                                    <option value="CRC">Colones Costarricenses (₡)</option>
-                                    <option value="USD">Dólares Americanos ($)</option>
-                                </select>
-                            </div>
+                        <div class="form-group">
+                            <label>Horario de Atención</label>
+                            <input type="text" id="businessHours" class="form-control" value="Lunes a Sábado 8am-6pm">
                         </div>
-
                         <div class="form-actions">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Guardar Configuración
-                            </button>
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar Configuración</button>
                         </div>
                     </form>
                 </div>
-
+                
                 <div class="form-section">
                     <h3><i class="fas fa-calendar-alt"></i> Temporadas Altas</h3>
+                    <p>Los precios aumentan automáticamente en estas fechas:</p>
                     <div id="seasonsList">
-                        <!-- Se llenará con JavaScript -->
-                    </div>
-                    <div class="form-actions">
-                        <button class="btn btn-secondary" onclick="addSeason()">
-                            <i class="fas fa-plus"></i> Agregar Temporada
-                        </button>
-                    </div>
-                </div>
-
-                <div class="form-section">
-                    <h3><i class="fas fa-user-shield"></i> Seguridad</h3>
-                    <form id="securityForm">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="adminEmail" class="required">Email Administrador</label>
-                                <input type="email" id="adminEmail" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="adminPassword" class="required">Nueva Contraseña</label>
-                                <input type="password" id="adminPassword" class="form-control" placeholder="Dejar en blanco para no cambiar">
+                        <div class="item-row">
+                            <div><strong>San Valentín</strong><br>1-15 Febrero</div>
+                            <div class="item-actions">
+                                <button class="btn-edit"><i class="fas fa-edit"></i></button>
                             </div>
                         </div>
-
-                        <div class="form-group">
-                            <label for="adminCode" class="required">Código de Acceso</label>
-                            <input type="text" id="adminCode" class="form-control" required>
+                        <div class="item-row">
+                            <div><strong>Día de la Madre</strong><br>1-15 Mayo</div>
+                            <div class="item-actions">
+                                <button class="btn-edit"><i class="fas fa-edit"></i></button>
+                            </div>
                         </div>
-
-                        <div class="form-actions">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-key"></i> Actualizar Credenciales
-                            </button>
+                        <div class="item-row">
+                            <div><strong>Navidad</strong><br>15 Nov - 31 Dic</div>
+                            <div class="item-actions">
+                                <button class="btn-edit"><i class="fas fa-edit"></i></button>
+                            </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL PARA IMPORTAR BACKUP -->
-    <div class="modal" id="importModal">
-        <div class="modal-content">
-            <button class="modal-close" onclick="this.parentElement.parentElement.classList.remove('active')">&times;</button>
-            <h3 class="modal-title">Importar Backup</h3>
-            <div class="modal-body">
-                <p>Selecciona un archivo JSON previamente exportado para importar los datos.</p>
-                <div class="form-group">
-                    <label for="backupFile">Archivo de Backup (.json)</label>
-                    <input type="file" id="backupFile" class="form-control" accept=".json">
-                </div>
-                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 20px;">
-                    <p style="color: #dc3545; margin: 0;">
-                        <i class="fas fa-exclamation-triangle"></i> <strong>Advertencia:</strong> Importar datos sobrescribirá todos los datos actuales.
-                    </p>
-                </div>
-            </div>
-            <div class="modal-actions">
-                <button class="btn btn-primary" onclick="importBackup()">
-                    <i class="fas fa-check"></i> Importar
-                </button>
-                <button class="btn btn-secondary" onclick="document.getElementById('importModal').classList.remove('active')">
-                    <i class="fas fa-times"></i> Cancelar
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL PARA CONFIRMAR ELIMINACIÓN -->
-    <div class="modal" id="confirmModal">
-        <div class="modal-content">
-            <button class="modal-close" onclick="this.parentElement.parentElement.classList.remove('active')">&times;</button>
-            <h3 class="modal-title" id="confirmModalTitle">Confirmar Acción</h3>
-            <div class="modal-body" id="confirmModalBody">
-                <!-- Contenido dinámico -->
-            </div>
-            <div class="modal-actions">
-                <button class="btn btn-danger" onclick="confirmAction()">
-                    <i class="fas fa-check"></i> Confirmar
-                </button>
-                <button class="btn btn-secondary" onclick="document.getElementById('confirmModal').classList.remove('active')">
-                    <i class="fas fa-times"></i> Cancelar
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL PARA EDITAR PRODUCTO -->
-    <div class="modal" id="editProductModal">
-        <div class="modal-content">
-            <button class="modal-close" onclick="this.parentElement.parentElement.classList.remove('active')">&times;</button>
-            <h3 class="modal-title">Editar Producto</h3>
-            <div class="modal-body">
-                <form id="editProductForm">
-                    <input type="hidden" id="editProductId">
-                    <div class="form-group">
-                        <label for="editProductName">Nombre del Producto</label>
-                        <input type="text" id="editProductName" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="editProductCategory">Categoría</label>
-                        <select id="editProductCategory" class="form-control" required>
-                            <option value="">Seleccionar categoría</option>
-                        </select>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="editProductPriceBaja">Precio Normal (₡)</label>
-                            <input type="number" id="editProductPriceBaja" class="form-control" min="0" step="100" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="editProductPriceAlta">Precio Temporada Alta (₡)</label>
-                            <input type="number" id="editProductPriceAlta" class="form-control" min="0" step="100" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="editProductDescription">Descripción</label>
-                        <textarea id="editProductDescription" class="form-control form-textarea" required></textarea>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="editProductImage">URL Imagen Pequeña</label>
-                            <input type="url" id="editProductImage" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="editProductImageFull">URL Imagen Grande</label>
-                            <input type="url" id="editProductImageFull" class="form-control" required>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-actions">
-                <button class="btn btn-primary" onclick="saveEditedProduct()">
-                    <i class="fas fa-save"></i> Guardar Cambios
-                </button>
-                <button class="btn btn-secondary" onclick="document.getElementById('editProductModal').classList.remove('active')">
-                    <i class="fas fa-times"></i> Cancelar
-                </button>
             </div>
         </div>
     </div>
 
     <script>
-        // ============================================
-        // SISTEMA ADMINISTRATIVO COMPLETO
-        // ============================================
+        // CONFIGURACIÓN
+        const STORAGE_KEY = 'floristeria_santa_barbara_data';
         
-        // Configuración
-        const CONFIG = {
-            storageKey: 'floristeria_santa_barbara_v2',
-            defaultSettings: {
-                whatsappNumber: "86053613",
-                storeName: "Floristería Santa Bárbara",
-                address: "Santa Bárbara, Heredia, Costa Rica",
-                businessHours: "Lunes a Sábado 8am-6pm",
-                currency: "CRC",
-                seasons: [
-                    { inicio: "2025-02-01", fin: "2025-02-15", nombre: "San Valentín" },
-                    { inicio: "2025-05-01", fin: "2025-05-15", nombre: "Día de la Madre" },
-                    { inicio: "2025-11-15", fin: "2025-12-31", nombre: "Navidad" }
-                ],
-                adminCredentials: {
-                    email: "admin@floristeria.com",
-                    password: "SantaBarbara2024",
-                    code: "FLOR-ADMIN-123"
-                }
-            }
-        };
-        
-        // Estado global
-        const STATE = {
+        // DATOS INICIALES
+        let appData = {
             products: [],
-            categories: [],
+            categories: [
+                { id: 'cat1', nombre: 'Rosas', descripcion: 'Arreglos con rosas' },
+                { id: 'cat2', nombre: 'Bodas', descripcion: 'Arreglos para bodas' },
+                { id: 'cat3', nombre: 'Cumpleaños', descripcion: 'Arreglos para cumpleaños' }
+            ],
             orders: [],
-            settings: {},
-            currentAction: null,
-            currentItemId: null
+            settings: {
+                whatsappNumber: '86053613',
+                storeName: 'Floristería Santa Bárbara',
+                address: 'Santa Bárbara, Heredia, Costa Rica',
+                businessHours: 'Lunes a Sábado 8am-6pm'
+            }
         };
         
-        // ============================================
-        // FUNCIONES DE INICIALIZACIÓN
-        // ============================================
-        function init() {
-            // Verificar autenticación
-            if (!checkAuth()) {
-                window.location.href = 'index.html';
-                return;
-            }
-            
-            // Cargar datos
-            loadData();
-            
-            // Configurar eventos
-            setupEventListeners();
-            
-            // Actualizar UI inicial
-            updateUI();
-            
-            // Configurar pestañas
-            setupTabs();
-        }
-        
-        function checkAuth() {
-            // En producción, esto verificaría con backend
-            // Por ahora, verificamos si viene del index
-            return localStorage.getItem('admin_logged_in') === 'true' || 
-                   document.referrer.includes('index.html');
-        }
-        
+        // CARGAR DATOS AL INICIO
         function loadData() {
-            const saved = localStorage.getItem(CONFIG.storageKey);
+            const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) {
                 try {
-                    const data = JSON.parse(saved);
-                    STATE.products = data.products || [];
-                    STATE.categories = data.categories || [];
-                    STATE.orders = data.orders || [];
-                    STATE.settings = data.settings || CONFIG.defaultSettings;
+                    appData = JSON.parse(saved);
                 } catch (e) {
-                    console.error("Error cargando datos:", e);
-                    loadSampleData();
+                    console.log('Usando datos por defecto');
                 }
-            } else {
-                loadSampleData();
             }
+            updateUI();
         }
         
-        function loadSampleData() {
-            STATE.products = [
-                {
-                    id: 'prod_001',
-                    nombre: 'Ramo de Rosas Rojas',
-                    descripcion: '12 rosas rojas frescas con follaje verde y envoltura especial',
-                    precioBaja: 25000,
-                    precioAlta: 28000,
-                    categoria: 'Rosas',
-                    foto: 'https://images.unsplash.com/photo-1563170351-be82bc888aa4?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80',
-                    foto_full: 'https://images.unsplash.com/photo-1563170351-be82bc888aa4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-                    createdAt: new Date().toISOString()
-                }
-            ];
-            
-            STATE.categories = [
-                { id: 'cat_001', nombre: 'Rosas', descripcion: 'Arreglos con rosas' },
-                { id: 'cat_002', nombre: 'Tulipanes', descripcion: 'Arreglos con tulipanes' }
-            ];
-            
-            STATE.orders = [
-                {
-                    id: 'ORD-20250115-001',
-                    date: '2025-01-15T10:30:00',
-                    customer: { name: 'Juan Pérez', phone: '8888-8888', address: 'San José' },
-                    items: [{ id: 'prod_001', nombre: 'Ramo de Rosas Rojas', quantity: 1, price: 25000 }],
-                    total: 25000,
-                    status: 'delivered',
-                    deliveryTime: '3:00 PM - 5:00 PM'
-                }
-            ];
-            
-            STATE.settings = CONFIG.defaultSettings;
-            
-            saveData();
-        }
-        
+        // GUARDAR DATOS
         function saveData() {
-            const data = {
-                products: STATE.products,
-                categories: STATE.categories,
-                orders: STATE.orders,
-                settings: STATE.settings,
-                lastUpdated: new Date().toISOString()
-            };
-            localStorage.setItem(CONFIG.storageKey, JSON.stringify(data));
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+            updateUI();
         }
         
-        // ============================================
-        // FUNCIONES DE UI
-        // ============================================
-        function setupEventListeners() {
-            // Formulario de producto
-            document.getElementById('productForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                saveProduct();
-            });
-            
-            // Formulario de categoría
-            document.getElementById('categoryForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                saveCategory();
-            });
-            
-            // Formulario de configuración
-            document.getElementById('settingsForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                saveSettings();
-            });
-            
-            // Formulario de seguridad
-            document.getElementById('securityForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                saveSecurity();
-            });
-            
-            // Formulario editar producto
-            document.getElementById('editProductForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                saveEditedProduct();
-            });
-        }
-        
-        function setupTabs() {
-            document.querySelectorAll('.admin-tab').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    const tabId = this.getAttribute('data-tab');
-                    
-                    // Remover clase activa de todas las pestañas
-                    document.querySelectorAll('.admin-tab').forEach(t => {
-                        t.classList.remove('active');
-                    });
-                    
-                    // Remover clase activa de todos los contenidos
-                    document.querySelectorAll('.tab-content').forEach(c => {
-                        c.classList.remove('active');
-                    });
-                    
-                    // Activar pestaña y contenido seleccionado
-                    this.classList.add('active');
-                    document.getElementById(tabId).classList.add('active');
-                    
-                    // Actualizar datos específicos de la pestaña
-                    if (tabId === 'products') updateProductsList();
-                    if (tabId === 'categories') updateCategoriesList();
-                    if (tabId === 'orders') updateOrdersList();
-                    if (tabId === 'settings') updateSettingsForm();
-                });
-            });
-        }
-        
+        // ACTUALIZAR INTERFAZ
         function updateUI() {
             // Actualizar estadísticas
-            document.getElementById('statsProducts').textContent = STATE.products.length;
-            document.getElementById('statsCategories').textContent = STATE.categories.length;
-            document.getElementById('statsOrders').textContent = STATE.orders.length;
+            document.getElementById('totalProducts').textContent = appData.products.length;
+            document.getElementById('totalOrders').textContent = appData.orders.length;
+            document.getElementById('totalCategories').textContent = appData.categories.length;
             
             // Calcular ventas totales
-            const totalSales = STATE.orders.reduce((sum, order) => sum + order.total, 0);
-            document.getElementById('statsSales').textContent = `₡ ${totalSales.toLocaleString()}`;
+            const totalSales = appData.orders.reduce((sum, order) => sum + (order.total || 0), 0);
+            document.getElementById('totalSales').textContent = `₡ ${totalSales.toLocaleString()}`;
             
-            // Actualizar badges
-            document.getElementById('productsCount').textContent = STATE.products.length;
-            document.getElementById('categoriesCount').textContent = STATE.categories.length;
-            document.getElementById('ordersCount').textContent = STATE.orders.length;
-            
-            // Actualizar listas
+            // Actualizar lista de productos
             updateProductsList();
-            updateCategoriesList();
-            updateOrdersList();
-            updateRecentActivity();
             
-            // Llenar select de categorías
-            updateCategorySelects();
+            // Actualizar lista de categorías
+            updateCategoriesList();
+            
+            // Actualizar select de categorías
+            updateCategorySelect();
+            
+            // Actualizar pedidos
+            updateOrdersList();
         }
         
-        function updateProductsList() {
-            const container = document.getElementById('productsList');
+        // FUNCIONES DE PESTAÑAS
+        function showTab(tabId) {
+            // Ocultar todas las pestañas
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
             
-            if (STATE.products.length === 0) {
+            // Desactivar todos los botones de pestaña
+            document.querySelectorAll('.admin-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Activar pestaña seleccionada
+            document.getElementById(tabId).classList.add('active');
+            
+            // Activar botón correspondiente
+            event.target.classList.add('active');
+        }
+        
+        // PRODUCTOS
+        function updateProductsList() {
+            const container = document.getElementById('productsListContainer');
+            
+            if (appData.products.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-box-open"></i>
                         <h3>No hay productos</h3>
-                        <p>Agrega tu primer producto usando el formulario arriba.</p>
+                        <p>Agrega tu primer producto usando el formulario.</p>
                     </div>
                 `;
                 return;
             }
             
-            container.innerHTML = STATE.products.map(product => `
-                <div class="item-row">
-                    <div class="item-name">${product.nombre}</div>
-                    <div class="item-price">₡ ${product.precioBaja.toLocaleString()}</div>
-                    <div>
-                        <span class="item-category">${product.categoria}</span>
+            let html = '<div class="items-header"><div>Producto</div><div>Precio</div><div>Categoría</div><div>Acciones</div></div>';
+            
+            appData.products.forEach(product => {
+                html += `
+                    <div class="item-row">
+                        <div class="item-name">${product.nombre}</div>
+                        <div class="item-price">₡ ${product.precioBaja.toLocaleString()}</div>
+                        <div><span class="item-category">${product.categoria}</span></div>
+                        <div class="item-actions">
+                            <button class="btn-edit" onclick="editProduct('${product.id}')"><i class="fas fa-edit"></i></button>
+                            <button class="btn-delete" onclick="deleteProduct('${product.id}')"><i class="fas fa-trash"></i></button>
+                        </div>
                     </div>
-                    <div>
-                        <img src="${product.foto}" alt="${product.nombre}" class="item-image" 
-                             onerror="this.src='https://via.placeholder.com/60?text=Producto'">
-                    </div>
-                    <div class="item-actions">
-                        <button class="btn-edit" onclick="editProduct('${product.id}')">
-                            <i class="fas fa-edit"></i> Editar
-                        </button>
-                        <button class="btn-delete" onclick="deleteProduct('${product.id}')">
-                            <i class="fas fa-trash"></i> Eliminar
-                        </button>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            });
+            
+            container.innerHTML = html;
         }
         
-        function updateCategoriesList() {
-            const container = document.getElementById('categoriesList');
+        function updateCategorySelect() {
+            const select = document.getElementById('prodCategory');
+            select.innerHTML = '<option value="">Seleccionar...</option>' +
+                appData.categories.map(cat => 
+                    `<option value="${cat.nombre}">${cat.nombre}</option>`
+                ).join('');
+        }
+        
+        document.getElementById('productForm').addEventListener('submit', function(e) {
+            e.preventDefault();
             
-            if (STATE.categories.length === 0) {
+            const newProduct = {
+                id: 'prod_' + Date.now(),
+                nombre: document.getElementById('prodName').value,
+                categoria: document.getElementById('prodCategory').value,
+                precioBaja: parseInt(document.getElementById('prodPriceNormal').value),
+                precioAlta: parseInt(document.getElementById('prodPriceHigh').value),
+                descripcion: document.getElementById('prodDescription').value,
+                foto: document.getElementById('prodImage').value,
+                foto_full: document.getElementById('prodImageFull').value,
+                createdAt: new Date().toISOString()
+            };
+            
+            appData.products.push(newProduct);
+            saveData();
+            
+            // Limpiar formulario
+            this.reset();
+            
+            // Mostrar notificación
+            showNotification('✅ Producto agregado correctamente');
+            
+            // Cambiar a la pestaña de productos
+            showTab('products');
+        });
+        
+        function editProduct(id) {
+            const product = appData.products.find(p => p.id === id);
+            if (!product) return;
+            
+            // Llenar formulario con datos del producto
+            document.getElementById('prodName').value = product.nombre;
+            document.getElementById('prodCategory').value = product.categoria;
+            document.getElementById('prodPriceNormal').value = product.precioBaja;
+            document.getElementById('prodPriceHigh').value = product.precioAlta;
+            document.getElementById('prodDescription').value = product.descripcion;
+            document.getElementById('prodImage').value = product.foto;
+            document.getElementById('prodImageFull').value = product.foto_full;
+            
+            // Eliminar el producto antiguo
+            deleteProduct(id, false);
+            
+            // Mostrar notificación
+            showNotification('📝 Edita los valores y guarda los cambios');
+            
+            // Cambiar a la pestaña de agregar producto
+            showTab('products');
+            document.getElementById('products').scrollIntoView();
+        }
+        
+        function deleteProduct(id, showAlert = true) {
+            appData.products = appData.products.filter(p => p.id !== id);
+            saveData();
+            
+            if (showAlert) {
+                showNotification('🗑️ Producto eliminado');
+            }
+        }
+        
+        // CATEGORÍAS
+        function updateCategoriesList() {
+            const container = document.getElementById('categoriesListContainer');
+            
+            if (appData.categories.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-tags"></i>
                         <h3>No hay categorías</h3>
-                        <p>Agrega tu primera categoría usando el formulario arriba.</p>
+                        <p>Agrega tu primera categoría.</p>
                     </div>
                 `;
                 return;
             }
             
-            container.innerHTML = STATE.categories.map(category => {
-                const productCount = STATE.products.filter(p => p.categoria === category.nombre).length;
-                return `
+            let html = '<div class="items-header"><div>Categoría</div><div>Descripción</div><div>Productos</div><div>Acciones</div></div>';
+            
+            appData.categories.forEach(category => {
+                const productCount = appData.products.filter(p => p.categoria === category.nombre).length;
+                
+                html += `
                     <div class="item-row">
                         <div class="item-name">${category.nombre}</div>
                         <div>${category.descripcion || 'Sin descripción'}</div>
                         <div>${productCount} productos</div>
                         <div class="item-actions">
-                            <button class="btn-edit" onclick="editCategory('${category.id}')">
-                                <i class="fas fa-edit"></i> Editar
-                            </button>
-                            <button class="btn-delete" onclick="deleteCategory('${category.id}')">
-                                <i class="fas fa-trash"></i> Eliminar
-                            </button>
+                            <button class="btn-edit" onclick="editCategory('${category.id}')"><i class="fas fa-edit"></i></button>
+                            <button class="btn-delete" onclick="deleteCategory('${category.id}')"><i class="fas fa-trash"></i></button>
                         </div>
                     </div>
                 `;
-            }).join('');
-        }
-        
-        function updateOrdersList(filter = 'all') {
-            const container = document.getElementById('ordersList');
-            let filteredOrders = STATE.orders;
-            
-            if (filter !== 'all') {
-                filteredOrders = STATE.orders.filter(order => order.status === filter);
-            }
-            
-            if (filteredOrders.length === 0) {
-                container.innerHTML = `
-                    <tr>
-                        <td colspan="7" style="text-align: center; padding: 40px;">
-                            <i class="fas fa-clipboard-list" style="font-size: 3rem; color: #dee2e6;"></i>
-                            <h3 style="color: #adb5bd; margin-top: 20px;">No hay pedidos</h3>
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-            
-            container.innerHTML = filteredOrders.map(order => {
-                const date = new Date(order.date);
-                const formattedDate = date.toLocaleDateString('es-CR') + ' ' + date.toLocaleTimeString('es-CR', { hour: '2-digit', minute: '2-digit' });
-                
-                let statusClass = 'status-pending';
-                let statusText = 'Pendiente';
-                
-                switch(order.status) {
-                    case 'processing':
-                        statusClass = 'status-processing';
-                        statusText = 'En proceso';
-                        break;
-                    case 'delivered':
-                        statusClass = 'status-delivered';
-                        statusText = 'Entregado';
-                        break;
-                    case 'cancelled':
-                        statusClass = 'status-cancelled';
-                        statusText = 'Cancelado';
-                        break;
-                }
-                
-                return `
-                    <tr>
-                        <td>${order.id}</td>
-                        <td>${formattedDate}</td>
-                        <td>
-                            <strong>${order.customer.name}</strong><br>
-                            ${order.customer.phone}<br>
-                            ${order.customer.address}
-                        </td>
-                        <td class="order-items">
-                            ${order.items.map(item => `
-                                <div class="order-item">
-                                    <span>${item.quantity}x ${item.nombre}</span>
-                                    <span>₡${(item.price * item.quantity).toLocaleString()}</span>
-                                </div>
-                            `).join('')}
-                        </td>
-                        <td><strong>₡${order.total.toLocaleString()}</strong></td>
-                        <td>
-                            <span class="order-status ${statusClass}">${statusText}</span>
-                        </td>
-                        <td>
-                            <div class="item-actions">
-                                <select class="form-control small" onchange="updateOrderStatus('${order.id}', this.value)">
-                                    <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>Pendiente</option>
-                                    <option value="processing" ${order.status === 'processing' ? 'selected' : ''}>En proceso</option>
-                                    <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>Entregado</option>
-                                    <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>Cancelado</option>
-                                </select>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        }
-        
-        function updateRecentActivity() {
-            const container = document.getElementById('recentActivity');
-            
-            // Combinar actividades recientes
-            const activities = [];
-            
-            // Últimos pedidos
-            STATE.orders.slice(0, 5).forEach(order => {
-                activities.push({
-                    type: 'order',
-                    date: order.date,
-                    text: `Nuevo pedido ${order.id} de ${order.customer.name}`,
-                    icon: 'fas fa-shopping-cart'
-                });
             });
             
-            // Ordenar por fecha
-            activities.sort((a, b) => new Date(b.date) - new Date(a.date));
-            
-            if (activities.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-history"></i>
-                        <h3>No hay actividad reciente</h3>
-                        <p>Cuando tengas pedidos, aparecerán aquí.</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            container.innerHTML = activities.slice(0, 10).map(activity => {
-                const date = new Date(activity.date);
-                const timeAgo = getTimeAgo(date);
-                
-                return `
-                    <div class="item-row">
-                        <div>
-                            <i class="${activity.icon}" style="color: #d1477a; margin-right: 10px;"></i>
-                            ${activity.text}
-                        </div>
-                        <div style="color: #6c757d; font-size: 0.9rem;">
-                            ${timeAgo}
-                        </div>
-                    </div>
-                `;
-            }).join('');
+            container.innerHTML = html;
         }
         
-        function updateCategorySelects() {
-            const selects = [
-                document.getElementById('productCategory'),
-                document.getElementById('editProductCategory')
-            ];
+        document.getElementById('categoryForm').addEventListener('submit', function(e) {
+            e.preventDefault();
             
-            selects.forEach(select => {
-                if (select) {
-                    select.innerHTML = '<option value="">Seleccionar categoría</option>' +
-                        STATE.categories.map(cat => 
-                            `<option value="${cat.nombre}">${cat.nombre}</option>`
-                        ).join('');
-                }
-            });
-        }
-        
-        function updateSettingsForm() {
-            document.getElementById('settingWhatsApp').value = STATE.settings.whatsappNumber || '';
-            document.getElementById('settingStoreName').value = STATE.settings.storeName || '';
-            document.getElementById('settingAddress').value = STATE.settings.address || '';
-            document.getElementById('settingBusinessHours').value = STATE.settings.businessHours || '';
-            document.getElementById('settingCurrency').value = STATE.settings.currency || 'CRC';
-            document.getElementById('adminEmail').value = STATE.settings.adminCredentials?.email || '';
-            document.getElementById('adminCode').value = STATE.settings.adminCredentials?.code || '';
-            
-            // Temporadas
-            updateSeasonsList();
-        }
-        
-        function updateSeasonsList() {
-            const container = document.getElementById('seasonsList');
-            const seasons = STATE.settings.seasons || CONFIG.defaultSettings.seasons;
-            
-            container.innerHTML = seasons.map((season, index) => `
-                <div class="item-row">
-                    <div>
-                        <strong>${season.nombre}</strong><br>
-                        <small>${season.inicio} al ${season.fin}</small>
-                    </div>
-                    <div class="item-actions">
-                        <button class="btn-edit" onclick="editSeason(${index})">
-                            <i class="fas fa-edit"></i> Editar
-                        </button>
-                        <button class="btn-delete" onclick="deleteSeason(${index})">
-                            <i class="fas fa-trash"></i> Eliminar
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
-        
-        // ============================================
-        // FUNCIONES DE PRODUCTOS
-        // ============================================
-        function saveProduct() {
-            const product = {
-                id: 'prod_' + Date.now(),
-                nombre: document.getElementById('productName').value,
-                categoria: document.getElementById('productCategory').value,
-                precioBaja: parseInt(document.getElementById('productPriceBaja').value),
-                precioAlta: parseInt(document.getElementById('productPriceAlta').value),
-                descripcion: document.getElementById('productDescription').value,
-                foto: document.getElementById('productImage').value,
-                foto_full: document.getElementById('productImageFull').value,
-                createdAt: new Date().toISOString()
-            };
-            
-            STATE.products.push(product);
-            saveData();
-            updateUI();
-            resetProductForm();
-            showNotification('✅ Producto agregado correctamente', 'success');
-        }
-        
-        function resetProductForm() {
-            document.getElementById('productForm').reset();
-        }
-        
-        function editProduct(id) {
-            const product = STATE.products.find(p => p.id === id);
-            if (!product) return;
-            
-            document.getElementById('editProductId').value = product.id;
-            document.getElementById('editProductName').value = product.nombre;
-            document.getElementById('editProductCategory').value = product.categoria;
-            document.getElementById('editProductPriceBaja').value = product.precioBaja;
-            document.getElementById('editProductPriceAlta').value = product.precioAlta;
-            document.getElementById('editProductDescription').value = product.descripcion;
-            document.getElementById('editProductImage').value = product.foto;
-            document.getElementById('editProductImageFull').value = product.foto_full;
-            
-            // Actualizar select de categorías
-            updateCategorySelects();
-            
-            document.getElementById('editProductModal').classList.add('active');
-        }
-        
-        function saveEditedProduct() {
-            const id = document.getElementById('editProductId').value;
-            const product = STATE.products.find(p => p.id === id);
-            
-            if (product) {
-                product.nombre = document.getElementById('editProductName').value;
-                product.categoria = document.getElementById('editProductCategory').value;
-                product.precioBaja = parseInt(document.getElementById('editProductPriceBaja').value);
-                product.precioAlta = parseInt(document.getElementById('editProductPriceAlta').value);
-                product.descripcion = document.getElementById('editProductDescription').value;
-                product.foto = document.getElementById('editProductImage').value;
-                product.foto_full = document.getElementById('editProductImageFull').value;
-                product.updatedAt = new Date().toISOString();
-                
-                saveData();
-                updateUI();
-                document.getElementById('editProductModal').classList.remove('active');
-                showNotification('✅ Producto actualizado correctamente', 'success');
-            }
-        }
-        
-        function deleteProduct(id) {
-            showConfirmModal(
-                'Eliminar Producto',
-                '¿Estás seguro de que deseas eliminar este producto? Esta acción no se puede deshacer.',
-                () => {
-                    STATE.products = STATE.products.filter(p => p.id !== id);
-                    saveData();
-                    updateUI();
-                    showNotification('✅ Producto eliminado correctamente', 'success');
-                }
-            );
-        }
-        
-        // ============================================
-        // FUNCIONES DE CATEGORÍAS
-        // ============================================
-        function saveCategory() {
-            const category = {
+            const newCategory = {
                 id: 'cat_' + Date.now(),
-                nombre: document.getElementById('categoryName').value,
-                descripcion: document.getElementById('categoryDescription').value,
-                createdAt: new Date().toISOString()
+                nombre: document.getElementById('catName').value,
+                descripcion: document.getElementById('catDescription').value
             };
             
-            STATE.categories.push(category);
+            appData.categories.push(newCategory);
             saveData();
-            updateUI();
-            document.getElementById('categoryForm').reset();
-            showNotification('✅ Categoría agregada correctamente', 'success');
-        }
+            
+            // Limpiar formulario
+            this.reset();
+            
+            showNotification('✅ Categoría agregada');
+        });
         
         function editCategory(id) {
-            const category = STATE.categories.find(c => c.id === id);
+            const category = appData.categories.find(c => c.id === id);
             if (!category) return;
             
-            document.getElementById('categoryName').value = category.nombre;
-            document.getElementById('categoryDescription').value = category.descripcion || '';
+            document.getElementById('catName').value = category.nombre;
+            document.getElementById('catDescription').value = category.descripcion || '';
             
-            // Mostrar modal de edición (simplificado)
-            showConfirmModal(
-                'Editar Categoría',
-                'Para editar, modifica los valores en el formulario y guarda como nueva categoría. Luego elimina la anterior.',
-                () => {}
-            );
+            // Eliminar la categoría antigua
+            deleteCategory(id, false);
+            
+            showNotification('📝 Edita los valores y guarda los cambios');
         }
         
-        function deleteCategory(id) {
-            const category = STATE.categories.find(c => c.id === id);
-            if (!category) return;
+        function deleteCategory(id, showAlert = true) {
+            const category = appData.categories.find(c => c.id === id);
             
             // Verificar si hay productos usando esta categoría
-            const productsUsingCategory = STATE.products.filter(p => p.categoria === category.nombre);
+            const productsUsingCategory = appData.products.filter(p => p.categoria === category.nombre);
             
-            if (productsUsingCategory.length > 0) {
-                showNotification(`❌ No se puede eliminar. Hay ${productsUsingCategory.length} productos usando esta categoría.`, 'error');
+            if (productsUsingCategory.length > 0 && showAlert) {
+                showNotification(`❌ No se puede eliminar. Hay ${productsUsingCategory.length} productos usando esta categoría.`);
                 return;
             }
             
-            showConfirmModal(
-                'Eliminar Categoría',
-                '¿Estás seguro de que deseas eliminar esta categoría? Esta acción no se puede deshacer.',
-                () => {
-                    STATE.categories = STATE.categories.filter(c => c.id !== id);
-                    saveData();
-                    updateUI();
-                    showNotification('✅ Categoría eliminada correctamente', 'success');
-                }
-            );
-        }
-        
-        // ============================================
-        // FUNCIONES DE PEDIDOS
-        // ============================================
-        function filterOrders(status) {
-            updateOrdersList(status);
-        }
-        
-        function updateOrderStatus(orderId, status) {
-            const order = STATE.orders.find(o => o.id === orderId);
-            if (order) {
-                order.status = status;
-                order.updatedAt = new Date().toISOString();
-                saveData();
-                showNotification('✅ Estado del pedido actualizado', 'success');
+            appData.categories = appData.categories.filter(c => c.id !== id);
+            saveData();
+            
+            if (showAlert) {
+                showNotification('🗑️ Categoría eliminada');
             }
         }
         
-        // ============================================
-        // FUNCIONES DE CONFIGURACIÓN
-        // ============================================
-        function saveSettings() {
-            STATE.settings.whatsappNumber = document.getElementById('settingWhatsApp').value;
-            STATE.settings.storeName = document.getElementById('settingStoreName').value;
-            STATE.settings.address = document.getElementById('settingAddress').value;
-            STATE.settings.businessHours = document.getElementById('settingBusinessHours').value;
-            STATE.settings.currency = document.getElementById('settingCurrency').value;
+        // PEDIDOS
+        function updateOrdersList() {
+            const container = document.getElementById('ordersListContainer');
             
-            saveData();
-            showNotification('✅ Configuración guardada correctamente', 'success');
-        }
-        
-        function saveSecurity() {
-            const email = document.getElementById('adminEmail').value;
-            const password = document.getElementById('adminPassword').value;
-            const code = document.getElementById('adminCode').value;
-            
-            if (!STATE.settings.adminCredentials) {
-                STATE.settings.adminCredentials = {};
+            if (appData.orders.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-clipboard-list"></i>
+                        <h3>No hay pedidos</h3>
+                        <p>Los pedidos recibidos por WhatsApp aparecerán aquí.</p>
+                    </div>
+                `;
+                return;
             }
             
-            STATE.settings.adminCredentials.email = email;
-            STATE.settings.adminCredentials.code = code;
+            // Mostrar últimos 10 pedidos
+            const recentOrders = appData.orders.slice(-10).reverse();
             
-            // Solo actualizar password si se proporcionó uno nuevo
-            if (password.trim() !== '') {
-                STATE.settings.adminCredentials.password = password;
-            }
-            
-            saveData();
-            document.getElementById('adminPassword').value = '';
-            showNotification('✅ Credenciales actualizadas correctamente', 'success');
+            recentOrders.forEach(order => {
+                const date = new Date(order.date || Date.now());
+                const formattedDate = date.toLocaleDateString('es-CR');
+                
+                container.innerHTML += `
+                    <div class="item-row">
+                        <div>${formattedDate}</div>
+                        <div>${order.customer?.name || 'Cliente'}</div>
+                        <div>${order.items?.length || 0} productos</div>
+                        <div class="item-price">₡ ${(order.total || 0).toLocaleString()}</div>
+                        <div><span class="item-category">${order.status || 'Pendiente'}</span></div>
+                    </div>
+                `;
+            });
         }
         
-        function addSeason() {
-            const nombre = prompt('Nombre de la temporada (ej: Navidad):');
-            if (!nombre) return;
+        // CONFIGURACIÓN
+        document.getElementById('settingsForm').addEventListener('submit', function(e) {
+            e.preventDefault();
             
-            const inicio = prompt('Fecha de inicio (YYYY-MM-DD):');
-            if (!inicio) return;
-            
-            const fin = prompt('Fecha de fin (YYYY-MM-DD):');
-            if (!fin) return;
-            
-            if (!STATE.settings.seasons) {
-                STATE.settings.seasons = [];
-            }
-            
-            STATE.settings.seasons.push({ nombre, inicio, fin });
-            saveData();
-            updateSeasonsList();
-            showNotification('✅ Temporada agregada correctamente', 'success');
-        }
-        
-        function editSeason(index) {
-            const season = STATE.settings.seasons[index];
-            if (!season) return;
-            
-            const nombre = prompt('Nombre de la temporada:', season.nombre);
-            if (!nombre) return;
-            
-            const inicio = prompt('Fecha de inicio (YYYY-MM-DD):', season.inicio);
-            if (!inicio) return;
-            
-            const fin = prompt('Fecha de fin (YYYY-MM-DD):', season.fin);
-            if (!fin) return;
-            
-            season.nombre = nombre;
-            season.inicio = inicio;
-            season.fin = fin;
-            
-            saveData();
-            updateSeasonsList();
-            showNotification('✅ Temporada actualizada correctamente', 'success');
-        }
-        
-        function deleteSeason(index) {
-            showConfirmModal(
-                'Eliminar Temporada',
-                '¿Estás seguro de que deseas eliminar esta temporada alta?',
-                () => {
-                    STATE.settings.seasons.splice(index, 1);
-                    saveData();
-                    updateSeasonsList();
-                    showNotification('✅ Temporada eliminada correctamente', 'success');
-                }
-            );
-        }
-        
-        // ============================================
-        // FUNCIONES DE BACKUP
-        // ============================================
-        function exportBackup() {
-            const data = {
-                products: STATE.products,
-                categories: STATE.categories,
-                orders: STATE.orders,
-                settings: STATE.settings,
-                exportedAt: new Date().toISOString()
+            appData.settings = {
+                whatsappNumber: document.getElementById('whatsappNumber').value,
+                storeName: document.getElementById('storeName').value,
+                address: document.getElementById('storeAddress').value,
+                businessHours: document.getElementById('businessHours').value
             };
             
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `backup_floristeria_${new Date().toISOString().split('T')[0]}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            saveData();
+            showNotification('✅ Configuración guardada');
+        });
+        
+        // BACKUP
+        function exportBackup() {
+            const dataStr = JSON.stringify(appData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `backup_floristeria_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
             URL.revokeObjectURL(url);
             
-            showNotification('✅ Backup exportado correctamente', 'success');
+            showNotification('💾 Backup exportado correctamente');
         }
         
         function importBackup() {
-            const fileInput = document.getElementById('backupFile');
-            const file = fileInput.files[0];
-            
-            if (!file) {
-                showNotification('❌ Por favor selecciona un archivo', 'error');
-                return;
-            }
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    
-                    showConfirmModal(
-                        'Importar Backup',
-                        '¿Estás seguro de que deseas importar este backup? Esto sobrescribirá todos los datos actuales.',
-                        () => {
-                            STATE.products = data.products || [];
-                            STATE.categories = data.categories || [];
-                            STATE.orders = data.orders || [];
-                            STATE.settings = data.settings || CONFIG.defaultSettings;
-                            
-                            saveData();
-                            updateUI();
-                            document.getElementById('importModal').classList.remove('active');
-                            fileInput.value = '';
-                            showNotification('✅ Backup importado correctamente', 'success');
-                        }
-                    );
-                } catch (error) {
-                    showNotification('❌ Error: El archivo no es un JSON válido', 'error');
-                }
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const importedData = JSON.parse(e.target.result);
+                        appData = importedData;
+                        saveData();
+                        showNotification('✅ Backup importado correctamente');
+                    } catch (error) {
+                        showNotification('❌ Error: Archivo inválido');
+                    }
+                };
+                reader.readAsText(file);
             };
-            reader.readAsText(file);
+            input.click();
         }
         
-        function clearData() {
-            showConfirmModal(
-                'Limpiar Todos los Datos',
-                '<strong style="color: #dc3545;">¡ADVERTENCIA!</strong><br><br>¿Estás seguro de que deseas eliminar TODOS los datos?<br><br>Esto incluye:<br>• Todos los productos<br>• Todas las categorías<br>• Todos los pedidos<br>• Toda la configuración<br><br>Esta acción NO se puede deshacer.',
-                () => {
-                    localStorage.removeItem(CONFIG.storageKey);
-                    loadSampleData();
-                    updateUI();
-                    showNotification('✅ Todos los datos han sido eliminados', 'success');
-                }
-            );
-        }
-        
-        function showClearDataModal() {
-            showConfirmModal(
-                'Limpiar Todos los Datos',
-                '<strong style="color: #dc3545;">¡ADVERTENCIA!</strong><br><br>¿Estás seguro de que deseas eliminar TODOS los datos?<br><br>Esto incluye:<br>• Todos los productos<br>• Todas las categorías<br>• Todos los pedidos<br>• Toda la configuración<br><br>Esta acción NO se puede deshacer.',
-                () => {
-                    localStorage.removeItem(CONFIG.storageKey);
-                    loadSampleData();
-                    updateUI();
-                    showNotification('✅ Todos los datos han sido eliminados', 'success');
-                }
-            );
-        }
-        
-        // ============================================
-        // FUNCIONES UTILITARIAS
-        // ============================================
-        function showConfirmModal(title, message, confirmCallback) {
-            STATE.currentAction = confirmCallback;
-            document.getElementById('confirmModalTitle').textContent = title;
-            document.getElementById('confirmModalBody').innerHTML = message;
-            document.getElementById('confirmModal').classList.add('active');
-        }
-        
-        function confirmAction() {
-            if (STATE.currentAction) {
-                STATE.currentAction();
-            }
-            document.getElementById('confirmModal').classList.remove('active');
-            STATE.currentAction = null;
-        }
-        
-        function showNotification(message, type = 'info') {
+        // NOTIFICACIONES
+        function showNotification(message) {
             // Remover notificaciones existentes
             const existing = document.querySelector('.notification');
             if (existing) existing.remove();
@@ -2042,73 +638,41 @@
             // Crear nueva notificación
             const notification = document.createElement('div');
             notification.className = 'notification';
-            
-            let icon = 'fas fa-info-circle';
-            if (type === 'success') icon = 'fas fa-check-circle';
-            if (type === 'error') icon = 'fas fa-exclamation-circle';
-            if (type === 'warning') icon = 'fas fa-exclamation-triangle';
-            
-            notification.innerHTML = `
-                <i class="${icon}"></i>
-                <span>${message}</span>
-            `;
-            
+            notification.innerHTML = `<i class="fas fa-info-circle"></i> ${message}`;
             document.body.appendChild(notification);
             
-            // Auto-eliminar después de 5 segundos
+            // Auto-eliminar después de 3 segundos
             setTimeout(() => {
                 if (notification.parentNode) {
-                    notification.style.animation = 'slideOutRight 0.3s ease';
+                    notification.style.animation = 'slideInRight 0.3s ease reverse';
                     setTimeout(() => {
                         if (notification.parentNode) {
                             document.body.removeChild(notification);
                         }
                     }, 300);
                 }
-            }, 5000);
+            }, 3000);
         }
         
-        function getTimeAgo(date) {
-            const now = new Date();
-            const diff = now - date;
-            const minutes = Math.floor(diff / 60000);
-            const hours = Math.floor(minutes / 60);
-            const days = Math.floor(hours / 24);
+        // INICIALIZAR
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
             
-            if (days > 0) return `hace ${days} día${days > 1 ? 's' : ''}`;
-            if (hours > 0) return `hace ${hours} hora${hours > 1 ? 's' : ''}`;
-            if (minutes > 0) return `hace ${minutes} minuto${minutes > 1 ? 's' : ''}`;
-            return 'ahora mismo';
-        }
+            // Cargar configuración en el formulario
+            document.getElementById('whatsappNumber').value = appData.settings.whatsappNumber;
+            document.getElementById('storeName').value = appData.settings.storeName;
+            document.getElementById('storeAddress').value = appData.settings.address;
+            document.getElementById('businessHours').value = appData.settings.businessHours;
+        });
         
-        function logout() {
-            localStorage.removeItem('admin_logged_in');
-            window.location.href = 'index.html';
-        }
-        
-        // ============================================
-        // INICIALIZACIÓN
-        // ============================================
-        document.addEventListener('DOMContentLoaded', init);
-        
-        // Hacer funciones globales para eventos onclick
+        // Hacer funciones globales
+        window.showTab = showTab;
         window.exportBackup = exportBackup;
         window.importBackup = importBackup;
-        window.clearData = clearData;
-        window.showClearDataModal = showClearDataModal;
-        window.confirmAction = confirmAction;
         window.editProduct = editProduct;
         window.deleteProduct = deleteProduct;
         window.editCategory = editCategory;
         window.deleteCategory = deleteCategory;
-        window.updateOrderStatus = updateOrderStatus;
-        window.filterOrders = filterOrders;
-        window.addSeason = addSeason;
-        window.editSeason = editSeason;
-        window.deleteSeason = deleteSeason;
-        window.saveEditedProduct = saveEditedProduct;
-        window.resetProductForm = resetProductForm;
-        window.logout = logout;
     </script>
 </body>
 </html>
