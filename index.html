@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         /* ===== VARIABLES Y RESET ===== */
         :root {
@@ -773,6 +774,29 @@
             cursor: pointer;
         }
         
+        /* Mapa de Ubicación */
+        #map {
+            height: 300px;
+            width: 100%;
+            border-radius: var(--radius-sm);
+            margin-top: 10px;
+            border: 2px solid var(--border);
+        }
+        
+        .map-instructions {
+            background: #f0f8ff;
+            padding: 10px;
+            border-radius: var(--radius-sm);
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+        
+        .map-instructions i {
+            color: var(--info);
+            margin-right: 5px;
+        }
+        
         /* Métodos de Pago */
         .payment-methods {
             display: grid;
@@ -1307,7 +1331,16 @@
                     <div class="form-group" id="addressField">
                         <label class="form-label">Dirección exacta para envío *</label>
                         <textarea id="deliveryAddress" class="form-control" rows="2" 
-                                  placeholder="Dirección completa, puntos de referencia..." required></textarea>
+                                  placeholder="Dirección completa, puntos de referencia..." required
+                                  oninput="calculateShippingFromAddress()"></textarea>
+                        
+                        <div class="map-instructions" id="mapInstructions">
+                            <i class="fas fa-info-circle"></i>
+                            El costo de envío se calcula automáticamente: ₡650 por kilómetro desde nuestra ubicación.
+                        </div>
+                        
+                        <!-- Mapa para mostrar ubicación -->
+                        <div id="map"></div>
                     </div>
 
                     <div class="form-row">
@@ -1316,14 +1349,11 @@
                             <input type="date" id="deliveryDate" class="form-control" required>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Hora aproximada *</label>
+                            <label class="form-label">Horario de entrega *</label>
                             <select id="deliveryTime" class="form-control" required>
-                                <option value="">Seleccionar hora</option>
-                                <option value="8:00-10:00">8:00 AM - 10:00 AM</option>
-                                <option value="10:00-12:00">10:00 AM - 12:00 PM</option>
-                                <option value="12:00-14:00">12:00 PM - 2:00 PM</option>
-                                <option value="14:00-16:00">2:00 PM - 4:00 PM</option>
-                                <option value="16:00-18:00">4:00 PM - 6:00 PM</option>
+                                <option value="">Seleccionar horario</option>
+                                <option value="Mañana (8:00 AM - 12:00 PM)">Mañana (8:00 AM - 12:00 PM)</option>
+                                <option value="Tarde (1:00 PM - 6:00 PM)">Tarde (1:00 PM - 6:00 PM)</option>
                             </select>
                         </div>
                     </div>
@@ -1377,6 +1407,7 @@
                     <div class="summary-row">
                         <span>Costo de envío:</span>
                         <span id="cartShipping">₡0</span>
+                        <small id="shippingDistance" style="font-size: 0.8rem; color: var(--gray);"></small>
                     </div>
                     <div class="summary-row summary-total">
                         <span>Total a pagar:</span>
@@ -1446,7 +1477,7 @@
                     <ul>
                         <li><strong>Lunes a Viernes:</strong> 8:00 AM - 7:00 PM</li>
                         <li><strong>Sábados:</strong> 8:00 AM - 7:00 PM</li>
-                        <li><strong>Domingos:</strong>Cerrado </li>
+                        <li><strong>Domingos:</strong> Cerrado</li>
                     </ul>
                 </div>
                 
@@ -1482,6 +1513,7 @@
         <span id="notificationText">Producto agregado al carrito</span>
     </div>
 
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         // ============================================
         // SISTEMA PRINCIPAL - FLORISTERÍA SANTA BÁRBARA
@@ -1494,28 +1526,26 @@
         let storeConfig = JSON.parse(localStorage.getItem('floristeria_config')) || {
             storeName: "Floristería Santa Bárbara",
             phoneNumber: "50686053613",
-            shippingCost: 0,
+            shippingCostPerKm: 650,
             currency: "₡",
-            whatsappMessage: "¡Hola! 😊\n\nGracias por comunicarte con nosotros.\n\nQuiero hacer un pedido:"
+            whatsappMessage: "¡Hola! 😊\n\nGracias por comunicarte con nosotros.\n\nQuiero hacer un pedido:",
+            address: "Santa Bárbara, Heredia, Costa Rica"
         };
 
-        // CORRECCIÓN CRÍTICA: Asegurar que currency siempre esté definido
-        if (!storeConfig.currency || storeConfig.currency === 'undefined') {
-            storeConfig.currency = "₡";
-            localStorage.setItem('floristeria_config', JSON.stringify(storeConfig));
-        }
-        
         let selectedPayment = 'sinpe';
         let currentCarouselSlide = 0;
+        let map = null;
+        let storeLocation = null;
+        let customerLocation = null;
+        let distanceKm = 0;
 
         // ============================================
         // INICIALIZACIÓN
         // ============================================
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Cargar datos
+            // Cargar datos centralizados
             loadStoreData();
-            fixCurrencyIssues(); // CORRECCIÓN: Llamar función de reparación
             
             // Inicializar componentes
             initCarousel();
@@ -1524,103 +1554,153 @@
             updateCartCount();
             setupEventListeners();
             
-            // Configurar fecha mínima (hoy)
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('deliveryDate').min = today;
-            document.getElementById('deliveryDate').value = today;
+            // Configurar fecha mínima (mañana)
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('deliveryDate').min = tomorrow.toISOString().split('T')[0];
+            document.getElementById('deliveryDate').value = tomorrow.toISOString().split('T')[0];
+            
+            // Inicializar mapa
+            initMap();
             
             // Seleccionar SINPE por defecto
             selectPayment('sinpe');
             
-            // Optimizar almacenamiento
-            setTimeout(optimizeStorage, 3000);
+            // Verificar actualizaciones cada 5 minutos
+            setInterval(checkForUpdates, 5 * 60 * 1000);
         });
 
-        // CORRECCIÓN: Función para reparar problemas de moneda
-        function fixCurrencyIssues() {
-            // 1. Asegurar que storeConfig.currency siempre existe
-            if (!storeConfig.currency || storeConfig.currency === 'undefined') {
-                storeConfig.currency = "₡";
-                localStorage.setItem('floristeria_config', JSON.stringify(storeConfig));
-                console.log("✅ Moneda corregida a:", storeConfig.currency);
-            }
-            
-            // 2. Verificar que los cálculos del carrito funcionen
-            const testCart = JSON.parse(localStorage.getItem('floristeria_cart')) || [];
-            if (testCart.length > 0) {
-                const testSubtotal = testCart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-                console.log("✅ Carrito test - Productos:", testCart.length, "Subtotal:", storeConfig.currency + testSubtotal.toLocaleString('es-CR'));
-            }
-        }
-
         function loadStoreData() {
-            // Cargar configuración
-            const savedConfig = localStorage.getItem('floristeria_config');
-            if (savedConfig) {
-                storeConfig = JSON.parse(savedConfig);
+            console.log("📥 Cargando datos centralizados...");
+            
+            // PRIMERO: Cargar datos locales para velocidad
+            const localProducts = JSON.parse(localStorage.getItem('floristeria_products')) || [];
+            const localCategories = JSON.parse(localStorage.getItem('floristeria_categories')) || [];
+            const localConfig = JSON.parse(localStorage.getItem('floristeria_config')) || {};
+            
+            if (localProducts.length > 0) {
+                products = localProducts;
+                categories = localCategories;
+                storeConfig = { ...storeConfig, ...localConfig };
+                console.log("📱 Datos locales cargados:", products.length, "productos");
             }
             
-            // CORRECCIÓN: Asegurar moneda
-            if (!storeConfig.currency || storeConfig.currency === 'undefined') {
-                storeConfig.currency = "₡";
-                localStorage.setItem('floristeria_config', JSON.stringify(storeConfig));
-            }
-            
-            // Cargar productos
-            const savedProducts = localStorage.getItem('floristeria_products');
-            if (savedProducts) {
-                products = JSON.parse(savedProducts);
-            }
-            
-            // Cargar categorías
-            const savedCategories = localStorage.getItem('floristeria_categories');
-            if (savedCategories) {
-                categories = JSON.parse(savedCategories);
-            }
-            
-            // Si no hay categorías, crear algunas por defecto
-            if (categories.length === 0) {
-                categories = ['Rosas', 'Arreglos', 'Tulipanes', 'Orquídeas', 'Girasoles', 'Lirios'];
-                localStorage.setItem('floristeria_categories', JSON.stringify(categories));
-            }
+            // LUEGO: Cargar datos centralizados desde GitHub
+            loadCentralizedData();
         }
 
-        function loadProducts() {
-            // Obtener productos desde localStorage
-            products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
+        function loadCentralizedData() {
+            const dataUrl = 'https://krisarias1990.github.io/Florister-a-Santa-Barbara/data.json';
             
-            if (products.length === 0) {
-                // Crear productos de ejemplo si no hay ninguno
-                products = [
-                    {
-                        id: 1,
-                        name: "Ramos de Rosas Rojas Premium",
-                        nombre: "Ramos de Rosas Rojas Premium",
-                        category: "Rosas",
-                        categoria: "Rosas",
-                        description: "Elegante ramo con 24 rosas rojas frescas, perfecto para aniversarios.",
-                        price: 25000,
-                        precio: 25000,
-                        image: "https://images.unsplash.com/photo-1519378058457-4c29a0a2efac?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                        stock: 10
-                    },
-                    {
-                        id: 2,
-                        name: "Centro de Mesa Mixto Grande",
-                        nombre: "Centro de Mesa Mixto Grande",
-                        category: "Arreglos",
-                        categoria: "Arreglos",
-                        description: "Colorido centro de mesa para eventos con flores de temporada.",
-                        price: 35000,
-                        precio: 35000,
-                        image: "https://images.unsplash.com/photo-1457089328109-e5d9bd499191?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                        stock: 5
+            console.log("🌐 Cargando datos centralizados desde:", dataUrl);
+            
+            fetch(dataUrl + '?v=' + Date.now())
+                .then(response => {
+                    if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
+                    return response.json();
+                })
+                .then(centralData => {
+                    console.log("✅ Datos centralizados recibidos");
+                    
+                    // Actualizar productos
+                    if (centralData.products && Array.isArray(centralData.products)) {
+                        products = centralData.products;
+                        localStorage.setItem('floristeria_products', JSON.stringify(products));
                     }
-                ];
-                localStorage.setItem('floristeria_products', JSON.stringify(products));
-            }
+                    
+                    // Actualizar categorías
+                    if (centralData.categories && Array.isArray(centralData.categories)) {
+                        categories = centralData.categories;
+                        localStorage.setItem('floristeria_categories', JSON.stringify(categories));
+                    }
+                    
+                    // Actualizar configuración
+                    if (centralData.storeConfig) {
+                        storeConfig = { ...storeConfig, ...centralData.storeConfig };
+                        localStorage.setItem('floristeria_config', JSON.stringify(storeConfig));
+                    }
+                    
+                    // Actualizar vista si es necesario
+                    if (document.getElementById('productsGrid')) {
+                        renderProducts(products);
+                        updateCategoryFilters();
+                    }
+                    
+                    console.log("🔄 Datos sincronizados correctamente");
+                })
+                .catch(error => {
+                    console.warn("⚠️ No se pudieron cargar datos centralizados:", error.message);
+                    // Continuar con datos locales
+                    if (products.length === 0) createDefaultData();
+                });
+        }
+
+        function createDefaultData() {
+            console.log("🔧 Creando datos por defecto...");
             
-            renderProducts(products);
+            products = [
+                {
+                    id: 1,
+                    name: "Ramos de Rosas Rojas Premium",
+                    nombre: "Ramos de Rosas Rojas Premium",
+                    category: "Rosas",
+                    categoria: "Rosas",
+                    description: "Elegante ramo con 24 rosas rojas frescas, perfecto para aniversarios.",
+                    price: 25000,
+                    image: "https://images.unsplash.com/photo-1519378058457-4c29a0a2efac?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    stock: 10
+                },
+                {
+                    id: 2,
+                    name: "Centro de Mesa Mixto Grande",
+                    nombre: "Centro de Mesa Mixto Grande",
+                    category: "Arreglos",
+                    categoria: "Arreglos",
+                    description: "Colorido centro de mesa para eventos con flores de temporada.",
+                    price: 35000,
+                    image: "https://images.unsplash.com/photo-1457089328109-e5d9bd499191?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    stock: 5
+                }
+            ];
+            
+            categories = ['Rosas', 'Arreglos', 'Tulipanes', 'Orquídeas', 'Girasoles', 'Lirios'];
+            
+            localStorage.setItem('floristeria_products', JSON.stringify(products));
+            localStorage.setItem('floristeria_categories', JSON.stringify(categories));
+            
+            console.log("✅ Datos por defecto creados");
+        }
+
+        function checkForUpdates() {
+            // Solo verificar si el usuario está en la página de catálogo
+            if (!document.getElementById('productsGrid')) return;
+            
+            console.log("🔄 Verificando actualizaciones...");
+            
+            // Obtener última actualización guardada
+            const lastUpdate = localStorage.getItem('floristeria_last_update');
+            
+            // Cargar datos centralizados
+            fetch('https://krisarias1990.github.io/Florister-a-Santa-Barbara/data.json?' + Date.now())
+                .then(response => response.json())
+                .then(data => {
+                    const centralUpdate = data.lastUpdated;
+                    
+                    // Si hay una actualización más reciente
+                    if (!lastUpdate || new Date(centralUpdate) > new Date(lastUpdate)) {
+                        console.log("🆕 Actualización disponible!");
+                        showNotification('🔄 Actualizando catálogo...', 'info');
+                        
+                        // Recargar datos
+                        loadCentralizedData();
+                        
+                        // Guardar nueva fecha de actualización
+                        localStorage.setItem('floristeria_last_update', centralUpdate);
+                    }
+                })
+                .catch(error => {
+                    console.log("⚠️ No se pudo verificar actualizaciones:", error.message);
+                });
         }
 
         function setupEventListeners() {
@@ -1637,6 +1717,125 @@
             document.getElementById('imageModal').addEventListener('click', function(e) {
                 if (e.target === this) closeImageModal();
             });
+        }
+
+        // ============================================
+        // MAPA Y CÁLCULO DE DISTANCIA
+        // ============================================
+
+        function initMap() {
+            // Coordenadas de Santa Bárbara, Heredia
+            storeLocation = [10.0833, -84.1333];
+            
+            // Crear mapa
+            map = L.map('map').setView(storeLocation, 13);
+            
+            // Agregar capa de OpenStreetMap
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+            
+            // Agregar marcador de la tienda
+            L.marker(storeLocation)
+                .addTo(map)
+                .bindPopup('Floristería Santa Bárbara<br>📍 Ubicación de la tienda')
+                .openPopup();
+            
+            console.log("🗺️ Mapa inicializado correctamente");
+        }
+
+        function calculateShippingFromAddress() {
+            const address = document.getElementById('deliveryAddress').value.trim();
+            const deliveryType = document.querySelector('input[name="deliveryType"]:checked');
+            
+            // Si es recoger en tienda, costo 0
+            if (deliveryType && deliveryType.value === 'pickup') {
+                distanceKm = 0;
+                updateShippingCost();
+                return;
+            }
+            
+            if (!address) {
+                distanceKm = 0;
+                updateShippingCost();
+                return;
+            }
+            
+            // Simular geocodificación (en producción usarías una API como Google Maps)
+            // Por ahora, estimamos distancia basada en texto de la dirección
+            
+            const addressLower = address.toLowerCase();
+            let estimatedDistance = 0;
+            
+            // Estimaciones por zona
+            if (addressLower.includes('santa bárbara') || addressLower.includes('santa barbara')) {
+                estimatedDistance = 1; // Muy cerca
+            } else if (addressLower.includes('heredia centro') || addressLower.includes('heredia')) {
+                estimatedDistance = 8;
+            } else if (addressLower.includes('san josé') || addressLower.includes('san jose')) {
+                estimatedDistance = 15;
+            } else if (addressLower.includes('alajuela')) {
+                estimatedDistance = 20;
+            } else if (addressLower.includes('cartago')) {
+                estimatedDistance = 25;
+            } else {
+                // Distancia por defecto para otras áreas
+                estimatedDistance = 10;
+            }
+            
+            distanceKm = estimatedDistance;
+            
+            // Actualizar mapa con marcador estimado
+            if (map) {
+                // Limpiar marcadores anteriores
+                map.eachLayer(function(layer) {
+                    if (layer instanceof L.Marker && layer !== storeLocation) {
+                        map.removeLayer(layer);
+                    }
+                });
+                
+                // Agregar marcador estimado (un poco al norte de la tienda para ejemplo)
+                const estimatedLocation = [storeLocation[0] + 0.05, storeLocation[1] + 0.05];
+                L.marker(estimatedLocation)
+                    .addTo(map)
+                    .bindPopup('📍 Dirección estimada del cliente')
+                    .openPopup();
+                
+                // Ajustar vista del mapa
+                map.fitBounds([storeLocation, estimatedLocation]);
+            }
+            
+            updateShippingCost();
+        }
+
+        function updateShippingCost() {
+            const shippingCostPerKm = storeConfig.shippingCostPerKm || 650;
+            let shippingCost = 0;
+            
+            if (distanceKm > 0) {
+                shippingCost = Math.round(distanceKm * shippingCostPerKm);
+                // Redondear a múltiplo de 100
+                shippingCost = Math.ceil(shippingCost / 100) * 100;
+            }
+            
+            // Actualizar en la interfaz
+            const shippingElement = document.getElementById('cartShipping');
+            const distanceElement = document.getElementById('shippingDistance');
+            
+            if (shippingElement) {
+                shippingElement.textContent = `${storeConfig.currency || '₡'}${shippingCost.toLocaleString('es-CR')}`;
+            }
+            
+            if (distanceElement) {
+                if (distanceKm > 0) {
+                    distanceElement.textContent = `(${distanceKm} km × ₡${shippingCostPerKm}/km)`;
+                } else {
+                    distanceElement.textContent = '';
+                }
+            }
+            
+            // Recalcular total
+            updateOrderSummary();
         }
 
         // ============================================
@@ -1728,6 +1927,9 @@
 
         function loadCategories() {
             const categoryFilters = document.getElementById('categoryFilters');
+            if (!categoryFilters) return;
+            
+            categoryFilters.innerHTML = '';
             
             // Botón "Todos"
             const allButton = document.createElement('button');
@@ -1761,12 +1963,36 @@
             renderProducts(filteredProducts);
         }
 
+        function updateCategoryFilters() {
+            const categoryFilters = document.getElementById('categoryFilters');
+            if (!categoryFilters) return;
+            
+            categoryFilters.innerHTML = '';
+            
+            // Botón "Todos"
+            const allButton = document.createElement('button');
+            allButton.className = 'category-btn active';
+            allButton.textContent = 'Todos';
+            allButton.onclick = () => filterProducts('all');
+            categoryFilters.appendChild(allButton);
+            
+            // Botones por categoría
+            categories.forEach(category => {
+                const button = document.createElement('button');
+                button.className = 'category-btn';
+                button.textContent = category;
+                button.onclick = () => filterProducts(category);
+                categoryFilters.appendChild(button);
+            });
+        }
+
         // ============================================
         // PRODUCTOS
         // ============================================
 
         function renderProducts(productsToRender) {
             const productsGrid = document.getElementById('productsGrid');
+            if (!productsGrid) return;
             
             if (!productsToRender || productsToRender.length === 0) {
                 productsGrid.innerHTML = `
@@ -1789,14 +2015,13 @@
                 const productName = product.nombre || product.name || 'Producto';
                 const productCategory = product.categoria || product.category || 'General';
                 const productDescription = product.descripcion || product.description || 'Producto de calidad';
-                // CORRECCIÓN: Asegurar que siempre tengamos un precio válido
                 const productPrice = parseFloat(product.precio || product.price || 0);
                 const productImage = product.imagen || product.image || 'https://images.unsplash.com/photo-1560749003-f4b1e17e2dff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80';
                 const productStock = product.stock || 0;
                 
                 productCard.innerHTML = `
                     <div class="product-image-container">
-                        ${product.stock < 5 ? '<span class="product-badge">¡Últimas unidades!</span>' : ''}
+                        ${productStock < 5 ? '<span class="product-badge">¡Últimas unidades!</span>' : ''}
                         <img src="${productImage}" 
                              alt="${productName}" 
                              class="product-image"
@@ -1816,6 +2041,17 @@
                 
                 productsGrid.appendChild(productCard);
             });
+        }
+
+        function loadProducts() {
+            // Obtener productos desde localStorage
+            products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
+            
+            if (products.length === 0) {
+                createDefaultData();
+            }
+            
+            renderProducts(products);
         }
 
         // ============================================
@@ -1861,7 +2097,7 @@
                 cart.push({
                     id: product.id,
                     name: product.nombre || product.name,
-                    price: parseFloat(product.precio || product.price || 0), // Asegurar que sea número
+                    price: parseFloat(product.precio || product.price || 0),
                     image: product.image || product.imagen,
                     quantity: 1
                 });
@@ -1897,11 +2133,32 @@
             document.body.style.overflow = 'auto';
         }
 
+        function toggleAddressField() {
+            const deliveryType = document.querySelector('input[name="deliveryType"]:checked');
+            const addressField = document.getElementById('addressField');
+            const mapElement = document.getElementById('map');
+            const mapInstructions = document.getElementById('mapInstructions');
+            
+            if (deliveryType.value === 'pickup') {
+                addressField.style.display = 'none';
+                document.getElementById('deliveryAddress').required = false;
+                if (mapElement) mapElement.style.display = 'none';
+                if (mapInstructions) mapInstructions.style.display = 'none';
+                distanceKm = 0;
+            } else {
+                addressField.style.display = 'block';
+                document.getElementById('deliveryAddress').required = true;
+                if (mapElement) mapElement.style.display = 'block';
+                if (mapInstructions) mapInstructions.style.display = 'block';
+                calculateShippingFromAddress();
+            }
+            
+            updateShippingCost();
+        }
+
         function loadCartItems() {
             const container = document.getElementById('cartItemsContainer');
             const cartSubtotal = document.getElementById('cartSubtotal');
-            const cartShipping = document.getElementById('cartShipping');
-            const cartTotal = document.getElementById('cartTotal');
             
             if (cart.length === 0) {
                 container.innerHTML = `
@@ -1915,8 +2172,8 @@
                     </div>
                 `;
                 cartSubtotal.textContent = `${storeConfig.currency || '₡'}0`;
-                cartShipping.textContent = `${storeConfig.currency || '₡'}0`;
-                cartTotal.textContent = `${storeConfig.currency || '₡'}0`;
+                document.getElementById('cartShipping').textContent = `${storeConfig.currency || '₡'}0`;
+                document.getElementById('cartTotal').textContent = `${storeConfig.currency || '₡'}0`;
                 return;
             }
             
@@ -1924,7 +2181,6 @@
             let subtotal = 0;
             
             cart.forEach(item => {
-                // Asegurar que el precio sea un número
                 const itemPrice = parseFloat(item.price) || 0;
                 const itemQuantity = parseInt(item.quantity) || 1;
                 const itemTotal = itemPrice * itemQuantity;
@@ -1957,15 +2213,38 @@
             html += '</div>';
             container.innerHTML = html;
             
-            // Calcular envío - CORRECCIÓN CRÍTICA AQUÍ
-            const deliveryType = document.querySelector('input[name="deliveryType"]:checked');
-            const shipping = deliveryType && deliveryType.value === 'delivery' ? (storeConfig.shippingCost || 0) : 0;
-            const total = subtotal + shipping;
-            
-            // CORRECCIÓN: Usar moneda segura y formato español
+            // Actualizar subtotal
             cartSubtotal.textContent = `${storeConfig.currency || '₡'}${subtotal.toLocaleString('es-CR')}`;
-            cartShipping.textContent = `${storeConfig.currency || '₡'}${shipping.toLocaleString('es-CR')}`;
-            cartTotal.textContent = `${storeConfig.currency || '₡'}${total.toLocaleString('es-CR')}`;
+            
+            // Calcular envío
+            calculateShippingFromAddress();
+        }
+
+        function updateOrderSummary() {
+            const subtotal = cart.reduce((sum, item) => sum + (parseFloat(item.price) * (item.quantity || 1)), 0);
+            const shippingCostPerKm = storeConfig.shippingCostPerKm || 650;
+            let shippingCost = 0;
+            
+            const deliveryType = document.querySelector('input[name="deliveryType"]:checked');
+            if (deliveryType && deliveryType.value === 'delivery' && distanceKm > 0) {
+                shippingCost = Math.round(distanceKm * shippingCostPerKm);
+                shippingCost = Math.ceil(shippingCost / 100) * 100;
+            }
+            
+            const total = subtotal + shippingCost;
+            
+            document.getElementById('cartSubtotal').textContent = `${storeConfig.currency || '₡'}${subtotal.toLocaleString('es-CR')}`;
+            document.getElementById('cartShipping').textContent = `${storeConfig.currency || '₡'}${shippingCost.toLocaleString('es-CR')}`;
+            document.getElementById('cartTotal').textContent = `${storeConfig.currency || '₡'}${total.toLocaleString('es-CR')}`;
+            
+            const distanceElement = document.getElementById('shippingDistance');
+            if (distanceElement) {
+                if (distanceKm > 0 && deliveryType && deliveryType.value === 'delivery') {
+                    distanceElement.textContent = `(${distanceKm} km × ₡${shippingCostPerKm}/km)`;
+                } else {
+                    distanceElement.textContent = '';
+                }
+            }
         }
 
         function updateQuantity(productId, change) {
@@ -2011,22 +2290,6 @@
         // FORMULARIO DE PEDIDO
         // ============================================
 
-        function toggleAddressField() {
-            const deliveryType = document.querySelector('input[name="deliveryType"]:checked');
-            const addressField = document.getElementById('addressField');
-            
-            if (deliveryType.value === 'pickup') {
-                addressField.style.display = 'none';
-                document.getElementById('deliveryAddress').required = false;
-            } else {
-                addressField.style.display = 'block';
-                document.getElementById('deliveryAddress').required = true;
-            }
-            
-            // Recalcular envío
-            loadCartItems();
-        }
-
         function selectPayment(method) {
             selectedPayment = method;
             document.querySelectorAll('.payment-method').forEach(el => {
@@ -2070,7 +2333,7 @@
             const orderDate = new Date().toLocaleDateString('es-ES');
             const orderTime = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
             
-            // Construir mensaje profesional CON IMÁGENES
+            // Construir mensaje
             let message = `${storeConfig.whatsappMessage}\n\n`;
             message += `🛍️ *DETALLE DEL PEDIDO*\n`;
             message += `━━━━━━━━━━━━━━━━━━━━\n`;
@@ -2086,6 +2349,7 @@
             
             if (deliveryType === 'delivery') {
                 message += `• Dirección: ${address}\n`;
+                message += `• Distancia estimada: ${distanceKm} km\n`;
             }
             
             message += `• Fecha de entrega: ${new Date(date).toLocaleDateString('es-ES')}\n`;
@@ -2097,18 +2361,16 @@
             cart.forEach((item, index) => {
                 message += `${index + 1}. *${item.name}*\n`;
                 message += `   Cantidad: ${item.quantity}\n`;
-                // CORRECCIÓN: Usar moneda segura y formato español
                 message += `   Precio unitario: ${storeConfig.currency || '₡'}${(parseFloat(item.price) || 0).toLocaleString('es-CR')}\n`;
                 message += `   Subtotal: ${storeConfig.currency || '₡'}${((parseFloat(item.price) || 0) * item.quantity).toLocaleString('es-CR')}\n`;
                 
-                // ✅ INCLUIR IMAGEN COMO ENLACE SEPARADO para mejor vista previa
                 if (item.image && item.image.startsWith('http')) {
                     message += `   👁️ *Ver producto:* ${item.image}\n`;
                 }
                 message += `\n`;
             });
-
-            // Sección de imágenes para WhatsApp mejorada
+            
+            // Sección de imágenes
             if (cart.some(item => item.image)) {
                 message += `\n🖼️ *IMÁGENES DE LOS PRODUCTOS:*\n`;
                 message += `━━━━━━━━━━━━━━━━━━━━\n`;
@@ -2127,12 +2389,22 @@
             message += `━━━━━━━━━━━━━━━━━━━━\n`;
             
             const subtotal = cart.reduce((sum, item) => sum + ((parseFloat(item.price) || 0) * item.quantity), 0);
-            const shipping = deliveryType === 'delivery' ? (storeConfig.shippingCost || 0) : 0;
+            const shippingCostPerKm = storeConfig.shippingCostPerKm || 650;
+            let shipping = 0;
+            
+            if (deliveryType === 'delivery' && distanceKm > 0) {
+                shipping = Math.round(distanceKm * shippingCostPerKm);
+                shipping = Math.ceil(shipping / 100) * 100;
+            }
+            
             const total = subtotal + shipping;
             
-            // CORRECCIÓN: Usar moneda segura y formato español
             message += `• Subtotal: ${storeConfig.currency || '₡'}${subtotal.toLocaleString('es-CR')}\n`;
-            message += `• Costo de envío: ${storeConfig.currency || '₡'}${shipping.toLocaleString('es-CR')}\n`;
+            if (shipping > 0) {
+                message += `• Costo de envío: ${storeConfig.currency || '₡'}${shipping.toLocaleString('es-CR')} (${distanceKm} km × ₡${shippingCostPerKm}/km)\n`;
+            } else {
+                message += `• Costo de envío: ${storeConfig.currency || '₡'}0 (Recoger en tienda)\n`;
+            }
             message += `• *TOTAL A PAGAR: ${storeConfig.currency || '₡'}${total.toLocaleString('es-CR')}*\n\n`;
             
             message += `💳 *MÉTODO DE PAGO*\n`;
@@ -2174,6 +2446,7 @@
                 customerPhone: phone,
                 deliveryType: deliveryType,
                 address: address,
+                distanceKm: distanceKm,
                 date: date,
                 time: time,
                 paymentMethod: selectedPayment,
@@ -2220,46 +2493,6 @@
         }
 
         // ============================================
-        // OPTIMIZACIÓN DE ALMACENAMIENTO
-        // ============================================
-
-        function optimizeStorage() {
-            // Limpiar carritos viejos (más de 7 días)
-            const cart = JSON.parse(localStorage.getItem('floristeria_cart')) || [];
-            
-            // Si el carrito está vacío por más de 7 días, limpiarlo
-            if (cart.length === 0) {
-                const lastCartUpdate = localStorage.getItem('floristeria_cart_last_update');
-                if (lastCartUpdate) {
-                    const daysSinceUpdate = (Date.now() - parseInt(lastCartUpdate)) / (1000 * 60 * 60 * 24);
-                    if (daysSinceUpdate > 7) {
-                        localStorage.removeItem('floristeria_cart');
-                        localStorage.removeItem('floristeria_cart_last_update');
-                    }
-                }
-            } else {
-                // Actualizar timestamp del carrito
-                localStorage.setItem('floristeria_cart_last_update', Date.now().toString());
-            }
-            
-            // Verificar tamaño total
-            const totalSize = JSON.stringify(localStorage).length;
-            const maxSize = 5 * 1024 * 1024; // 5MB máximo
-            
-            if (totalSize > maxSize * 0.8) {
-                console.log('⚠️ Almacenamiento cerca del límite. Limpiando datos temporales...');
-                
-                // Limpiar datos temporales de sesión
-                sessionStorage.clear();
-                
-                // Notificar al usuario si está en admin
-                if (window.location.href.includes('admin.html')) {
-                    showNotification('⚠️ Almacenamiento optimizado automáticamente', 'warning');
-                }
-            }
-        }
-
-        // ============================================
         // NOTIFICACIONES
         // ============================================
 
@@ -2275,30 +2508,6 @@
             setTimeout(() => {
                 notification.classList.remove('show');
             }, 3000);
-        }
-
-        // ============================================
-        // DEBUG FUNCTIONS
-        // ============================================
-
-        function debugSystem() {
-            console.log("=== DEBUG FLORISTERÍA ===");
-            console.log("Productos en localStorage:", JSON.parse(localStorage.getItem('floristeria_products'))?.length || 0);
-            console.log("Productos cargados:", products.length);
-            console.log("Carrito actual:", cart);
-            console.log("Store Config:", storeConfig);
-            console.log("Currency:", storeConfig.currency);
-            console.log("Shipping Cost:", storeConfig.shippingCost);
-            
-            // Verificar si hay elementos en el carrito
-            if (cart.length > 0) {
-                let total = 0;
-                cart.forEach(item => {
-                    console.log(`Item: ${item.name}, Price: ${item.price}, Quantity: ${item.quantity}`);
-                    total += (item.price * item.quantity);
-                });
-                console.log("Total calculado:", total);
-            }
         }
 
         // ============================================
@@ -2318,9 +2527,8 @@
         window.nextSlide = nextSlide;
         window.goToSlide = goToSlide;
         window.filterProducts = filterProducts;
-        window.fixCurrencyIssues = fixCurrencyIssues;
-        window.optimizeStorage = optimizeStorage;
-        window.debugSystem = debugSystem;
+        window.calculateShippingFromAddress = calculateShippingFromAddress;
+        window.toggleAddressField = toggleAddressField;
     </script>
 </body>
 </html>
