@@ -1189,6 +1189,39 @@
         .mb-3 { margin-bottom: 1.5rem; }
         .mt-3 { margin-top: 1.5rem; }
         .hidden { display: none; }
+
+        /* ===== BOTÓN GOOGLE MAPS ===== */
+        .google-maps-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+        
+        .google-maps-button a {
+            background: #4285F4;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: var(--transition);
+        }
+        
+        .google-maps-button a:hover {
+            background: #3367D6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        
+        .google-maps-button i {
+            font-size: 1rem;
+        }
+        
     </style>
 </head>
 <body>
@@ -1345,21 +1378,18 @@
                                   placeholder="Dirección completa, puntos de referencia..." required
                                   oninput="calculateShippingFromAddress()"></textarea>
                         
-                        <div class="map-instructions" id="mapInstructions">
+                       <div class="map-instructions" id="mapInstructions">
                             <i class="fas fa-info-circle"></i>
-                            El costo de envío se calcula automáticamente: ₡650 por kilómetro desde nuestra ubicación.
+                            <strong>📍 Importante:</strong> Escribe la dirección completa. El sistema generará automáticamente un enlace de Google Maps que aparecerá en tu pedido por WhatsApp.
+                            <br>
+                            <small>El costo de envío se calcula automáticamente: ₡650 por kilómetro desde nuestra ubicación.</small>
                         </div>
-
+                    
                         <!-- NUEVO: Campo para señas específicas -->
                         <div style="margin-top: 10px;">
                             <label class="form-label">Señas específicas (detalles adicionales)</label>
                             <textarea id="addressDetails" class="form-control" rows="2" 
                                       placeholder="Ejemplo: Casa color azul con portón negro, junto a la pulpería"></textarea>
-                        </div>
-                        
-                        <div class="map-instructions" id="mapInstructions">
-                            <i class="fas fa-info-circle"></i>
-                            El sistema generará automáticamente un enlace de Google Maps con esta dirección.
                         </div>
                         
                         <!-- Mapa para mostrar ubicación -->
