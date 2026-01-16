@@ -343,6 +343,75 @@
             margin-bottom: 1.5rem;
         }
         
+        /* Product Status Toggle */
+        .status-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1rem;
+            padding: 10px;
+            background: var(--light);
+            border-radius: var(--radius-sm);
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .toggle-slider {
+            background-color: var(--success);
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+        }
+        
+        .toggle-label {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .toggle-label.active {
+            color: var(--success);
+        }
+        
+        .toggle-label.inactive {
+            color: var(--danger);
+        }
+        
         /* Buttons */
         .btn {
             padding: 12px 24px;
@@ -390,6 +459,20 @@
         
         .btn-danger:hover {
             background: #d32f2f;
+        }
+        
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            background: #e68900;
+        }
+        
+        .btn-info {
+            background: var(--info);
+            color: white;
         }
         
         .btn-small {
@@ -532,12 +615,42 @@
             border-bottom: none;
         }
         
+        /* Producto bloqueado en la tabla */
+        .product-blocked {
+            opacity: 0.6;
+            background: rgba(0,0,0,0.03);
+            position: relative;
+        }
+        
+        .product-blocked::before {
+            content: "🔒 BLOQUEADO";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            background: rgba(220, 53, 69, 0.9);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            z-index: 1;
+            pointer-events: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
         .product-img-small {
             width: 60px;
             height: 60px;
             object-fit: cover;
             border-radius: var(--radius-sm);
             border: 2px solid var(--border);
+        }
+        
+        /* Producto bloqueado - imagen sombreada */
+        .product-img-small.blocked {
+            filter: grayscale(100%);
+            opacity: 0.5;
         }
         
         /* Order Status */
@@ -568,6 +681,7 @@
         .action-buttons {
             display: flex;
             gap: 0.5rem;
+            flex-wrap: wrap;
         }
         
         /* Store Configuration */
@@ -585,6 +699,33 @@
             gap: 1rem;
             margin-top: 1.5rem;
             flex-wrap: wrap;
+        }
+        
+        /* Sincronización con Data.json */
+        .sync-section {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            margin-top: 2rem;
+            border-left: 4px solid var(--info);
+        }
+        
+        .sync-instructions {
+            background: white;
+            padding: 1rem;
+            border-radius: var(--radius-sm);
+            margin-top: 1rem;
+            border: 1px solid var(--border);
+        }
+        
+        .sync-instructions ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .sync-instructions li {
+            margin-bottom: 0.5rem;
+            color: var(--dark);
         }
         
         /* Responsive */
@@ -640,6 +781,10 @@
             .btn {
                 width: 100%;
                 justify-content: center;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
             }
         }
         
@@ -825,6 +970,9 @@
             <button class="tab-btn" onclick="switchTab('store')">
                 <i class="fas fa-store"></i> Tienda
             </button>
+            <button class="tab-btn" onclick="switchTab('sync')">
+                <i class="fas fa-sync-alt"></i> Sincronizar
+            </button>
             <button class="tab-btn" onclick="switchTab('settings')">
                 <i class="fas fa-cog"></i> Configuración
             </button>
@@ -859,10 +1007,10 @@
                 
                 <div class="stat-card">
                     <div class="stat-icon">
-                        <i class="fas fa-tags"></i>
+                        <i class="fas fa-ban"></i>
                     </div>
-                    <div class="stat-number" id="totalCategories">0</div>
-                    <div class="stat-label">Categorías</div>
+                    <div class="stat-number" id="totalBlocked">0</div>
+                    <div class="stat-label">Productos Bloqueados</div>
                 </div>
             </div>
             
@@ -887,16 +1035,16 @@
                         <p style="color: var(--gray); font-size: 0.9rem;">Agrega nuevos productos con imágenes, precios y descripciones.</p>
                     </div>
                     <div>
-                        <h4 style="color: var(--primary); margin-bottom: 0.5rem;">🏷️ Categorías</h4>
-                        <p style="color: var(--gray); font-size: 0.9rem;">Organiza tus productos por categorías para mejor navegación.</p>
+                        <h4 style="color: var(--primary); margin-bottom: 0.5rem;">🔒 Bloquear Productos</h4>
+                        <p style="color: var(--gray); font-size: 0.9rem;">Bloquea productos temporalmente cuando no hay disponibilidad.</p>
                     </div>
                     <div>
                         <h4 style="color: var(--primary); margin-bottom: 0.5rem;">📦 Pedidos</h4>
                         <p style="color: var(--gray); font-size: 0.9rem;">Revisa y gestiona los pedidos recibidos de tus clientes.</p>
                     </div>
                     <div>
-                        <h4 style="color: var(--primary); margin-bottom: 0.5rem;">⚙️ Configuración</h4>
-                        <p style="color: var(--gray); font-size: 0.9rem;">Personaliza la información de tu tienda y métodos de pago.</p>
+                        <h4 style="color: var(--primary); margin-bottom: 0.5rem;">🔄 Sincronizar</h4>
+                        <p style="color: var(--gray); font-size: 0.9rem;">Actualiza el catálogo para que todos los clientes vean los cambios.</p>
                     </div>
                 </div>
             </div>
@@ -907,6 +1055,14 @@
             <div class="card">
                 <h3><i class="fas fa-plus-circle"></i> Agregar Nuevo Producto</h3>
                 <form id="productForm">
+                    <div class="status-toggle">
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="productStatus" checked>
+                            <span class="toggle-slider"></span>
+                        </div>
+                        <span class="toggle-label active" id="statusLabel">Producto ACTIVO (disponible para venta)</span>
+                    </div>
+                    
                     <div class="form-row">
                         <div>
                             <label>Nombre del Producto *</label>
@@ -974,23 +1130,49 @@
                         </div>
                     </div>
                     
-                    <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                    <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-save"></i> Guardar Producto
                         </button>
                         <button type="button" class="btn btn-secondary" onclick="clearProductForm()">
                             <i class="fas fa-times"></i> Limpiar Formulario
                         </button>
+                        <div style="margin-left: auto;">
+                            <button type="button" class="btn btn-info" onclick="testProductBlocking()">
+                                <i class="fas fa-eye"></i> Ver cómo se ve bloqueado
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>
             
             <div class="card">
                 <h3><i class="fas fa-boxes"></i> Productos Registrados</h3>
+                
+                <div style="margin-bottom: 1rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <button class="btn btn-success" onclick="loadProductsList()">
+                        <i class="fas fa-sync-alt"></i> Actualizar Lista
+                    </button>
+                    <button class="btn btn-warning" onclick="toggleAllProducts('block')">
+                        <i class="fas fa-ban"></i> Bloquear Todos
+                    </button>
+                    <button class="btn btn-info" onclick="toggleAllProducts('unblock')">
+                        <i class="fas fa-check"></i> Desbloquear Todos
+                    </button>
+                    <div style="margin-left: auto;">
+                        <select id="productFilter" class="form-control" onchange="filterProductsList()" style="width: 200px;">
+                            <option value="all">Todos los productos</option>
+                            <option value="active">Solo activos</option>
+                            <option value="blocked">Solo bloqueados</option>
+                        </select>
+                    </div>
+                </div>
+                
                 <div class="table-container">
                     <table class="data-table">
                         <thead>
                             <tr>
+                                <th>Estado</th>
                                 <th>Imagen</th>
                                 <th>Producto</th>
                                 <th>Categoría</th>
@@ -1074,12 +1256,17 @@
                     <button class="btn btn-secondary" onclick="exportOrders()">
                         <i class="fas fa-file-export"></i> Exportar a Excel
                     </button>
+                    <button class="btn btn-info" onclick="markAllOrdersAsRead()">
+                        <i class="fas fa-check-double"></i> Marcar todos como leídos
+                    </button>
                     <div style="margin-left: auto;">
                         <select id="orderFilter" class="form-control" style="width: 200px;" onchange="filterOrders()">
                             <option value="all">Todos los pedidos</option>
                             <option value="today">Hoy</option>
                             <option value="week">Esta semana</option>
                             <option value="month">Este mes</option>
+                            <option value="pending">Pendientes</option>
+                            <option value="confirmed">Confirmados</option>
                         </select>
                     </div>
                 </div>
@@ -1090,7 +1277,7 @@
                             <tr>
                                 <th>N° Pedido</th>
                                 <th>Cliente</th>
-                                <th>Fecha</th>
+                                <th>Fecha/Hora</th>
                                 <th>Total</th>
                                 <th>Estado</th>
                                 <th>Acciones</th>
@@ -1110,61 +1297,11 @@
             
             <div class="card">
                 <h3><i class="fas fa-chart-bar"></i> Análisis de Ventas</h3>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
-                    <div>
-                        <h4 style="margin-bottom: 1rem; color: var(--dark);">Ventas por Día</h4>
-                        <div style="background: var(--light); padding: 1rem; border-radius: var(--radius-sm); height: 200px; display: flex; align-items: flex-end; gap: 10px;">
-                            <!-- Gráfico simple de barras -->
-                            <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
-                                <div style="background: var(--primary); width: 30px; height: 50px; border-radius: 4px 4px 0 0;"></div>
-                                <span style="font-size: 0.8rem; margin-top: 5px;">Lun</span>
-                            </div>
-                            <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
-                                <div style="background: var(--primary); width: 30px; height: 80px; border-radius: 4px 4px 0 0;"></div>
-                                <span style="font-size: 0.8rem; margin-top: 5px;">Mar</span>
-                            </div>
-                            <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
-                                <div style="background: var(--primary); width: 30px; height: 120px; border-radius: 4px 4px 0 0;"></div>
-                                <span style="font-size: 0.8rem; margin-top: 5px;">Mié</span>
-                            </div>
-                            <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
-                                <div style="background: var(--primary); width: 30px; height: 90px; border-radius: 4px 4px 0 0;"></div>
-                                <span style="font-size: 0.8rem; margin-top: 5px;">Jue</span>
-                            </div>
-                            <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
-                                <div style="background: var(--primary); width: 30px; height: 150px; border-radius: 4px 4px 0 0;"></div>
-                                <span style="font-size: 0.8rem; margin-top: 5px;">Vie</span>
-                            </div>
-                            <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
-                                <div style="background: var(--primary); width: 30px; height: 180px; border-radius: 4px 4px 0 0;"></div>
-                                <span style="font-size: 0.8rem; margin-top: 5px;">Sáb</span>
-                            </div>
-                            <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
-                                <div style="background: var(--primary); width: 30px; height: 100px; border-radius: 4px 4px 0 0;"></div>
-                                <span style="font-size: 0.8rem; margin-top: 5px;">Dom</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <h4 style="margin-bottom: 1rem; color: var(--dark);">Top Productos</h4>
-                        <div id="topProducts">
-                            <div style="background: var(--light); padding: 1rem; border-radius: var(--radius-sm);">
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
-                                    <span>Ramos de Rosas</span>
-                                    <span>15 ventas</span>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
-                                    <span>Centro de Mesa</span>
-                                    <span>8 ventas</span>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
-                                    <span>Tulipanes</span>
-                                    <span>6 ventas</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div id="salesChart">
+                    <p style="color: var(--gray); text-align: center; padding: 2rem;">
+                        <i class="fas fa-chart-line" style="font-size: 3rem; margin-bottom: 1rem; color: var(--gray-light);"></i><br>
+                        Gráficos de ventas disponibles próximamente
+                    </p>
                 </div>
             </div>
         </div>
@@ -1198,8 +1335,9 @@
                     
                     <div class="form-row">
                         <div>
-                            <label>Costo de Envío (₡) *</label>
-                            <input type="number" id="storeShipping" class="form-control" value="₡0" required>
+                            <label>Costo por Kilómetro (₡) *</label>
+                            <input type="number" id="storeShippingPerKm" class="form-control" value="650" required>
+                            <small style="color: var(--gray);">Costo de envío por kilómetro (₡650/km)</small>
                         </div>
                         <div>
                             <label>Símbolo de Moneda</label>
@@ -1210,7 +1348,7 @@
                     <div class="form-row">
                         <div style="grid-column: 1 / -1;">
                             <label>Mensaje de WhatsApp *</label>
-                            <textarea id="storeWhatsapp" class="form-control" rows="4" required>¡Hola Floristería Santa Bárbara! 😊
+                            <textarea id="storeWhatsapp" class="form-control" rows="4" required>¡Hola! 😊
 
 Gracias por comunicarte con nosotros.
 
@@ -1229,19 +1367,19 @@ Quiero hacer un pedido:</textarea>
                 <form id="scheduleForm">
                     <div class="form-row">
                         <div>
-                            <label>Lunes a Viernes</label>
-                            <input type="text" id="scheduleWeekdays" class="form-control" value="8:00 AM - 7:00 PM">
+                            <label>Horario Mañana</label>
+                            <input type="text" id="scheduleMorning" class="form-control" value="8:00 AM - 12:00 PM">
                         </div>
                         <div>
-                            <label>Sábados</label>
-                            <input type="text" id="scheduleSaturday" class="form-control" value="8:00 AM - 6:00 PM">
+                            <label>Horario Tarde</label>
+                            <input type="text" id="scheduleAfternoon" class="form-control" value="1:00 PM - 6:00 PM">
                         </div>
                     </div>
                     
                     <div class="form-row">
                         <div>
-                            <label>Domingos</label>
-                            <input type="text" id="scheduleSunday" class="form-control" value="9:00 AM - 2:00 PM">
+                            <label>Días de atención</label>
+                            <input type="text" id="scheduleDays" class="form-control" value="Lunes a Sábado">
                         </div>
                     </div>
                     
@@ -1250,36 +1388,65 @@ Quiero hacer un pedido:</textarea>
                     </button>
                 </form>
             </div>
-            
+        </div>
+        
+        <!-- Sync Tab -->
+        <div id="sync" class="tab-content">
             <div class="card">
-                <h3><i class="fas fa-wifi"></i> Redes Sociales</h3>
-                <form id="socialForm">
-                    <div class="form-row">
-                        <div>
-                            <label><i class="fab fa-facebook" style="color: #1877F2;"></i> Facebook</label>
-                            <input type="url" id="socialFacebook" class="form-control" placeholder="https://facebook.com/tutienda">
-                        </div>
-                        <div>
-                            <label><i class="fab fa-instagram" style="color: #E4405F;"></i> Instagram</label>
-                            <input type="url" id="socialInstagram" class="form-control" placeholder="https://instagram.com/tutienda">
-                        </div>
+                <h3><i class="fas fa-sync-alt"></i> Sincronización con Clientes</h3>
+                
+                <div class="sync-section">
+                    <h4 style="color: var(--info); margin-bottom: 1rem;">
+                        <i class="fas fa-cloud-upload-alt"></i> Actualizar Catálogo para TODOS los Clientes
+                    </h4>
+                    
+                    <p style="color: var(--dark); margin-bottom: 1rem;">
+                        Cuando hagas cambios en productos, categorías o configuraciones, debes sincronizar para que 
+                        <strong>todos los clientes vean los mismos datos</strong> en cualquier dispositivo.
+                    </p>
+                    
+                    <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                        <button class="btn btn-success" onclick="generateDataJson()">
+                            <i class="fas fa-code"></i> Generar Código para Sincronizar
+                        </button>
+                        <button class="btn btn-info" onclick="showSyncInstructions()">
+                            <i class="fas fa-question-circle"></i> Instrucciones
+                        </button>
                     </div>
                     
-                    <div class="form-row">
-                        <div>
-                            <label><i class="fab fa-tiktok" style="color: #000000;"></i> TikTok</label>
-                            <input type="url" id="socialTiktok" class="form-control" placeholder="https://tiktok.com/@tutienda">
-                        </div>
-                        <div>
-                            <label><i class="fab fa-whatsapp" style="color: #25D366;"></i> WhatsApp Business</label>
-                            <input type="url" id="socialWhatsapp" class="form-control" placeholder="https://wa.me/50686053613">
-                        </div>
+                    <div id="syncInstructions" class="sync-instructions hidden">
+                        <h5>📝 Cómo Sincronizar:</h5>
+                        <ol>
+                            <li>Haz clic en "Generar Código para Sincronizar"</li>
+                            <li>Copia TODO el código que aparece en el cuadro de texto</li>
+                            <li>Ve a tu repositorio en GitHub</li>
+                            <li>Haz clic en el archivo <strong>data.json</strong></li>
+                            <li>Haz clic en el ícono de lápiz (Editar)</li>
+                            <li>Borra TODO el contenido existente</li>
+                            <li>Pega el código nuevo que copiaste</li>
+                            <li>Haz clic en <strong>Commit changes</strong> (abajo de la página)</li>
+                            <li>Espera 1-2 minutos para que los cambios se reflejen</li>
+                        </ol>
+                        <p style="color: var(--gray); font-size: 0.9rem;">
+                            <i class="fas fa-info-circle"></i> Los cambios se verán automáticamente en todos los dispositivos.
+                        </p>
                     </div>
                     
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Guardar Enlaces
-                    </button>
-                </form>
+                    <div id="jsonOutput" style="margin-top: 1.5rem; display: none;">
+                        <h5>📋 Código para Copiar:</h5>
+                        <textarea id="jsonTextArea" style="width: 100%; height: 300px; font-family: monospace; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius-sm);" readonly></textarea>
+                        <button class="btn btn-primary" onclick="copyJsonToClipboard()" style="margin-top: 10px;">
+                            <i class="fas fa-copy"></i> Copiar al Portapapeles
+                        </button>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 2rem; padding: 1rem; background: var(--light); border-radius: var(--radius-sm);">
+                    <h4 style="margin-bottom: 0.75rem; color: var(--dark);">Estado Actual del Catálogo</h4>
+                    <div id="syncStatus">
+                        <p>Cargando información del catálogo...</p>
+                    </div>
+                </div>
             </div>
         </div>
         
@@ -1386,140 +1553,104 @@ Quiero hacer un pedido:</textarea>
         let editingCategoryIndex = null;
 
         // ============================================
-        // SISTEMA INTELIGENTE DE GESTIÓN DE IMÁGENES
+        // SISTEMA DE BLOQUEO/DESBLOQUEO DE PRODUCTOS
         // ============================================
         
-        function optimizeImage(file) {
-            return new Promise((resolve, reject) => {
-                const img = new Image();
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    img.onload = function() {
-                        // Crear canvas para redimensionar
-                        const canvas = document.createElement('canvas');
-                        const ctx = canvas.getContext('2d');
-                        
-                        // Calcular nuevas dimensiones (máx 800x800)
-                        let width = img.width;
-                        let height = img.height;
-                        
-                        if (width > 800 || height > 800) {
-                            if (width > height) {
-                                height = Math.round((height * 800) / width);
-                                width = 800;
-                            } else {
-                                width = Math.round((width * 800) / height);
-                                height = 800;
-                            }
-                        }
-                        
-                        // Configurar canvas
-                        canvas.width = width;
-                        canvas.height = height;
-                        
-                        // Dibujar imagen redimensionada
-                        ctx.drawImage(img, 0, 0, width, height);
-                        
-                        // Comprimir a 80% calidad (buena calidad/tamaño)
-                        const optimizedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
-                        
-                        resolve({
-                            dataUrl: optimizedDataUrl,
-                            originalSize: file.size,
-                            optimizedSize: optimizedDataUrl.length,
-                            reduction: Math.round(((file.size - optimizedDataUrl.length) / file.size) * 100)
-                        });
-                    };
-                    
-                    img.onerror = reject;
-                    img.src = e.target.result;
-                };
-                
-                reader.onerror = reject;
-                reader.readAsDataURL(file);
-            });
+        function toggleProductStatus(productId) {
+            let products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
+            const productIndex = products.findIndex(p => p.id == productId);
+            
+            if (productIndex === -1) return;
+            
+            // Cambiar estado
+            products[productIndex].blocked = !products[productIndex].blocked;
+            
+            // Guardar cambios
+            localStorage.setItem('floristeria_products', JSON.stringify(products));
+            
+            // Mostrar notificación
+            const productName = products[productIndex].nombre || products[productIndex].name;
+            if (products[productIndex].blocked) {
+                showAlert(`🔒 Producto "${productName}" BLOQUEADO. No aparecerá en el catálogo.`, 'warning');
+            } else {
+                showAlert(`✅ Producto "${productName}" DESBLOQUEADO. Ya está disponible para venta.`, 'success');
+            }
+            
+            // Recargar lista
+            loadProductsList();
+            loadDashboardStats();
         }
         
-        function cleanOldImages() {
-            const products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
-            const MAX_STORAGE_SIZE = 4 * 1024 * 1024; // 4MB máximo
-            const currentSize = JSON.stringify(localStorage).length;
+        function toggleAllProducts(action) {
+            let products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
             
-            // Si tenemos menos de 3.5MB, no hacer nada
-            if (currentSize < 3.5 * 1024 * 1024) return;
+            if (products.length === 0) {
+                showAlert('No hay productos para modificar', 'warning');
+                return;
+            }
             
-            showAlert('⚠️ Optimizando almacenamiento automáticamente...', 'warning');
+            const confirmMessage = action === 'block' 
+                ? `¿Bloquear TODOS los productos (${products.length})? No aparecerán en el catálogo.`
+                : `¿Desbloquear TODOS los productos (${products.length})? Volverán a aparecer en el catálogo.`;
             
-            // Ordenar productos por fecha (más antiguos primero)
-            products.sort((a, b) => {
-                const dateA = a.lastModified || a.created || 0;
-                const dateB = b.lastModified || b.created || 0;
-                return dateA - dateB;
-            });
+            if (!confirm(confirmMessage)) return;
             
-            let removedCount = 0;
-            
-            // Para cada producto, reducir calidad de imágenes si son muy grandes
-            products.forEach((product, index) => {
-                const image = product.image || product.imagen;
-                
-                if (image && image.startsWith('data:image') && image.length > 100000) {
-                    // Imagen Base64 mayor a 100KB - reducir calidad
-                    const img = new Image();
-                    img.onload = function() {
-                        const canvas = document.createElement('canvas');
-                        const ctx = canvas.getContext('2d');
-                        canvas.width = img.width;
-                        canvas.height = img.height;
-                        ctx.drawImage(img, 0, 0);
-                        
-                        // Reducir a 70% calidad
-                        const optimized = canvas.toDataURL('image/jpeg', 0.7);
-                        
-                        if (optimized.length < image.length) {
-                            product.image = optimized;
-                            product.imagen = optimized;
-                            removedCount++;
-                        }
-                    };
-                    img.src = image;
-                }
+            // Cambiar estado de todos los productos
+            products.forEach(product => {
+                product.blocked = (action === 'block');
             });
             
             // Guardar cambios
             localStorage.setItem('floristeria_products', JSON.stringify(products));
             
-            if (removedCount > 0) {
-                showAlert(`✅ Optimizadas ${removedCount} imágenes para ahorrar espacio`, 'success');
+            // Mostrar notificación
+            if (action === 'block') {
+                showAlert(`🔒 ${products.length} productos BLOQUEADOS. No aparecerán en el catálogo.`, 'warning');
+            } else {
+                showAlert(`✅ ${products.length} productos DESBLOQUEADOS. Ya están disponibles para venta.`, 'success');
             }
+            
+            // Recargar lista
+            loadProductsList();
+            loadDashboardStats();
         }
         
-        function checkStorageSpace() {
-            const currentSize = JSON.stringify(localStorage).length;
-            const maxSize = 5 * 1024 * 1024; // 5MB (típico en navegadores)
-            const percentage = (currentSize / maxSize) * 100;
+        function filterProductsList() {
+            const filter = document.getElementById('productFilter').value;
+            const products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
+            const container = document.getElementById('productsList');
             
-            if (percentage > 80) {
-                showAlert(`⚠️ Alerta: Almacenamiento al ${Math.round(percentage)}%. Limpiando automáticamente...`, 'warning');
-                cleanOldImages();
-            } else if (percentage > 60) {
-                showAlert(`ℹ️ Almacenamiento al ${Math.round(percentage)}%. El sistema limpiará automáticamente si es necesario.`, 'info');
+            if (products.length === 0) return;
+            
+            let filteredProducts = products;
+            
+            switch(filter) {
+                case 'active':
+                    filteredProducts = products.filter(p => !p.blocked);
+                    break;
+                case 'blocked':
+                    filteredProducts = products.filter(p => p.blocked);
+                    break;
+                // 'all' - muestra todos
             }
+            
+            // Mostrar productos filtrados
+            renderProductsList(filteredProducts);
         }
         
-        function formatBytes(bytes, decimals = 2) {
-            if (bytes === 0) return '0 Bytes';
-            
-            const k = 1024;
-            const dm = decimals < 0 ? 0 : decimals;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+        function testProductBlocking() {
+            showAlert(`
+                <h4>🔒 Sistema de Bloqueo de Productos</h4>
+                <p>Cuando bloqueas un producto:</p>
+                <ul style="text-align: left; margin: 10px 0;">
+                    <li>En el catálogo principal aparecerá <strong>sombreado/opaco</strong></li>
+                    <li>Los clientes NO podrán agregarlo al carrito</li>
+                    <li>Aparecerá con una etiqueta "NO DISPONIBLE"</li>
+                    <li>En el admin se verá con un fondo gris y texto "BLOQUEADO"</li>
+                </ul>
+                <p>Perfecto para temporadas sin disponibilidad de flores.</p>
+            `, 'info');
         }
-        
 
         // ============================================
         // INICIALIZACIÓN
@@ -1536,6 +1667,9 @@ Quiero hacer un pedido:</textarea>
             
             // Cargar categorías en select
             loadCategoriesForSelect();
+            
+            // Configurar toggle de estado de producto
+            setupProductStatusToggle();
         });
 
         function setupForms() {
@@ -1569,16 +1703,25 @@ Quiero hacer un pedido:</textarea>
                 saveSchedule();
             });
             
-            // Social form
-            document.getElementById('socialForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                saveSocialLinks();
-            });
-            
             // Admin form
             document.getElementById('adminForm').addEventListener('submit', function(e) {
                 e.preventDefault();
                 updateAdminCredentials();
+            });
+        }
+        
+        function setupProductStatusToggle() {
+            const toggle = document.getElementById('productStatus');
+            const label = document.getElementById('statusLabel');
+            
+            toggle.addEventListener('change', function() {
+                if (this.checked) {
+                    label.textContent = 'Producto ACTIVO (disponible para venta)';
+                    label.className = 'toggle-label active';
+                } else {
+                    label.textContent = 'Producto BLOQUEADO (no disponible temporalmente)';
+                    label.className = 'toggle-label inactive';
+                }
             });
         }
 
@@ -1627,11 +1770,6 @@ Quiero hacer un pedido:</textarea>
         function showAdminPanel() {
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('adminPanel').style.display = 'block';
-
-            // Verificar y limpiar automáticamente al entrar
-            setTimeout(() => {
-                checkStorageSpace();
-            }, 2000);
             
             // Cargar datos iniciales
             loadDashboardStats();
@@ -1639,6 +1777,7 @@ Quiero hacer un pedido:</textarea>
             loadCategoriesList();
             loadOrders();
             loadDataSummary();
+            loadSyncStatus();
         }
 
         function logout() {
@@ -1691,6 +1830,9 @@ Quiero hacer un pedido:</textarea>
                 case 'store':
                     loadStoreSettings();
                     break;
+                case 'sync':
+                    loadSyncStatus();
+                    break;
             }
         }
 
@@ -1704,19 +1846,30 @@ Quiero hacer un pedido:</textarea>
             const orders = JSON.parse(localStorage.getItem('floristeria_orders')) || [];
             const categories = JSON.parse(localStorage.getItem('floristeria_categories')) || [];
             
-            // Calcular ventas totales
+            // Calcular ventas totales y productos bloqueados
             let totalSales = 0;
+            let blockedProducts = 0;
+            let activeProducts = 0;
+            
             orders.forEach(order => {
                 if (order.total) {
                     totalSales += order.total;
                 }
             });
             
+            products.forEach(product => {
+                if (product.blocked) {
+                    blockedProducts++;
+                } else {
+                    activeProducts++;
+                }
+            });
+            
             // Actualizar estadísticas
-            document.getElementById('totalProducts').textContent = products.length;
+            document.getElementById('totalProducts').textContent = activeProducts;
             document.getElementById('totalOrders').textContent = orders.length;
             document.getElementById('totalSales').textContent = `₡${totalSales.toLocaleString()}`;
-            document.getElementById('totalCategories').textContent = categories.length;
+            document.getElementById('totalBlocked').textContent = blockedProducts;
             
             // Actualizar estadísticas recientes
             const recentStats = document.getElementById('recentStats');
@@ -1777,7 +1930,7 @@ Quiero hacer un pedido:</textarea>
                 
                 // Validar tamaño (3MB máximo original)
                 if (file.size > 3 * 1024 * 1024) {
-                    showAlert(`La imagen "${file.name}" es muy grande (${(file.size / 1024 / 1024).toFixed(2)}MB). Optimizando...`, 'warning');
+                    showAlert(`La imagen "${file.name}" es muy grande (${(file.size / 1024 / 1024).toFixed(2)}MB). El sistema la optimizará.`, 'warning');
                 }
                 
                 // Validar tipo
@@ -1786,34 +1939,28 @@ Quiero hacer un pedido:</textarea>
                     continue;
                 }
                 
-                // Optimizar imagen automáticamente
-                optimizeImage(file).then(result => {
-                    // Actualizar barra de progreso
+                // Crear preview inmediato
+                const reader = new FileReader();
+                reader.onload = function(e) {
                     processed++;
                     progressBar.style.width = `${(processed / totalFiles) * 100}%`;
                     
-                    // Guardar imagen optimizada
+                    // Guardar imagen
                     currentImages.push({
-                        url: result.dataUrl,
+                        url: e.target.result,
                         name: file.name,
                         file: file,
-                        type: 'optimized',
-                        originalSize: result.originalSize,
-                        optimizedSize: result.optimizedSize,
-                        reduction: result.reduction
+                        type: 'base64'
                     });
                     
                     // Mostrar previsualización
                     const imageItem = document.createElement('div');
                     imageItem.className = 'image-item';
                     imageItem.innerHTML = `
-                        <img src="${result.dataUrl}" class="image-preview">
+                        <img src="${e.target.result}" class="image-preview">
                         <button type="button" class="image-remove" onclick="removeImage(${currentImages.length - 1})">
                             <i class="fas fa-times"></i>
                         </button>
-                        <div style="position: absolute; bottom: 5px; left: 5px; background: rgba(0,0,0,0.7); color: white; padding: 2px 6px; border-radius: 10px; font-size: 0.7rem;">
-                            ${result.reduction > 0 ? `-${result.reduction}%` : 'optimizada'}
-                        </div>
                     `;
                     previewContainer.appendChild(imageItem);
                     
@@ -1823,19 +1970,11 @@ Quiero hacer un pedido:</textarea>
                             progressBar.style.width = '0%';
                         }, 500);
                         
-                        // Verificar espacio de almacenamiento
-                        checkStorageSpace();
-                        
-                        // Mostrar estadísticas
-                        if (result.reduction > 0) {
-                            showAlert(`✅ Imagen optimizada: Reducida un ${result.reduction}% automáticamente`, 'success');
-                        } else {
-                            showAlert('✅ Imagen lista para usar', 'success');
-                        }
+                        showAlert('✅ Imágenes listas para usar', 'success');
                     }
-                }).catch(error => {
-                    showAlert(`Error procesando "${file.name}": ${error.message}`, 'error');
-                });
+                };
+                
+                reader.readAsDataURL(file);
             }
         }
 
@@ -1869,6 +2008,7 @@ Quiero hacer un pedido:</textarea>
             const stock = parseInt(document.getElementById('productStock').value) || 10;
             const description = document.getElementById('productDescription').value.trim();
             const imageUrl = document.getElementById('productImageUrl').value.trim();
+            const isActive = document.getElementById('productStatus').checked;
             
             // Validaciones
             if (!name || !category || !price || !description) {
@@ -1876,30 +2016,20 @@ Quiero hacer un pedido:</textarea>
                 return;
             }
             
-            // Verificar espacio ANTES de guardar
-            checkStorageSpace();
-            
-            // Preparar imagen - SISTEMA INTELIGENTE
+            // Preparar imagen
+            let imageData = '';
             if (currentImages.length > 0) {
-                // 1. USAR IMAGEN YA OPTIMIZADA (ya está en Base64 optimizado)
-                finishSavingProduct(name, category, price, stock, description, currentImages[0].url);
-                
+                imageData = currentImages[0].url;
             } else if (imageUrl) {
-                // 2. URL EXTERNA - Verificar si es válida
                 if (!imageUrl.startsWith('http')) {
                     showAlert('La URL debe comenzar con http:// o https://', 'error');
                     return;
                 }
-                finishSavingProduct(name, category, price, stock, description, imageUrl);
-                
+                imageData = imageUrl;
             } else {
-                // 3. IMAGEN POR DEFECTO (ya optimizada por Unsplash)
-                const defaultImage = 'https://images.unsplash.com/photo-1560749003-f4b1e17e2dff?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
-                finishSavingProduct(name, category, price, stock, description, defaultImage);
+                imageData = 'https://images.unsplash.com/photo-1560749003-f4b1e17e2dff?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
             }
-        }
-
-        function finishSavingProduct(name, category, price, stock, description, imageData) {
+            
             // Obtener productos existentes
             let products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
             
@@ -1922,7 +2052,8 @@ Quiero hacer un pedido:</textarea>
                         descripcion: description,
                         image: imageData,
                         imagen: imageData,
-                        lastModified: now // ← Registrar fecha de modificación
+                        blocked: !isActive, // Invertir porque "activo" en toggle = no bloqueado
+                        lastModified: now
                     };
                     
                     showAlert('✅ Producto actualizado correctamente', 'success');
@@ -1944,12 +2075,13 @@ Quiero hacer un pedido:</textarea>
                     descripcion: description,
                     image: imageData,
                     imagen: imageData,
-                    created: now,        // ← Fecha creación
-                    lastModified: now    // ← Fecha modificación
+                    blocked: !isActive, // Invertir porque "activo" en toggle = no bloqueado
+                    created: now,
+                    lastModified: now
                 };
                 
                 products.push(newProduct);
-                showAlert('✅ Producto agregado con imagen optimizada', 'success');
+                showAlert('✅ Producto agregado correctamente', 'success');
             }
             
             // Guardar en localStorage
@@ -1963,9 +2095,6 @@ Quiero hacer un pedido:</textarea>
             
             // Actualizar dashboard
             loadDashboardStats();
-            
-            // Verificar espacio DESPUÉS de guardar
-            setTimeout(checkStorageSpace, 1000);
         }
 
         function clearProductForm() {
@@ -1975,6 +2104,9 @@ Quiero hacer un pedido:</textarea>
             document.getElementById('productStock').value = '10';
             document.getElementById('productDescription').value = '';
             document.getElementById('productImageUrl').value = '';
+            document.getElementById('productStatus').checked = true;
+            document.getElementById('statusLabel').textContent = 'Producto ACTIVO (disponible para venta)';
+            document.getElementById('statusLabel').className = 'toggle-label active';
             
             // Limpiar imágenes
             currentImages = [];
@@ -1990,10 +2122,14 @@ Quiero hacer un pedido:</textarea>
 
         function loadProductsList() {
             const products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
+            renderProductsList(products);
+        }
+        
+        function renderProductsList(productsToRender) {
             const container = document.getElementById('productsList');
             const emptyState = document.getElementById('productsEmpty');
             
-            if (products.length === 0) {
+            if (productsToRender.length === 0) {
                 container.innerHTML = '';
                 emptyState.classList.remove('hidden');
                 return;
@@ -2001,8 +2137,11 @@ Quiero hacer un pedido:</textarea>
             
             emptyState.classList.add('hidden');
             
+            // Ordenar por ID (más nuevos primero)
+            productsToRender.sort((a, b) => b.id - a.id);
+            
             let html = '';
-            products.forEach(product => {
+            productsToRender.forEach(product => {
                 // Usar compatibilidad con ambos formatos
                 const name = product.nombre || product.name || 'Producto sin nombre';
                 const category = product.categoria || product.category || 'General';
@@ -2010,11 +2149,24 @@ Quiero hacer un pedido:</textarea>
                 const stock = product.stock || 0;
                 const image = product.image || product.imagen || 'https://images.unsplash.com/photo-1560749003-f4b1e17e2dff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80';
                 const description = product.descripcion || product.description || '';
+                const isBlocked = product.blocked || false;
+                
+                // Determinar clase para fila bloqueada
+                const rowClass = isBlocked ? 'product-blocked' : '';
+                const imgClass = isBlocked ? 'product-img-small blocked' : 'product-img-small';
+                const statusText = isBlocked ? '🔒 Bloqueado' : '✅ Activo';
+                const statusColor = isBlocked ? 'var(--danger)' : 'var(--success)';
+                const toggleText = isBlocked ? 'Desbloquear' : 'Bloquear';
+                const toggleIcon = isBlocked ? 'fa-lock-open' : 'fa-lock';
+                const toggleClass = isBlocked ? 'btn-warning' : 'btn-danger';
                 
                 html += `
-                    <tr>
+                    <tr class="${rowClass}">
                         <td>
-                            <img src="${image}" alt="${name}" class="product-img-small">
+                            <span style="color: ${statusColor}; font-weight: 600;">${statusText}</span>
+                        </td>
+                        <td>
+                            <img src="${image}" alt="${name}" class="${imgClass}">
                         </td>
                         <td>
                             <div style="font-weight: 600;">${name}</div>
@@ -2030,10 +2182,13 @@ Quiero hacer un pedido:</textarea>
                         <td>
                             <div class="action-buttons">
                                 <button class="btn btn-small btn-primary" onclick="editProduct(${product.id})">
-                                    <i class="fas fa-edit"></i>
+                                    <i class="fas fa-edit"></i> Editar
+                                </button>
+                                <button class="btn btn-small ${toggleClass}" onclick="toggleProductStatus(${product.id})">
+                                    <i class="fas ${toggleIcon}"></i> ${toggleText}
                                 </button>
                                 <button class="btn btn-small btn-danger" onclick="deleteProduct(${product.id})">
-                                    <i class="fas fa-trash"></i>
+                                    <i class="fas fa-trash"></i> Eliminar
                                 </button>
                             </div>
                         </td>
@@ -2057,14 +2212,23 @@ Quiero hacer un pedido:</textarea>
             document.getElementById('productStock').value = product.stock || 10;
             document.getElementById('productDescription').value = product.descripcion || product.description || '';
             
-            // IMPORTANTE: Si la imagen es Base64, NO la mostramos en el campo URL
+            // Configurar estado (bloqueado/inactivo)
+            const isBlocked = product.blocked || false;
+            document.getElementById('productStatus').checked = !isBlocked;
+            const statusLabel = document.getElementById('statusLabel');
+            if (!isBlocked) {
+                statusLabel.textContent = 'Producto ACTIVO (disponible para venta)';
+                statusLabel.className = 'toggle-label active';
+            } else {
+                statusLabel.textContent = 'Producto BLOQUEADO (no disponible temporalmente)';
+                statusLabel.className = 'toggle-label inactive';
+            }
+            
+            // Manejar imagen
             const image = product.image || product.imagen || '';
             if (image && image.startsWith('data:image')) {
                 // Es una imagen Base64 (subida desde PC)
                 document.getElementById('productImageUrl').value = '';
-                showAlert('ℹ️ Este producto tiene una imagen subida desde tu computadora. Para cambiarla, sube una nueva imagen.', 'info');
-                
-                // Mostrar la imagen Base64 en preview
                 currentImages = [{
                     url: image,
                     name: 'Imagen existente',
@@ -2093,6 +2257,7 @@ Quiero hacer un pedido:</textarea>
             // Scroll al formulario
             document.getElementById('productForm').scrollIntoView({ behavior: 'smooth' });
         }
+        
         function deleteProduct(id) {
             if (confirm('¿Estás seguro de que deseas eliminar este producto? Esta acción no se puede deshacer.')) {
                 let products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
@@ -2196,6 +2361,10 @@ Quiero hacer un pedido:</textarea>
             categories.forEach((category, index) => {
                 // Contar productos en esta categoría
                 const productCount = products.filter(p => 
+                    (p.categoria === category || p.category === category) && !p.blocked
+                ).length;
+                
+                const totalProductsInCategory = products.filter(p => 
                     (p.categoria === category || p.category === category)
                 ).length;
                 
@@ -2208,7 +2377,9 @@ Quiero hacer un pedido:</textarea>
                             <div style="color: var(--gray);">${document.getElementById('categoryDescription').value || 'Sin descripción'}</div>
                         </td>
                         <td>
-                            <span style="display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; background: var(--light);">${productCount} productos</span>
+                            <span style="display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; background: var(--light);">
+                                ${productCount} activos / ${totalProductsInCategory} total
+                            </span>
                         </td>
                         <td>
                             <div class="action-buttons">
@@ -2294,6 +2465,10 @@ Quiero hacer un pedido:</textarea>
                         case 'month':
                             const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
                             return orderDate >= monthAgo;
+                        case 'pending':
+                            return order.status === 'pending' || !order.status;
+                        case 'confirmed':
+                            return order.status === 'confirmed';
                         default:
                             return true;
                     }
@@ -2321,7 +2496,9 @@ Quiero hacer un pedido:</textarea>
                 const formattedDate = orderDate.toLocaleDateString('es-ES', {
                     day: '2-digit',
                     month: '2-digit',
-                    year: 'numeric',
+                    year: 'numeric'
+                });
+                const formattedTime = orderDate.toLocaleTimeString('es-ES', {
                     hour: '2-digit',
                     minute: '2-digit'
                 });
@@ -2359,8 +2536,14 @@ Quiero hacer un pedido:</textarea>
                             <div style="font-size: 0.85rem; color: var(--gray); margin-top: 0.25rem;">
                                 ${order.customerPhone || 'Sin teléfono'}
                             </div>
+                            <div style="font-size: 0.8rem; color: var(--info); margin-top: 0.25rem;">
+                                ${order.deliveryType === 'delivery' ? '🚚 Envío' : '🏪 Recoger'}
+                            </div>
                         </td>
-                        <td>${formattedDate}</td>
+                        <td>
+                            <div style="font-weight: 600;">${formattedDate}</div>
+                            <div style="font-size: 0.85rem; color: var(--gray);">${formattedTime}</div>
+                        </td>
                         <td>
                             <strong style="color: var(--success);">₡${(order.total || 0).toLocaleString()}</strong>
                         </td>
@@ -2370,10 +2553,10 @@ Quiero hacer un pedido:</textarea>
                         <td>
                             <div class="action-buttons">
                                 <button class="btn btn-small btn-primary" onclick="viewOrderDetails('${order.number || orderDate.getTime()}')">
-                                    <i class="fas fa-eye"></i>
+                                    <i class="fas fa-eye"></i> Ver
                                 </button>
                                 <button class="btn btn-small btn-success" onclick="updateOrderStatus('${order.number || orderDate.getTime()}', 'confirmed')">
-                                    <i class="fas fa-check"></i>
+                                    <i class="fas fa-check"></i> Confirmar
                                 </button>
                                 <button class="btn btn-small btn-danger" onclick="deleteOrder('${order.number || orderDate.getTime()}')">
                                     <i class="fas fa-trash"></i>
@@ -2389,6 +2572,11 @@ Quiero hacer un pedido:</textarea>
 
         function filterOrders() {
             loadOrders();
+        }
+        
+        function markAllOrdersAsRead() {
+            // Esta función podría marcar pedidos como leídos si agregamos esa funcionalidad
+            showAlert('Todos los pedidos marcados como revisados', 'info');
         }
 
         function viewOrderDetails(orderId) {
@@ -2409,8 +2597,14 @@ Quiero hacer un pedido:</textarea>
             
             if (order.deliveryType === 'delivery' && order.address) {
                 message += `• Dirección: ${order.address}\n`;
+                if (order.distanceKm) {
+                    message += `• Distancia: ${order.distanceKm} km\n`;
+                }
             }
             
+            const orderDate = new Date(order.timestamp || order.date || new Date());
+            message += `• Fecha del pedido: ${orderDate.toLocaleDateString('es-ES')}\n`;
+            message += `• Hora del pedido: ${orderDate.toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit'})}\n`;
             message += `• Fecha de entrega: ${order.date}\n`;
             message += `• Horario: ${order.time}\n`;
             message += `• Método de pago: ${order.paymentMethod || 'No especificado'}\n\n`;
@@ -2432,8 +2626,44 @@ Quiero hacer un pedido:</textarea>
                 message += `📋 *NOTAS*\n${order.notes}\n\n`;
             }
             
-            // Mostrar en alerta
-            alert(message);
+            // Mostrar en alerta con scroll
+            const alertDiv = document.createElement('div');
+            alertDiv.style.position = 'fixed';
+            alertDiv.style.top = '50%';
+            alertDiv.style.left = '50%';
+            alertDiv.style.transform = 'translate(-50%, -50%)';
+            alertDiv.style.width = '90%';
+            alertDiv.style.maxWidth = '600px';
+            alertDiv.style.maxHeight = '80vh';
+            alertDiv.style.overflow = 'auto';
+            alertDiv.style.background = 'white';
+            alertDiv.style.padding = '20px';
+            alertDiv.style.borderRadius = 'var(--radius)';
+            alertDiv.style.boxShadow = '0 5px 30px rgba(0,0,0,0.3)';
+            alertDiv.style.zIndex = '3000';
+            
+            alertDiv.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="color: var(--primary); margin: 0;">Detalles del Pedido</h3>
+                    <button onclick="this.parentElement.parentElement.remove()" style="background: var(--danger); color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer;">×</button>
+                </div>
+                <div style="white-space: pre-wrap; font-family: monospace; font-size: 0.9rem; background: #f8f9fa; padding: 15px; border-radius: 5px; max-height: 60vh; overflow: auto;">${message}</div>
+                <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: flex-end;">
+                    <button onclick="this.parentElement.parentElement.parentElement.remove()" style="padding: 8px 16px; background: var(--gray); color: white; border: none; border-radius: var(--radius-sm); cursor: pointer;">Cerrar</button>
+                    <button onclick="copyToClipboard('${message.replace(/'/g, "\\'")}'); this.parentElement.parentElement.parentElement.remove(); showAlert('Detalles copiados al portapapeles', 'success')" style="padding: 8px 16px; background: var(--primary); color: white; border: none; border-radius: var(--radius-sm); cursor: pointer;">📋 Copiar</button>
+                </div>
+            `;
+            
+            document.body.appendChild(alertDiv);
+        }
+        
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
         }
 
         function updateOrderStatus(orderId, status) {
@@ -2479,15 +2709,17 @@ Quiero hacer un pedido:</textarea>
             }
             
             // Crear contenido CSV
-            let csv = 'N° Pedido,Cliente,Teléfono,Fecha,Total,Estado,Método de Pago\n';
+            let csv = 'N° Pedido,Cliente,Teléfono,Fecha,Hora,Total,Estado,Método de Pago,Tipo Entrega\n';
             
             orders.forEach(order => {
-                const date = new Date(order.timestamp || order.date || new Date()).toLocaleDateString('es-ES');
+                const date = new Date(order.timestamp || order.date || new Date());
+                const formattedDate = date.toLocaleDateString('es-ES');
+                const formattedTime = date.toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit'});
                 const status = order.status || 'pending';
                 const statusText = status === 'confirmed' ? 'Confirmado' : 
                                  status === 'completed' ? 'Completado' : 'Pendiente';
                 
-                csv += `"${order.number || 'Sin número'}","${order.customerName || 'Sin nombre'}","${order.customerPhone || 'Sin teléfono'}","${date}","₡${order.total || 0}","${statusText}","${order.paymentMethod || 'No especificado'}"\n`;
+                csv += `"${order.number || 'Sin número'}","${order.customerName || 'Sin nombre'}","${order.customerPhone || 'Sin teléfono'}","${formattedDate}","${formattedTime}","₡${order.total || 0}","${statusText}","${order.paymentMethod || 'No especificado'}","${order.deliveryType === 'delivery' ? 'Envío' : 'Recoger'}"\n`;
             });
             
             // Crear y descargar archivo
@@ -2515,9 +2747,9 @@ Quiero hacer un pedido:</textarea>
             const config = JSON.parse(localStorage.getItem('floristeria_config')) || {
                 storeName: "Floristería Santa Bárbara",
                 phoneNumber: "50686053613",
-                shippingCost: 3000,
+                shippingCostPerKm: 650,
                 currency: "₡",
-                whatsappMessage: "¡Hola Floristería Santa Bárbara! 😊\n\nGracias por comunicarte con nosotros.\n\nQuiero hacer un pedido:"
+                whatsappMessage: "¡Hola! 😊\n\nGracias por comunicarte con nosotros.\n\nQuiero hacer un pedido:"
             };
             
             // Rellenar formularios
@@ -2525,9 +2757,9 @@ Quiero hacer un pedido:</textarea>
             document.getElementById('storePhone').value = config.phoneNumber || "50686053613";
             document.getElementById('storeAddress').value = config.address || "Santa Bárbara, Heredia, Costa Rica";
             document.getElementById('storeEmail').value = config.email || "ventas@floristeriasantabarbara.com";
-            document.getElementById('storeShipping').value = config.shippingCost || 0;
+            document.getElementById('storeShippingPerKm').value = config.shippingCostPerKm || 650;
             document.getElementById('storeCurrency').value = config.currency || "₡";
-            document.getElementById('storeWhatsapp').value = config.whatsappMessage || "¡Hola Floristería Santa Bárbara! 😊\n\nGracias por comunicarte con nosotros.\n\nQuiero hacer un pedido:";
+            document.getElementById('storeWhatsapp').value = config.whatsappMessage || "¡Hola! 😊\n\nGracias por comunicarte con nosotros.\n\nQuiero hacer un pedido:";
         }
 
         function saveStoreConfig() {
@@ -2536,7 +2768,7 @@ Quiero hacer un pedido:</textarea>
                 phoneNumber: document.getElementById('storePhone').value.trim(),
                 address: document.getElementById('storeAddress').value.trim(),
                 email: document.getElementById('storeEmail').value.trim(),
-                shippingCost: parseInt(document.getElementById('storeShipping').value) || 0,
+                shippingCostPerKm: parseInt(document.getElementById('storeShippingPerKm').value) || 650,
                 currency: document.getElementById('storeCurrency').value.trim() || "₡",
                 whatsappMessage: document.getElementById('storeWhatsapp').value.trim()
             };
@@ -2551,39 +2783,90 @@ Quiero hacer un pedido:</textarea>
             localStorage.setItem('floristeria_config', JSON.stringify(config));
             
             showAlert('Configuración de tienda guardada correctamente', 'success');
-            
-            // Recargar configuración en la tienda (si está abierta)
-            if (typeof loadStoreData !== 'undefined') {
-                // Esta función existe en index.html
-                try {
-                    localStorage.setItem('reload_config', 'true');
-                } catch (e) {
-                    console.log('Configuración guardada, recarga la tienda para ver cambios');
-                }
-            }
         }
 
         function saveSchedule() {
             const schedule = {
-                weekdays: document.getElementById('scheduleWeekdays').value.trim(),
-                saturday: document.getElementById('scheduleSaturday').value.trim(),
-                sunday: document.getElementById('scheduleSunday').value.trim()
+                morning: document.getElementById('scheduleMorning').value.trim(),
+                afternoon: document.getElementById('scheduleAfternoon').value.trim(),
+                days: document.getElementById('scheduleDays').value.trim()
             };
             
             localStorage.setItem('floristeria_schedule', JSON.stringify(schedule));
             showAlert('Horarios actualizados correctamente', 'success');
         }
 
-        function saveSocialLinks() {
-            const social = {
-                facebook: document.getElementById('socialFacebook').value.trim(),
-                instagram: document.getElementById('socialInstagram').value.trim(),
-                tiktok: document.getElementById('socialTiktok').value.trim(),
-                whatsapp: document.getElementById('socialWhatsapp').value.trim()
+        // ============================================
+        // SINCRONIZACIÓN CON DATA.JSON
+        // ============================================
+        
+        function generateDataJson() {
+            // Recopilar todos los datos
+            const allData = {
+                version: "1.0",
+                lastUpdated: new Date().toISOString(),
+                storeConfig: JSON.parse(localStorage.getItem('floristeria_config')) || {},
+                categories: JSON.parse(localStorage.getItem('floristeria_categories')) || [],
+                products: JSON.parse(localStorage.getItem('floristeria_products')) || []
             };
             
-            localStorage.setItem('floristeria_social', JSON.stringify(social));
-            showAlert('Redes sociales actualizadas correctamente', 'success');
+            // Filtrar productos bloqueados (no enviarlos al data.json)
+            allData.products = allData.products.filter(product => !product.blocked);
+            
+            const jsonContent = JSON.stringify(allData, null, 2);
+            
+            // Mostrar en textarea
+            document.getElementById('jsonTextArea').value = jsonContent;
+            document.getElementById('jsonOutput').style.display = 'block';
+            document.getElementById('syncInstructions').classList.remove('hidden');
+            
+            // Scroll al textarea
+            document.getElementById('jsonTextArea').scrollIntoView({ behavior: 'smooth' });
+            
+            showAlert('✅ Código generado. Copia y pega en data.json', 'success');
+        }
+        
+        function copyJsonToClipboard() {
+            const textarea = document.getElementById('jsonTextArea');
+            textarea.select();
+            document.execCommand('copy');
+            showAlert('✅ Código copiado al portapapeles. Ahora pégalo en data.json en GitHub.', 'success');
+        }
+        
+        function showSyncInstructions() {
+            const instructions = document.getElementById('syncInstructions');
+            instructions.classList.toggle('hidden');
+        }
+        
+        function loadSyncStatus() {
+            const products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
+            const blockedProducts = products.filter(p => p.blocked).length;
+            const activeProducts = products.filter(p => !p.blocked).length;
+            
+            const statusDiv = document.getElementById('syncStatus');
+            statusDiv.innerHTML = `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div>
+                        <div style="font-size: 0.9rem; color: var(--gray);">Productos Activos</div>
+                        <div style="font-size: 1.2rem; font-weight: 600; color: var(--success);">${activeProducts}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.9rem; color: var(--gray);">Productos Bloqueados</div>
+                        <div style="font-size: 1.2rem; font-weight: 600; color: var(--danger);">${blockedProducts}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.9rem; color: var(--gray);">En data.json se enviarán</div>
+                        <div style="font-size: 1.2rem; font-weight: 600; color: var(--primary);">${activeProducts} productos</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.9rem; color: var(--gray);">Última sincronización</div>
+                        <div style="font-size: 1.2rem; font-weight: 600; color: var(--info);">${new Date().toLocaleDateString('es-ES')}</div>
+                    </div>
+                </div>
+                <div style="margin-top: 1rem; padding: 0.75rem; background: #f0f8ff; border-radius: var(--radius-sm); font-size: 0.9rem; color: var(--info);">
+                    <i class="fas fa-info-circle"></i> Los productos bloqueados NO se envían a data.json. Solo los clientes verán productos activos.
+                </div>
+            `;
         }
 
         // ============================================
@@ -2598,18 +2881,16 @@ Quiero hacer un pedido:</textarea>
             
             const container = document.getElementById('dataSummary');
             
-            // Calcular tamaños y contar imágenes Base64
+            // Calcular tamaños
             const productsSize = JSON.stringify(products).length;
             const ordersSize = JSON.stringify(orders).length;
             const categoriesSize = JSON.stringify(categories).length;
             const configSize = JSON.stringify(config).length;
             const totalSize = productsSize + ordersSize + categoriesSize + configSize;
             
-            // Contar imágenes Base64
-            const base64Images = products.filter(p => 
-                (p.image && p.image.startsWith('data:image')) || 
-                (p.imagen && p.imagen.startsWith('data:image'))
-            ).length;
+            // Contar productos bloqueados
+            const blockedProducts = products.filter(p => p.blocked).length;
+            const activeProducts = products.length - blockedProducts;
             
             // Calcular porcentaje de uso
             const maxStorage = 5 * 1024 * 1024; // 5MB
@@ -2621,7 +2902,7 @@ Quiero hacer un pedido:</textarea>
             
             if (usagePercent > 80) {
                 usageColor = 'var(--danger)';
-                usageMessage = '⚠️ ALTO - Limpieza automática activada';
+                usageMessage = '⚠️ ALTO - Considera limpiar';
             } else if (usagePercent > 60) {
                 usageColor = 'var(--warning)';
                 usageMessage = '⚠️ Moderado';
@@ -2630,20 +2911,20 @@ Quiero hacer un pedido:</textarea>
             container.innerHTML = `
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                     <div>
-                        <div style="font-size: 0.9rem; color: var(--gray);">Productos</div>
-                        <div style="font-size: 1.1rem; font-weight: 600;">${products.length} (${formatBytes(productsSize)})</div>
+                        <div style="font-size: 0.9rem; color: var(--gray);">Productos Totales</div>
+                        <div style="font-size: 1.1rem; font-weight: 600;">${products.length} (${activeProducts} activos)</div>
                     </div>
                     <div>
-                        <div style="font-size: 0.9rem; color: var(--gray);">Imágenes Locales</div>
-                        <div style="font-size: 1.1rem; font-weight: 600; color: var(--primary);">${base64Images} guardadas</div>
+                        <div style="font-size: 0.9rem; color: var(--gray);">Productos Bloqueados</div>
+                        <div style="font-size: 1.1rem; font-weight: 600; color: ${blockedProducts > 0 ? 'var(--danger)' : 'var(--success)'};">${blockedProducts}</div>
                     </div>
                     <div>
                         <div style="font-size: 0.9rem; color: var(--gray);">Pedidos</div>
-                        <div style="font-size: 1.1rem; font-weight: 600;">${orders.length} (${formatBytes(ordersSize)})</div>
+                        <div style="font-size: 1.1rem; font-weight: 600;">${orders.length}</div>
                     </div>
                     <div>
                         <div style="font-size: 0.9rem; color: var(--gray);">Categorías</div>
-                        <div style="font-size: 1.1rem; font-weight: 600;">${categories.length} (${formatBytes(categoriesSize)})</div>
+                        <div style="font-size: 1.1rem; font-weight: 600;">${categories.length}</div>
                     </div>
                 </div>
                 <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border);">
@@ -2654,18 +2935,13 @@ Quiero hacer un pedido:</textarea>
                     
                     <!-- Barra de progreso -->
                     <div style="height: 10px; background: var(--light); border-radius: 5px; overflow: hidden; margin-bottom: 0.5rem;">
-                        <div style="height: 100%; width: ${usagePercent}%; background: ${usagePercent > 80 ? 'var(--danger)' : usagePercent > 60 ? 'var(--warning)' : 'var(--success)'}; border-radius: 5px; transition: width 0.3s ease;"></div>
+                        <div style="height: 100%; width: ${usagePercent}%; background: ${usageColor}; border-radius: 5px; transition: width 0.3s ease;"></div>
                     </div>
                     
                     <div style="display: flex; justify-content: space-between;">
                         <div style="font-size: 0.85rem; color: var(--gray);">${formatBytes(totalSize)} / 5MB</div>
                         <div style="font-size: 0.85rem; color: var(--gray);">${usagePercent}% utilizado</div>
                     </div>
-                </div>
-                
-                <div style="margin-top: 1rem; padding: 0.75rem; background: var(--light); border-radius: var(--radius-sm); font-size: 0.85rem; color: var(--gray);">
-                    <i class="fas fa-info-circle" style="margin-right: 5px;"></i>
-                    El sistema optimiza automáticamente las imágenes y limpia cuando es necesario.
                 </div>
             `;
         }
@@ -2689,7 +2965,6 @@ Quiero hacer un pedido:</textarea>
                 categories: JSON.parse(localStorage.getItem('floristeria_categories')) || [],
                 config: JSON.parse(localStorage.getItem('floristeria_config')) || {},
                 schedule: JSON.parse(localStorage.getItem('floristeria_schedule')) || {},
-                social: JSON.parse(localStorage.getItem('floristeria_social')) || {},
                 exportDate: new Date().toISOString()
             };
             
@@ -2735,7 +3010,6 @@ Quiero hacer un pedido:</textarea>
                             if (data.categories) localStorage.setItem('floristeria_categories', JSON.stringify(data.categories));
                             if (data.config) localStorage.setItem('floristeria_config', JSON.stringify(data.config));
                             if (data.schedule) localStorage.setItem('floristeria_schedule', JSON.stringify(data.schedule));
-                            if (data.social) localStorage.setItem('floristeria_social', JSON.stringify(data.social));
                             
                             showAlert('Datos importados correctamente', 'success');
                             
@@ -2746,6 +3020,7 @@ Quiero hacer un pedido:</textarea>
                             loadOrders();
                             loadCategoriesForSelect();
                             loadDataSummary();
+                            loadSyncStatus();
                         }
                     } catch (error) {
                         showAlert('Error al importar datos: Archivo JSON inválido', 'error');
@@ -2801,7 +3076,6 @@ Quiero hacer un pedido:</textarea>
                 localStorage.removeItem('floristeria_categories');
                 localStorage.removeItem('floristeria_config');
                 localStorage.removeItem('floristeria_schedule');
-                localStorage.removeItem('floristeria_social');
                 localStorage.removeItem('floristeria_cart');
                 
                 showAlert('Todos los datos han sido eliminados', 'warning');
@@ -2814,6 +3088,7 @@ Quiero hacer un pedido:</textarea>
                     loadOrders();
                     loadCategoriesForSelect();
                     loadDataSummary();
+                    loadSyncStatus();
                 }, 1000);
             }
         }
@@ -2846,7 +3121,8 @@ Quiero hacer un pedido:</textarea>
                         precio: 25000,
                         image: "https://images.unsplash.com/photo-1519378058457-4c29a0a2efac?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
                         imagen: "https://images.unsplash.com/photo-1519378058457-4c29a0a2efac?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                        stock: 10
+                        stock: 10,
+                        blocked: false
                     },
                     {
                         id: 2,
@@ -2860,7 +3136,8 @@ Quiero hacer un pedido:</textarea>
                         precio: 35000,
                         image: "https://images.unsplash.com/photo-1457089328109-e5d9bd499191?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
                         imagen: "https://images.unsplash.com/photo-1457089328109-e5d9bd499191?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                        stock: 5
+                        stock: 5,
+                        blocked: false
                     }
                 ];
                 
@@ -2871,9 +3148,9 @@ Quiero hacer un pedido:</textarea>
                     phoneNumber: "50686053613",
                     address: "Santa Bárbara, Heredia, Costa Rica",
                     email: "ventas@floristeriasantabarbara.com",
-                    shippingCost: 0,
+                    shippingCostPerKm: 650,
                     currency: "₡",
-                    whatsappMessage: "¡Hola Floristería Santa Bárbara! 😊\n\nGracias por comunicarte con nosotros.\n\nQuiero hacer un pedido:"
+                    whatsappMessage: "¡Hola! 😊\n\nGracias por comunicarte con nosotros.\n\nQuiero hacer un pedido:"
                 };
                 
                 // Guardar datos
@@ -2894,6 +3171,7 @@ Quiero hacer un pedido:</textarea>
                     loadCategoriesList();
                     loadCategoriesForSelect();
                     loadDataSummary();
+                    loadSyncStatus();
                 }, 1000);
             }
         }
@@ -2963,14 +3241,21 @@ Quiero hacer un pedido:</textarea>
         window.exportOrders = exportOrders;
         window.saveStoreConfig = saveStoreConfig;
         window.saveSchedule = saveSchedule;
-        window.saveSocialLinks = saveSocialLinks;
         window.updateAdminCredentials = updateAdminCredentials;
         window.exportData = exportData;
         window.importData = importData;
         window.resetData = resetData;
         window.clearAllData = clearAllData;
         window.clearOrders = clearOrders;
-        window.reinstallSystem = resetData; // Alias
+        window.reinstallSystem = resetData;
+        window.toggleProductStatus = toggleProductStatus;
+        window.toggleAllProducts = toggleAllProducts;
+        window.filterProductsList = filterProductsList;
+        window.testProductBlocking = testProductBlocking;
+        window.generateDataJson = generateDataJson;
+        window.copyJsonToClipboard = copyJsonToClipboard;
+        window.showSyncInstructions = showSyncInstructions;
+        window.markAllOrdersAsRead = markAllOrdersAsRead;
     </script>
 </body>
 </html>
