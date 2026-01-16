@@ -1349,6 +1349,18 @@
                             <i class="fas fa-info-circle"></i>
                             El costo de envío se calcula automáticamente: ₡650 por kilómetro desde nuestra ubicación.
                         </div>
+
+                        <!-- NUEVO: Campo para señas específicas -->
+                        <div style="margin-top: 10px;">
+                            <label class="form-label">Señas específicas (detalles adicionales)</label>
+                            <textarea id="addressDetails" class="form-control" rows="2" 
+                                      placeholder="Ejemplo: Casa color azul con portón negro, junto a la pulpería"></textarea>
+                        </div>
+                        
+                        <div class="map-instructions" id="mapInstructions">
+                            <i class="fas fa-info-circle"></i>
+                            El sistema generará automáticamente un enlace de Google Maps con esta dirección.
+                        </div>
                         
                         <!-- Mapa para mostrar ubicación -->
                         <div id="map"></div>
@@ -1842,7 +1854,30 @@
                 // Redondear a múltiplo de 100
                 shippingCost = Math.ceil(shippingCost / 100) * 100;
             }
-            
+            // Mostrar botón de Google Maps si hay dirección
+            const address = document.getElementById('deliveryAddress').value.trim();
+            if (address && map) {
+                // Agregar botón de Google Maps al mapa
+                const mapsButton = document.createElement('div');
+                mapsButton.innerHTML = `
+                    <div style="position: absolute; top: 10px; right: 10px; z-index: 1000;">
+                        <a href="${generateGoogleMapsLink(address)}" target="_blank" 
+                           style="background: #4285F4; color: white; padding: 8px 12px; border-radius: 4px; text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; gap: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+                            <i class="fab fa-google"></i> Abrir en Google Maps
+                        </a>
+                    </div>
+                `;
+                
+                // Remover botón anterior si existe
+                const existingButton = document.querySelector('.google-maps-button');
+                if (existingButton) {
+                    existingButton.remove();
+                }
+                
+                mapsButton.className = 'google-maps-button';
+                document.getElementById('map').appendChild(mapsButton);
+            }
+           
             // Actualizar en la interfaz
             const shippingElement = document.getElementById('cartShipping');
             const distanceElement = document.getElementById('shippingDistance');
@@ -2324,6 +2359,43 @@
         }
 
         // ============================================
+        // GENERADOR DE ENLACE GOOGLE MAPS
+        // ============================================
+        
+        function generateGoogleMapsLink(address) {
+            if (!address || address.trim() === '') {
+                return 'No se proporcionó dirección';
+            }
+            
+            // Codificar la dirección para URL
+            const encodedAddress = encodeURIComponent(address.trim());
+            
+            // Crear enlace de Google Maps
+            const googleMapsLink = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+            
+            return googleMapsLink;
+        }
+        
+        // También puedes agregar un botón de prueba (opcional)
+        function testGoogleMapsLink() {
+            const address = document.getElementById('deliveryAddress').value;
+            if (!address) {
+                showNotification('Escribe una dirección primero', 'warning');
+                return;
+            }
+            
+            const mapsLink = generateGoogleMapsLink(address);
+            showAlert(`
+                <h4>📍 Enlace de Google Maps Generado</h4>
+                <p><strong>Dirección:</strong> ${address}</p>
+                <p><strong>Enlace:</strong> ${mapsLink}</p>
+                <a href="${mapsLink}" target="_blank" style="display: inline-block; margin-top: 10px; padding: 8px 16px; background: #4285F4; color: white; border-radius: 4px; text-decoration: none;">
+                    <i class="fab fa-google"></i> Abrir en Google Maps
+                </a>
+            `, 'info');
+        }
+        
+        // ============================================
         // WHATSAPP INTEGRATION
         // ============================================
 
@@ -2378,9 +2450,16 @@
             message += `• Entrega: ${deliveryType === 'delivery' ? 'A domicilio' : 'Recoger en tienda'}\n`;
             
             if (deliveryType === 'delivery') {
+                const addressDetails = document.getElementById('addressDetails').value.trim();
+                const googleMapsLink = generateGoogleMapsLink(address);
+                
                 message += `• Dirección exacta: ${address}\n`;
-                message += `• Señas (descripción): ${address}\n`;
-                message += `• Ubicación en app: ${address}\n`;
+                
+                if (addressDetails) {
+                    message += `• Señas específicas: ${addressDetails}\n`;
+                }
+                
+                message += `• 📍 Ubicación en Google Maps: ${googleMapsLink}\n`;
             }
             
             message += `• Fecha de entrega: ${new Date(date).toLocaleDateString('es-ES')}\n`;
