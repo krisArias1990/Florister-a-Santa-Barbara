@@ -2596,43 +2596,251 @@
                 return;
             }
             
+            // Función auxiliar para generar enlace Google Maps
+            function generateGoogleMapsLink(address) {
+                if (!address || address.trim() === '') {
+                    return null;
+                }
+                const encodedAddress = encodeURIComponent(address.trim());
+                return `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+            }
+            
             // Construir mensaje detallado
             let message = `📦 *DETALLE DEL PEDIDO ${order.number}*\n\n`;
-            message += `👤 *CLIENTE*\n`;
-            message += `• Nombre: ${order.customerName}\n`;
-            message += `• Teléfono: ${order.customerPhone}\n`;
+            
+            // INFORMACIÓN DE QUIEN RECIBE (nuevos campos)
+            message += `👤 *INFORMACIÓN DE QUIEN RECIBE*\n`;
+            message += `━━━━━━━━━━━━━━━━━━━━\n`;
+            message += `• Nombre completo: ${order.receiverName || order.customerName || 'No especificado'}\n`;
+            message += `• Teléfono: ${order.receiverPhone || order.customerPhone || 'No especificado'}\n`;
             message += `• Tipo de entrega: ${order.deliveryType === 'delivery' ? 'A domicilio' : 'Recoger en tienda'}\n`;
             
             if (order.deliveryType === 'delivery' && order.address) {
-                message += `• Dirección: ${order.address}\n`;
+                message += `• Dirección exacta: ${order.address}\n`;
+                
+                // Mostrar señas específicas si existen
+                if (order.addressDetails) {
+                    message += `• Señas específicas: ${order.addressDetails}\n`;
+                }
+                
+                // Mostrar distancia si existe
                 if (order.distanceKm) {
-                    message += `• Distancia: ${order.distanceKm} km\n`;
+                    message += `• Distancia estimada: ${order.distanceKm} km\n`;
+                }
+                
+                // AGREGAR ENLACE DE GOOGLE MAPS
+                const googleMapsLink = generateGoogleMapsLink(order.address);
+                if (googleMapsLink) {
+                    message += `• 📍 Google Maps: ${googleMapsLink}\n`;
                 }
             }
             
+            // INFORMACIÓN DE QUIEN ENVÍA (nuevos campos)
+            message += `\n👤 *INFORMACIÓN DE QUIEN ENVÍA*\n`;
+            message += `━━━━━━━━━━━━━━━━━━━━\n`;
+            message += `• Nombre completo: ${order.senderName || 'No especificado'}\n`;
+            message += `• Teléfono: ${order.senderPhone || 'No especificado'}\n`;
+            
+            // Fechas y horarios
             const orderDate = new Date(order.timestamp || order.date || new Date());
+            message += `\n📅 *FECHAS Y HORARIOS*\n`;
+            message += `━━━━━━━━━━━━━━━━━━━━\n`;
             message += `• Fecha del pedido: ${orderDate.toLocaleDateString('es-ES')}\n`;
             message += `• Hora del pedido: ${orderDate.toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit'})}\n`;
-            message += `• Fecha de entrega: ${order.date}\n`;
-            message += `• Horario: ${order.time}\n`;
-            message += `• Método de pago: ${order.paymentMethod || 'No especificado'}\n\n`;
+            message += `• Fecha de entrega: ${order.date || 'No especificada'}\n`;
+            message += `• Horario: ${order.time || 'No especificado'}\n`;
+            message += `• Método de pago: ${order.paymentMethod || 'No especificado'}\n`;
             
-            message += `🛍️ *PRODUCTOS*\n`;
+            // Mensaje en tarjeta si existe
+            if (order.cardMessage && order.cardMessage.trim() !== '') {
+                message += `\n💌 *MENSAJE EN TARJETA*\n`;
+                message += `━━━━━━━━━━━━━━━━━━━━\n`;
+                message += `${order.cardMessage}\n`;
+            }
+            
+            // Productos
+            message += `\n🛍️ *PRODUCTOS SOLICITADOS*\n`;
+            message += `━━━━━━━━━━━━━━━━━━━━\n`;
             if (order.items && order.items.length > 0) {
                 order.items.forEach((item, index) => {
                     message += `${index + 1}. ${item.name} x${item.quantity}\n`;
                     message += `   ₡${item.price.toLocaleString()} c/u\n`;
+                    message += `   Subtotal: ₡${(item.price * item.quantity).toLocaleString()}\n`;
+                    
+                    // Mostrar imagen si existe (solo si es URL)
+                    if (item.image && item.image.startsWith('http')) {
+                        message += `   👁️ Ver: ${item.image}\n`;
+                    }
+                    message += `\n`;
                 });
+            } else {
+                message += `No hay productos registrados\n`;
             }
             
-            message += `\n💰 *TOTAL*\n`;
+            // Resumen de pago
+            message += `💰 *RESUMEN DE PAGO*\n`;
+            message += `━━━━━━━━━━━━━━━━━━━━\n`;
             message += `• Subtotal: ₡${order.subtotal.toLocaleString()}\n`;
             message += `• Envío: ₡${order.shipping.toLocaleString()}\n`;
-            message += `• *Total: ₡${order.total.toLocaleString()}*\n\n`;
+            message += `• *TOTAL A PAGAR: ₡${order.total.toLocaleString()}*\n\n`;
             
-            if (order.notes) {
-                message += `📋 *NOTAS*\n${order.notes}\n\n`;
+            // Notas adicionales
+            if (order.notes && order.notes.trim() !== '') {
+                message += `📋 *NOTAS ADICIONALES*\n`;
+                message += `━━━━━━━━━━━━━━━━━━━━\n`;
+                message += `${order.notes}\n\n`;
             }
+            
+            // Estado del pedido
+            const status = order.status || 'pending';
+            const statusText = status === 'confirmed' ? '✅ CONFIRMADO' : 
+                             status === 'completed' ? '✅ COMPLETADO' : '⏳ PENDIENTE';
+            
+            message += `📊 *ESTADO DEL PEDIDO*\n`;
+            message += `━━━━━━━━━━━━━━━━━━━━\n`;
+            message += `${statusText}\n\n`;
+            
+            // Generar enlace Google Maps para el botón
+            const googleMapsLink = order.address ? generateGoogleMapsLink(order.address) : null;
+            
+            // Crear HTML para mostrar
+            let detailsHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="color: var(--primary); margin: 0;">📦 Pedido ${order.number}</h3>
+                    <button onclick="this.parentElement.parentElement.remove()" style="background: var(--danger); color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer;">×</button>
+                </div>
+                
+                <div style="display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 200px;">
+                        <div style="background: #e8f5e9; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+                            <strong style="color: var(--success);">👤 QUIEN RECIBE</strong>
+                            <div>${order.receiverName || order.customerName || 'No especificado'}</div>
+                            <div>📞 ${order.receiverPhone || order.customerPhone || 'No especificado'}</div>
+                        </div>
+                    </div>
+                    
+                    <div style="flex: 1; min-width: 200px;">
+                        <div style="background: #e3f2fd; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+                            <strong style="color: var(--info);">👤 QUIEN ENVÍA</strong>
+                            <div>${order.senderName || 'No especificado'}</div>
+                            <div>📞 ${order.senderPhone || 'No especificado'}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Agregar sección de entrega si es a domicilio
+            if (order.deliveryType === 'delivery' && order.address) {
+                detailsHTML += `
+                    <div style="background: #fff3e0; padding: 12px; border-radius: 5px; margin-bottom: 15px;">
+                        <strong style="color: var(--warning);">🚚 ENTREGA A DOMICILIO</strong>
+                        <div style="margin-top: 8px;">
+                            <div><strong>📍 Dirección:</strong> ${order.address}</div>
+                `;
+                
+                if (order.addressDetails) {
+                    detailsHTML += `<div><strong>📝 Señas:</strong> ${order.addressDetails}</div>`;
+                }
+                
+                if (order.distanceKm) {
+                    detailsHTML += `<div><strong>📏 Distancia:</strong> ${order.distanceKm} km</div>`;
+                }
+                
+                // BOTÓN DE GOOGLE MAPS
+                if (googleMapsLink) {
+                    detailsHTML += `
+                        <div style="margin-top: 10px;">
+                            <a href="${googleMapsLink}" target="_blank" 
+                               style="background: #4285F4; color: white; padding: 8px 15px; border-radius: 4px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-size: 0.9rem;">
+                                <i class="fab fa-google"></i> Ver en Google Maps
+                            </a>
+                        </div>
+                    `;
+                }
+                
+                detailsHTML += `</div></div>`;
+            }
+            
+            // Agregar mensaje en tarjeta si existe
+            if (order.cardMessage && order.cardMessage.trim() !== '') {
+                detailsHTML += `
+                    <div style="background: #fce4ec; padding: 12px; border-radius: 5px; margin-bottom: 15px;">
+                        <strong style="color: var(--primary);">💌 MENSAJE EN TARJETA</strong>
+                        <div style="margin-top: 8px; white-space: pre-wrap; font-style: italic;">${order.cardMessage}</div>
+                    </div>
+                `;
+            }
+            
+            // Agregar productos
+            detailsHTML += `
+                <div style="background: #f5f5f5; padding: 12px; border-radius: 5px; margin-bottom: 15px;">
+                    <strong style="color: var(--dark);">🛍️ PRODUCTOS (${order.items ? order.items.length : 0})</strong>
+            `;
+            
+            if (order.items && order.items.length > 0) {
+                order.items.forEach((item, index) => {
+                    detailsHTML += `
+                        <div style="margin-top: 10px; padding: 8px; background: white; border-radius: 4px;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <strong>${index + 1}. ${item.name}</strong>
+                                <span style="color: var(--success); font-weight: bold;">₡${item.price.toLocaleString()}</span>
+                            </div>
+                            <div style="color: var(--gray); font-size: 0.9rem;">
+                                Cantidad: ${item.quantity} | Subtotal: ₡${(item.price * item.quantity).toLocaleString()}
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                detailsHTML += `<div style="margin-top: 10px; color: var(--gray);">No hay productos</div>`;
+            }
+            
+            detailsHTML += `</div>`;
+            
+            // Agregar resumen de pago
+            detailsHTML += `
+                <div style="background: #e8f5e9; padding: 12px; border-radius: 5px; margin-bottom: 15px;">
+                    <strong style="color: var(--success);">💰 RESUMEN DE PAGO</strong>
+                    <div style="margin-top: 10px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span>Subtotal:</span>
+                            <span>₡${order.subtotal.toLocaleString()}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span>Envío:</span>
+                            <span>₡${order.shipping.toLocaleString()}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.1rem; border-top: 2px solid var(--success); padding-top: 8px;">
+                            <span>TOTAL:</span>
+                            <span>₡${order.total.toLocaleString()}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Agregar notas si existen
+            if (order.notes && order.notes.trim() !== '') {
+                detailsHTML += `
+                    <div style="background: #e3f2fd; padding: 12px; border-radius: 5px; margin-bottom: 15px;">
+                        <strong style="color: var(--info);">📋 NOTAS ADICIONALES</strong>
+                        <div style="margin-top: 8px; white-space: pre-wrap;">${order.notes}</div>
+                    </div>
+                `;
+            }
+            
+            // Agregar estado del pedido
+            const statusColor = order.status === 'confirmed' ? 'var(--success)' : 
+                               order.status === 'completed' ? 'var(--info)' : 'var(--warning)';
+            const statusDisplay = order.status === 'confirmed' ? '✅ CONFIRMADO' : 
+                                 order.status === 'completed' ? '✅ COMPLETADO' : '⏳ PENDIENTE';
+            
+            detailsHTML += `
+                <div style="background: ${order.status === 'confirmed' ? '#d4edda' : order.status === 'completed' ? '#d1ecf1' : '#fff3cd'}; 
+                            padding: 12px; border-radius: 5px; margin-bottom: 20px; border-left: 4px solid ${statusColor};">
+                    <strong style="color: ${statusColor};">📊 ESTADO DEL PEDIDO</strong>
+                    <div style="margin-top: 8px; font-weight: bold; font-size: 1.1rem;">${statusDisplay}</div>
+                </div>
+            `;
             
             // Mostrar en alerta con scroll
             const alertDiv = document.createElement('div');
@@ -2641,24 +2849,41 @@
             alertDiv.style.left = '50%';
             alertDiv.style.transform = 'translate(-50%, -50%)';
             alertDiv.style.width = '90%';
-            alertDiv.style.maxWidth = '600px';
-            alertDiv.style.maxHeight = '80vh';
+            alertDiv.style.maxWidth = '800px'; // Más ancho para mejor visualización
+            alertDiv.style.maxHeight = '85vh';
             alertDiv.style.overflow = 'auto';
             alertDiv.style.background = 'white';
-            alertDiv.style.padding = '20px';
+            alertDiv.style.padding = '25px';
             alertDiv.style.borderRadius = 'var(--radius)';
-            alertDiv.style.boxShadow = '0 5px 30px rgba(0,0,0,0.3)';
+            alertDiv.style.boxShadow = '0 10px 40px rgba(0,0,0,0.3)';
             alertDiv.style.zIndex = '3000';
+            alertDiv.style.fontFamily = "'Open Sans', sans-serif";
             
             alertDiv.innerHTML = `
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <h3 style="color: var(--primary); margin: 0;">Detalles del Pedido</h3>
-                    <button onclick="this.parentElement.parentElement.remove()" style="background: var(--danger); color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer;">×</button>
-                </div>
-                <div style="white-space: pre-wrap; font-family: monospace; font-size: 0.9rem; background: #f8f9fa; padding: 15px; border-radius: 5px; max-height: 60vh; overflow: auto;">${message}</div>
-                <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: flex-end;">
-                    <button onclick="this.parentElement.parentElement.parentElement.remove()" style="padding: 8px 16px; background: var(--gray); color: white; border: none; border-radius: var(--radius-sm); cursor: pointer;">Cerrar</button>
-                    <button onclick="copyToClipboard('${message.replace(/'/g, "\\'")}'); this.parentElement.parentElement.parentElement.remove(); showAlert('Detalles copiados al portapapeles', 'success')" style="padding: 8px 16px; background: var(--primary); color: white; border: none; border-radius: var(--radius-sm); cursor: pointer;">📋 Copiar</button>
+                ${detailsHTML}
+                
+                <div style="display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);">
+                    <button onclick="this.parentElement.parentElement.remove()" 
+                            style="padding: 10px 20px; background: var(--gray); color: white; border: none; border-radius: var(--radius-sm); cursor: pointer; font-weight: 600;">
+                        <i class="fas fa-times"></i> Cerrar
+                    </button>
+                    
+                    ${googleMapsLink ? `
+                        <a href="${googleMapsLink}" target="_blank" 
+                           style="padding: 10px 20px; background: #4285F4; color: white; border: none; border-radius: var(--radius-sm); cursor: pointer; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+                            <i class="fab fa-google"></i> Google Maps
+                        </a>
+                    ` : ''}
+                    
+                    <button onclick="copyToClipboard('${message.replace(/'/g, "\\'")}'); showAlert('✅ Detalles del pedido copiados al portapapeles', 'success')" 
+                            style="padding: 10px 20px; background: var(--primary); color: white; border: none; border-radius: var(--radius-sm); cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-copy"></i> Copiar para WhatsApp
+                    </button>
+                    
+                    <button onclick="updateOrderStatus('${order.number || orderId}', 'confirmed'); this.parentElement.parentElement.remove();" 
+                            style="padding: 10px 20px; background: var(--success); color: white; border: none; border-radius: var(--radius-sm); cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-check"></i> Marcar como Confirmado
+                    </button>
                 </div>
             `;
             
