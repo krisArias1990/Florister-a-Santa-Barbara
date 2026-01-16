@@ -1305,12 +1305,23 @@
                     
                     <div class="form-row">
                         <div class="form-group">
-                            <label class="form-label">Nombre completo *</label>
-                            <input type="text" id="customerName" class="form-control" placeholder="Tu nombre" required>
+                            <label class="form-label">👤 Nombre de QUIEN RECIBE *</label>
+                            <input type="text" id="receiverName" class="form-control" placeholder="Nombre y apellidos de quien recibe" required>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Teléfono *</label>
-                            <input type="tel" id="customerPhone" class="form-control" placeholder="8888-8888" required>
+                            <label class="form-label">📞 Teléfono de QUIEN RECIBE *</label>
+                            <input type="tel" id="receiverPhone" class="form-control" placeholder="8888-8888" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">👤 Nombre de QUIEN ENVÍA *</label>
+                            <input type="text" id="senderName" class="form-control" placeholder="Tu nombre y apellidos" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">📞 Teléfono de QUIEN ENVÍA *</label>
+                            <input type="tel" id="senderPhone" class="form-control" placeholder="8888-8888" required>
                         </div>
                     </div>
 
@@ -1341,6 +1352,16 @@
                         
                         <!-- Mapa para mostrar ubicación -->
                         <div id="map"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">💌 Mensaje en tarjeta (opcional - máximo 4 líneas)</label>
+                        <textarea id="cardMessage" class="form-control" rows="4" 
+                                  placeholder="Ejemplo: Feliz cumpleaños querida amiga. Que tengas un día maravilloso. Te queremos mucho. Con cariño, tu familia."
+                                  maxlength="200"></textarea>
+                        <small style="color: var(--gray); display: block; margin-top: 0.25rem;">
+                            <i class="fas fa-info-circle"></i> Máximo 4 líneas. Se incluirá en la tarjeta que acompaña el arreglo.
+                        </small>
                     </div>
 
                     <div class="form-row">
@@ -1473,11 +1494,15 @@
                 </div>
                 
                 <div class="footer-section">
-                    <h3><i class="fas fa-clock"></i> Horarios</h3>
+                    <h3><i class="fas fa-clock"></i> Horarios de Atención</h3>
                     <ul>
-                        <li><strong>Lunes a Viernes:</strong> 8:00 AM - 7:00 PM</li>
-                        <li><strong>Sábados:</strong> 8:00 AM - 7:00 PM</li>
-                        <li><strong>Domingos:</strong> Cerrado</li>
+                        <li><strong>Lunes a Viernes:</strong> 9:00 AM - 7:00 PM</li>
+                        <li><strong>Sábados:</strong> 9:30 AM - 7:00 PM</li>
+                        <li><strong>Almuerzo:</strong> 12:30 PM - 1:30 PM</li>
+                        <li><strong>Domingos:</strong> <span style="color: var(--danger);">CERRADO</span></li>
+                        <li style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
+                            <strong style="color: var(--primary);">🚚 Servicio a Domicilio Disponible</strong>
+                        </li>
                     </ul>
                 </div>
                 
