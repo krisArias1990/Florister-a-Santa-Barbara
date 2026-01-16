@@ -2329,16 +2329,20 @@
 
         function sendWhatsAppOrder() {
             // Validar formulario
-            const name = document.getElementById('customerName').value.trim();
-            const phone = document.getElementById('customerPhone').value.trim();
+            const receiverName = document.getElementById('receiverName').value.trim();
+            const receiverPhone = document.getElementById('receiverPhone').value.trim();
+            const senderName = document.getElementById('senderName').value.trim();
+            const senderPhone = document.getElementById('senderPhone').value.trim();
             const deliveryType = document.querySelector('input[name="deliveryType"]:checked').value;
             const address = document.getElementById('deliveryAddress').value.trim();
             const date = document.getElementById('deliveryDate').value;
             const time = document.getElementById('deliveryTime').value;
+            const cardMessage = document.getElementById('cardMessage').value.trim();
             const notes = document.getElementById('orderNotes').value.trim();
             
             // Validaciones
-            if (!name || !phone || (deliveryType === 'delivery' && !address) || !date || !time) {
+            if (!receiverName || !receiverPhone || !senderName || !senderPhone || 
+                (deliveryType === 'delivery' && !address) || !date || !time) {
                 showNotification('Por favor complete todos los campos requeridos (*)', 'error');
                 return;
             }
@@ -2359,6 +2363,7 @@
             const orderTime = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
             
             // Construir mensaje
+            // Construir mensaje profesional CON IMÁGENES
             let message = `${storeConfig.whatsappMessage}\n\n`;
             message += `🛍️ *DETALLE DEL PEDIDO*\n`;
             message += `━━━━━━━━━━━━━━━━━━━━\n`;
@@ -2366,19 +2371,32 @@
             message += `🗓️ Fecha del pedido: ${orderDate}\n`;
             message += `🕐 Hora del pedido: ${orderTime}\n\n`;
             
-            message += `👤 *INFORMACIÓN DEL CLIENTE*\n`;
+            message += `👤 *INFORMACIÓN DE QUIEN RECIBE*\n`;
             message += `━━━━━━━━━━━━━━━━━━━━\n`;
-            message += `• Nombre: ${name}\n`;
-            message += `• Teléfono: ${phone}\n`;
+            message += `• Nombre completo: ${receiverName}\n`;
+            message += `• Teléfono: ${receiverPhone}\n`;
             message += `• Entrega: ${deliveryType === 'delivery' ? 'A domicilio' : 'Recoger en tienda'}\n`;
             
             if (deliveryType === 'delivery') {
-                message += `• Dirección: ${address}\n`;
-                message += `• Distancia estimada: ${distanceKm} km\n`;
+                message += `• Dirección exacta: ${address}\n`;
+                message += `• Señas (descripción): ${address}\n`;
+                message += `• Ubicación en app: ${address}\n`;
             }
             
             message += `• Fecha de entrega: ${new Date(date).toLocaleDateString('es-ES')}\n`;
             message += `• Horario: ${time}\n\n`;
+            
+            message += `👤 *INFORMACIÓN DE QUIEN ENVÍA*\n`;
+            message += `━━━━━━━━━━━━━━━━━━━━\n`;
+            message += `• Nombre completo: ${senderName}\n`;
+            message += `• Teléfono: ${senderPhone}\n\n`;
+            
+            // Mensaje en tarjeta
+            if (cardMessage && cardMessage.trim() !== '') {
+                message += `💌 *MENSAJE EN TARJETA*\n`;
+                message += `━━━━━━━━━━━━━━━━━━━━\n`;
+                message += `${cardMessage}\n\n`;
+            }
 
             message += `📝 *PRODUCTOS SOLICITADOS*\n`;
             message += `━━━━━━━━━━━━━━━━━━━━\n`;
@@ -2467,13 +2485,16 @@
             // Guardar pedido en historial
             saveOrderToHistory({
                 number: orderNumber,
-                customerName: name,
-                customerPhone: phone,
+                receiverName: receiverName,
+                receiverPhone: receiverPhone,
+                senderName: senderName,
+                senderPhone: senderPhone,
                 deliveryType: deliveryType,
                 address: address,
                 distanceKm: distanceKm,
                 date: date,
                 time: time,
+                cardMessage: cardMessage,
                 paymentMethod: selectedPayment,
                 items: cart.map(item => ({
                     name: item.name,
