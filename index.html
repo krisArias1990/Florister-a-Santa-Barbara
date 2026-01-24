@@ -1884,6 +1884,7 @@
                 // Redondear a múltiplo de 100
                 shippingCost = Math.ceil(shippingCost / 100) * 100;
             }
+            
             // Mostrar botón de Google Maps si hay dirección
             const address = document.getElementById('deliveryAddress').value.trim();
             if (address && map) {
@@ -2160,7 +2161,7 @@
         }
 
         // ============================================
-        // CARRITO DE COMPRAS
+        // CARRITO DE COMPRAS - FUNCIONES CORREGIDAS
         // ============================================
 
         function updateCartCount() {
@@ -2361,6 +2362,10 @@
             showNotification('Producto eliminado del carrito');
         }
 
+        // ============================================
+        // FUNCIÓN CLEARCART() CORREGIDA
+        // ============================================
+        
         function clearCart() {
             if (cart.length === 0) {
                 showNotification('El carrito ya está vacío', 'warning');
@@ -2368,11 +2373,25 @@
             }
             
             if (confirm('¿Estás seguro de que deseas vaciar todo el carrito?')) {
+                // 1. Vaciar el array del carrito
                 cart = [];
+                
+                // 2. Eliminar del localStorage
                 localStorage.removeItem('floristeria_cart');
+                
+                // 3. Actualizar contador del carrito
                 updateCartCount();
+                
+                // 4. Recargar los items del carrito en la interfaz
                 loadCartItems();
-                showNotification('Carrito vaciado correctamente');
+                
+                // 5. Cerrar el modal del carrito
+                closeCart();
+                
+                // 6. Mostrar notificación
+                showNotification('Carrito vaciado correctamente', 'success');
+                
+                console.log("✅ Carrito limpiado correctamente");
             }
         }
 
@@ -2405,28 +2424,9 @@
             
             return googleMapsLink;
         }
-        
-        // También puedes agregar un botón de prueba (opcional)
-        function testGoogleMapsLink() {
-            const address = document.getElementById('deliveryAddress').value;
-            if (!address) {
-                showNotification('Escribe una dirección primero', 'warning');
-                return;
-            }
-            
-            const mapsLink = generateGoogleMapsLink(address);
-            showAlert(`
-                <h4>📍 Enlace de Google Maps Generado</h4>
-                <p><strong>Dirección:</strong> ${address}</p>
-                <p><strong>Enlace:</strong> ${mapsLink}</p>
-                <a href="${mapsLink}" target="_blank" style="display: inline-block; margin-top: 10px; padding: 8px 16px; background: #4285F4; color: white; border-radius: 4px; text-decoration: none;">
-                    <i class="fab fa-google"></i> Abrir en Google Maps
-                </a>
-            `, 'info');
-        }
-        
+
         // ============================================
-        // WHATSAPP INTEGRATION
+        // FUNCIÓN sendWhatsAppOrder() CORREGIDA
         // ============================================
 
         function sendWhatsAppOrder() {
@@ -2459,13 +2459,25 @@
                 return;
             }
             
+            // Guardar temporalmente el carrito ANTES de limpiarlo
+            const cartCopy = [...cart];
+            const subtotal = cart.reduce((sum, item) => sum + ((parseFloat(item.price) || 0) * item.quantity), 0);
+            const shippingCostPerKm = storeConfig.shippingCostPerKm || 650;
+            let shipping = 0;
+            
+            if (deliveryType === 'delivery' && distanceKm > 0) {
+                shipping = Math.round(distanceKm * shippingCostPerKm);
+                shipping = Math.ceil(shipping / 100) * 100;
+            }
+            
+            const total = subtotal + shipping;
+            
             // Generar número de pedido
             const orderNumber = 'PED-' + new Date().getTime().toString().slice(-8);
             const orderDate = new Date().toLocaleDateString('es-ES');
             const orderTime = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
             
             // Construir mensaje
-            // Construir mensaje profesional CON IMÁGENES
             let message = `${storeConfig.whatsappMessage}\n\n`;
             message += `🛍️ *DETALLE DEL PEDIDO*\n`;
             message += `━━━━━━━━━━━━━━━━━━━━\n`;
@@ -2510,7 +2522,7 @@
             message += `📝 *PRODUCTOS SOLICITADOS*\n`;
             message += `━━━━━━━━━━━━━━━━━━━━\n`;
             
-            cart.forEach((item, index) => {
+            cartCopy.forEach((item, index) => {
                 message += `${index + 1}. *${item.name}*\n`;
                 message += `   Cantidad: ${item.quantity}\n`;
                 message += `   Precio unitario: ${storeConfig.currency || '₡'}${(parseFloat(item.price) || 0).toLocaleString('es-CR')}\n`;
@@ -2522,35 +2534,8 @@
                 message += `\n`;
             });
             
-            // Sección de imágenes
-            if (cart.some(item => item.image)) {
-                message += `\n🖼️ *IMÁGENES DE LOS PRODUCTOS:*\n`;
-                message += `━━━━━━━━━━━━━━━━━━━━\n`;
-                
-                cart.forEach((item, index) => {
-                    if (item.image) {
-                        if (item.image.startsWith('http') || item.image.startsWith('data:image')) {
-                            message += `📸 *${item.name}:*\n`;
-                            message += `${item.image}\n\n`;
-                        }
-                    }
-                });
-            }
-            
             message += `💰 *RESUMEN DE PAGO*\n`;
             message += `━━━━━━━━━━━━━━━━━━━━\n`;
-            
-            const subtotal = cart.reduce((sum, item) => sum + ((parseFloat(item.price) || 0) * item.quantity), 0);
-            const shippingCostPerKm = storeConfig.shippingCostPerKm || 650;
-            let shipping = 0;
-            
-            if (deliveryType === 'delivery' && distanceKm > 0) {
-                shipping = Math.round(distanceKm * shippingCostPerKm);
-                shipping = Math.ceil(shipping / 100) * 100;
-            }
-            
-            const total = subtotal + shipping;
-            
             message += `• Subtotal: ${storeConfig.currency || '₡'}${subtotal.toLocaleString('es-CR')}\n`;
             if (shipping > 0) {
                 message += `• Costo de envío: ${storeConfig.currency || '₡'}${shipping.toLocaleString('es-CR')} (${distanceKm} km × ₡${shippingCostPerKm}/km)\n`;
@@ -2591,7 +2576,7 @@
             const encodedMessage = encodeURIComponent(message);
             const whatsappUrl = `https://wa.me/${storeConfig.phoneNumber}?text=${encodedMessage}`;
             
-            // Guardar pedido en historial
+            // 🔥 PRIMERO: Guardar pedido en historial
             saveOrderToHistory({
                 number: orderNumber,
                 receiverName: receiverName,
@@ -2605,7 +2590,7 @@
                 time: time,
                 cardMessage: cardMessage,
                 paymentMethod: selectedPayment,
-                items: cart.map(item => ({
+                items: cartCopy.map(item => ({
                     name: item.name,
                     quantity: item.quantity,
                     price: parseFloat(item.price) || 0,
@@ -2618,16 +2603,27 @@
                 timestamp: new Date().toISOString()
             });
             
-            // Limpiar carrito
-            cart = [];
-            localStorage.removeItem('floristeria_cart');
-            updateCartCount();
-            closeCart();
+            // 🔥 SEGUNDO: Limpiar el carrito usando la función clearCart()
+            clearCart();
             
-            // Abrir WhatsApp
+            // 🔥 TERCERO: Limpiar campos del formulario
+            setTimeout(() => {
+                document.getElementById('receiverName').value = '';
+                document.getElementById('receiverPhone').value = '';
+                document.getElementById('senderName').value = '';
+                document.getElementById('senderPhone').value = '';
+                document.getElementById('deliveryAddress').value = '';
+                document.getElementById('addressDetails').value = '';
+                document.getElementById('cardMessage').value = '';
+                document.getElementById('deliveryDate').value = tomorrow.toISOString().split('T')[0];
+                document.getElementById('deliveryTime').value = '';
+                document.getElementById('orderNotes').value = '';
+            }, 100);
+            
+            // 🔥 CUARTO: Abrir WhatsApp en una nueva pestaña
             window.open(whatsappUrl, '_blank');
             
-            // Mostrar confirmación
+            // 🔥 QUINTO: Mostrar confirmación
             showNotification('¡Pedido enviado por WhatsApp! Revisa tu chat para confirmar.', 'success');
         }
 
@@ -2674,6 +2670,7 @@
         window.addToCart = addToCart;
         window.updateQuantity = updateQuantity;
         window.removeFromCart = removeFromCart;
+        window.clearCart = clearCart; // ¡Ahora está disponible!
         window.openImageModal = openImageModal;
         window.closeImageModal = closeImageModal;
         window.selectPayment = selectPayment;
