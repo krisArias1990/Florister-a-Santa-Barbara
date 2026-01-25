@@ -1561,110 +1561,16 @@
         let editingCategoryIndex = null;
 
         // ============================================
-        // SISTEMA DE BLOQUEO/DESBLOQUEO DE PRODUCTOS
-        // ============================================
-        
-        function toggleProductStatus(productId) {
-            let products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
-            const productIndex = products.findIndex(p => p.id == productId);
-            
-            if (productIndex === -1) return;
-            
-            // Cambiar estado
-            products[productIndex].blocked = !products[productIndex].blocked;
-            
-            // Guardar cambios
-            localStorage.setItem('floristeria_products', JSON.stringify(products));
-            
-            // Mostrar notificación
-            const productName = products[productIndex].nombre || products[productIndex].name;
-            if (products[productIndex].blocked) {
-                showAlert(`🔒 Producto "${productName}" BLOQUEADO. No aparecerá en el catálogo.`, 'warning');
-            } else {
-                showAlert(`✅ Producto "${productName}" DESBLOQUEADO. Ya está disponible para venta.`, 'success');
-            }
-            
-            // Recargar lista
-            loadProductsList();
-            loadDashboardStats();
-        }
-        
-        function toggleAllProducts(action) {
-            let products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
-            
-            if (products.length === 0) {
-                showAlert('No hay productos para modificar', 'warning');
-                return;
-            }
-            
-            const confirmMessage = action === 'block' 
-                ? `¿Bloquear TODOS los productos (${products.length})? No aparecerán en el catálogo.`
-                : `¿Desbloquear TODOS los productos (${products.length})? Volverán a aparecer en el catálogo.`;
-            
-            if (!confirm(confirmMessage)) return;
-            
-            // Cambiar estado de todos los productos
-            products.forEach(product => {
-                product.blocked = (action === 'block');
-            });
-            
-            // Guardar cambios
-            localStorage.setItem('floristeria_products', JSON.stringify(products));
-            
-            // Mostrar notificación
-            if (action === 'block') {
-                showAlert(`🔒 ${products.length} productos BLOQUEADOS. No aparecerán en el catálogo.`, 'warning');
-            } else {
-                showAlert(`✅ ${products.length} productos DESBLOQUEADOS. Ya están disponibles para venta.`, 'success');
-            }
-            
-            // Recargar lista
-            loadProductsList();
-            loadDashboardStats();
-        }
-        
-        function filterProductsList() {
-            const filter = document.getElementById('productFilter').value;
-            const products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
-            const container = document.getElementById('productsList');
-            
-            if (products.length === 0) return;
-            
-            let filteredProducts = products;
-            
-            switch(filter) {
-                case 'active':
-                    filteredProducts = products.filter(p => !p.blocked);
-                    break;
-                case 'blocked':
-                    filteredProducts = products.filter(p => p.blocked);
-                    break;
-                // 'all' - muestra todos
-            }
-            
-            // Mostrar productos filtrados
-            renderProductsList(filteredProducts);
-        }
-        
-        function testProductBlocking() {
-            showAlert(`
-                <h4>🔒 Sistema de Bloqueo de Productos</h4>
-                <p>Cuando bloqueas un producto:</p>
-                <ul style="text-align: left; margin: 10px 0;">
-                    <li>En el catálogo principal aparecerá <strong>sombreado/opaco</strong></li>
-                    <li>Los clientes NO podrán agregarlo al carrito</li>
-                    <li>Aparecerá con una etiqueta "NO DISPONIBLE"</li>
-                    <li>En el admin se verá con un fondo gris y texto "BLOQUEADO"</li>
-                </ul>
-                <p>Perfecto para temporadas sin disponibilidad de flores.</p>
-            `, 'info');
-        }
-
-        // ============================================
         // INICIALIZACIÓN
         // ============================================
 
         document.addEventListener('DOMContentLoaded', function() {
+            // Cargar credenciales guardadas si existen
+            const savedAdminData = JSON.parse(localStorage.getItem('floristeria_admin_data'));
+            if (savedAdminData) {
+                adminData = savedAdminData;
+            }
+            
             // Verificar si ya está logueado
             if (localStorage.getItem('floristeria_admin_logged') === 'true') {
                 showAdminPanel();
@@ -1743,10 +1649,16 @@
             const code = document.getElementById('adminCode').value;
             const errorMessage = document.getElementById('errorMessage');
             
+            // Primero intenta cargar credenciales actualizadas del localStorage
+            const savedAdminData = JSON.parse(localStorage.getItem('floristeria_admin_data'));
+            
+            // Usar credenciales guardadas o las por defecto
+            const currentAdminData = savedAdminData || adminData;
+            
             // Validar credenciales
-            if (email === adminData.email && 
-                password === adminData.password && 
-                code === adminData.code) {
+            if (email === currentAdminData.email && 
+                password === currentAdminData.password && 
+                code === currentAdminData.code) {
                 
                 // Guardar estado de login
                 localStorage.setItem('floristeria_admin_logged', 'true');
@@ -2200,11 +2112,11 @@
                                 </button>
                             </div>
                         </td>
-                    </tr
-                                    });
-                
-                container.innerHTML = html;
-            }
+                    </tr>
+                `;
+            });
+            
+            container.innerHTML = html;
         }
 
         function editProduct(id) {
@@ -2276,6 +2188,106 @@
                 loadProductsList();
                 loadDashboardStats();
             }
+        }
+
+        // ============================================
+        // SISTEMA DE BLOQUEO/DESBLOQUEO DE PRODUCTOS
+        // ============================================
+        
+        function toggleProductStatus(productId) {
+            let products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
+            const productIndex = products.findIndex(p => p.id == productId);
+            
+            if (productIndex === -1) return;
+            
+            // Cambiar estado
+            products[productIndex].blocked = !products[productIndex].blocked;
+            
+            // Guardar cambios
+            localStorage.setItem('floristeria_products', JSON.stringify(products));
+            
+            // Mostrar notificación
+            const productName = products[productIndex].nombre || products[productIndex].name;
+            if (products[productIndex].blocked) {
+                showAlert(`🔒 Producto "${productName}" BLOQUEADO. No aparecerá en el catálogo.`, 'warning');
+            } else {
+                showAlert(`✅ Producto "${productName}" DESBLOQUEADO. Ya está disponible para venta.`, 'success');
+            }
+            
+            // Recargar lista
+            loadProductsList();
+            loadDashboardStats();
+        }
+        
+        function toggleAllProducts(action) {
+            let products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
+            
+            if (products.length === 0) {
+                showAlert('No hay productos para modificar', 'warning');
+                return;
+            }
+            
+            const confirmMessage = action === 'block' 
+                ? `¿Bloquear TODOS los productos (${products.length})? No aparecerán en el catálogo.`
+                : `¿Desbloquear TODOS los productos (${products.length})? Volverán a aparecer en el catálogo.`;
+            
+            if (!confirm(confirmMessage)) return;
+            
+            // Cambiar estado de todos los productos
+            products.forEach(product => {
+                product.blocked = (action === 'block');
+            });
+            
+            // Guardar cambios
+            localStorage.setItem('floristeria_products', JSON.stringify(products));
+            
+            // Mostrar notificación
+            if (action === 'block') {
+                showAlert(`🔒 ${products.length} productos BLOQUEADOS. No aparecerán en el catálogo.`, 'warning');
+            } else {
+                showAlert(`✅ ${products.length} productos DESBLOQUEADOS. Ya están disponibles para venta.`, 'success');
+            }
+            
+            // Recargar lista
+            loadProductsList();
+            loadDashboardStats();
+        }
+        
+        function filterProductsList() {
+            const filter = document.getElementById('productFilter').value;
+            const products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
+            const container = document.getElementById('productsList');
+            
+            if (products.length === 0) return;
+            
+            let filteredProducts = products;
+            
+            switch(filter) {
+                case 'active':
+                    filteredProducts = products.filter(p => !p.blocked);
+                    break;
+                case 'blocked':
+                    filteredProducts = products.filter(p => p.blocked);
+                    break;
+                // 'all' - muestra todos
+            }
+            
+            // Mostrar productos filtrados
+            renderProductsList(filteredProducts);
+        }
+        
+        function testProductBlocking() {
+            showAlert(`
+                <h4>🔒 Sistema de Bloqueo de Productos</h4>
+                <p>Cuando bloqueas un producto:</p>
+                <ul style="text-align: left; margin: 10px 0;">
+                    <li>En el catálogo principal aparecerá <strong>sombreado/opaco</strong></li>
+                    <li>Los clientes NO podrán agregarlo al carrito</li>
+                    <li>Aparecerá con una etiqueta "NO DISPONIBLE"</li>
+                    <li>En el admin se verá con un fondo gris y texto "BLOQUEADO"</li>
+                </ul>
+                <p>Perfecto para temporadas sin disponibilidad de flores.</p>
+            `, 'info');
         }
 
         // ============================================
@@ -3280,13 +3292,19 @@
                 return;
             }
             
-            // Actualizar credenciales
-            if (newEmail) adminData.email = newEmail;
-            if (newPassword) adminData.password = newPassword;
-            if (newCode) adminData.code = newCode;
+            // Cargar datos actuales del localStorage
+            let savedAdminData = JSON.parse(localStorage.getItem('floristeria_admin_data')) || adminData;
             
-            // Guardar en localStorage (opcional, para persistencia)
-            localStorage.setItem('floristeria_admin_data', JSON.stringify(adminData));
+            // Actualizar credenciales (solo si se proporcionaron nuevos valores)
+            if (newEmail) savedAdminData.email = newEmail;
+            if (newPassword) savedAdminData.password = newPassword;
+            if (newCode) savedAdminData.code = newCode;
+            
+            // Guardar en localStorage
+            localStorage.setItem('floristeria_admin_data', JSON.stringify(savedAdminData));
+            
+            // Actualizar también la variable global
+            adminData = savedAdminData;
             
             // Limpiar formulario
             document.getElementById('newEmail').value = '';
@@ -3294,7 +3312,7 @@
             document.getElementById('confirmPassword').value = '';
             document.getElementById('newCode').value = '';
             
-            showAlert('Credenciales actualizadas correctamente', 'success');
+            showAlert('✅ Credenciales actualizadas correctamente. Usa las nuevas credenciales para iniciar sesión.', 'success');
         }
 
         // ============================================
