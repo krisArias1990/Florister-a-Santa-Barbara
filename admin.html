@@ -2044,7 +2044,7 @@
             const products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
             renderProductsList(products);
         }
-        
+
         function renderProductsList(productsToRender) {
             const container = document.getElementById('productsList');
             const emptyState = document.getElementById('productsEmpty');
@@ -2071,7 +2071,7 @@
                 const description = product.descripcion || product.description || '';
                 const isBlocked = product.blocked || false;
                 
-                // Determinar clase para fila bloqueada
+                // Determinar clase para fila bloqueada - IMPORTANTE: Solo si está bloqueado
                 const rowClass = isBlocked ? 'product-blocked' : '';
                 const imgClass = isBlocked ? 'product-img-small blocked' : 'product-img-small';
                 const statusText = isBlocked ? '🔒 Bloqueado' : '✅ Activo';
@@ -2178,13 +2178,43 @@
             document.getElementById('productForm').scrollIntoView({ behavior: 'smooth' });
         }
         
-        function deleteProduct(id) {
-            if (confirm('¿Estás seguro de que deseas eliminar este producto? Esta acción no se puede deshacer.')) {
-                let products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
-                products = products.filter(p => p.id != id);
-                localStorage.setItem('floristeria_products', JSON.stringify(products));
+        function confirmDeleteProduct(id) {
+            const products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
+            const product = products.find(p => p.id == id);
+            
+            if (!product) return;
+            
+            const productName = product.nombre || product.name || 'este producto';
+            
+            // Crear mensaje de confirmación más claro
+            const message = `
+                ¿ESTÁS SEGURO DE ELIMINAR "${productName}"?
                 
-                showAlert('Producto eliminado correctamente', 'success');
+                🚨 ESTA ACCIÓN NO SE PUEDE DESHACER
+                • El producto se eliminará PERMANENTEMENTE
+                • También se eliminará de data.json al sincronizar
+                • Los pedidos existentes NO se afectarán
+                
+                💡 Si solo quieres que no aparezca temporalmente:
+                Usa la opción "BLOQUEAR" en lugar de eliminar.
+                
+                ¿Realmente quieres ELIMINAR este producto?
+            `;
+            
+            if (confirm(message)) {
+                // Primero, hacer un mini backup del producto
+                const productBackup = {...product, deletedAt: new Date().toISOString()};
+                
+                // Guardar en un array de productos eliminados (por si acaso)
+                let deletedProducts = JSON.parse(localStorage.getItem('floristeria_deleted_products')) || [];
+                deletedProducts.push(productBackup);
+                localStorage.setItem('floristeria_deleted_products', JSON.stringify(deletedProducts.slice(-50))); // Guardar solo últimos 50
+                
+                // Ahora sí eliminar
+                let updatedProducts = products.filter(p => p.id != id);
+                localStorage.setItem('floristeria_products', JSON.stringify(updatedProducts));
+                
+                showAlert(`❌ Producto "${productName}" eliminado permanentemente`, 'error');
                 loadProductsList();
                 loadDashboardStats();
             }
