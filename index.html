@@ -492,6 +492,12 @@
             background: var(--success);
         }
         
+        .add-to-cart-btn:disabled {
+            background: var(--gray);
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        
         /* ===== MODAL DE IMAGEN AMPLIADA ===== */
         .image-modal {
             display: none;
@@ -1605,6 +1611,71 @@
         let storeLocation = null;
         let customerLocation = null;
         let distanceKm = 0;
+        let storeMarker = null; // Para el marcador de la tienda
+
+        // ============================================
+        // MAPA DE DISTANCIAS PRECISO - SANTA BÁRBARA
+        // ============================================
+
+        // Coordenadas exactas de Santa Bárbara de Heredia
+        const STORE_COORDINATES = [10.0833, -84.1333];
+
+        // Mapeo de zonas con distancias aproximadas DESDE SANTA BÁRBARA
+        const ZONE_DISTANCES = {
+            // SANTA BÁRBARA (mismo cantón) - 0-3km
+            'santa barbara': 1,
+            'santa bárbara': 1,
+            'barbara': 1,
+            'bárbara': 1,
+            
+            // HEREDIA CENTRO - 5-8km
+            'heredia centro': 6,
+            'heredia': 6,
+            'la aurora': 7,
+            'san francisco': 5,
+            'san pablo': 4,
+            
+            // SAN JOSÉ - 15-20km
+            'san josé': 18,
+            'san jose': 18,
+            'san pedro': 19,
+            'curridabat': 16,
+            'sabanilla': 17,
+            'moravia': 15,
+            'tibás': 14,
+            'guadalupe': 17,
+            
+            // ALAJUELA - 10-15km
+            'alajuela': 12,
+            'alajuelita': 11,
+            'desamparados': 5, // ¡CORRECCIÓN! Desamparados de Alajuela está CERCA
+            'zarcero': 30,
+            'naranjo': 20,
+            'palmares': 25,
+            'san ramón': 30,
+            
+            // CARTAGO - 25-30km
+            'cartago': 28,
+            'la unión': 25,
+            'tres ríos': 22,
+            'paraiso': 30,
+            
+            // OTRAS ZONAS CERCANAS
+            'belén': 8,
+            'flores': 10,
+            'san rafael': 3,
+            'san joaquín': 2,
+            'barreal': 2,
+            'jesus': 4,
+            'santo domingo': 5,
+            'san vicente': 3,
+            
+            // ZONAS LEJANAS (por defecto)
+            'puntarenas': 80,
+            'limón': 100,
+            'guanacaste': 120,
+            'liberia': 150
+        };
 
         // ============================================
         // INICIALIZACIÓN
@@ -1715,7 +1786,8 @@
                     description: "Elegante ramo con 24 rosas rojas frescas, perfecto para aniversarios.",
                     price: 25000,
                     image: "https://images.unsplash.com/photo-1519378058457-4c29a0a2efac?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    stock: 10
+                    stock: 10,
+                    blocked: false
                 },
                 {
                     id: 2,
@@ -1726,7 +1798,8 @@
                     description: "Colorido centro de mesa para eventos con flores de temporada.",
                     price: 35000,
                     image: "https://images.unsplash.com/photo-1457089328109-e5d9bd499191?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    stock: 5
+                    stock: 5,
+                    blocked: false
                 }
             ];
             
@@ -1787,12 +1860,11 @@
         }
 
         // ============================================
-        // MAPA Y CÁLCULO DE DISTANCIA
+        // MAPA Y CÁLCULO DE DISTANCIA CORREGIDO
         // ============================================
 
         function initMap() {
-            // Coordenadas de Santa Bárbara, Heredia
-            storeLocation = [10.0833, -84.1333];
+            storeLocation = STORE_COORDINATES;
             
             // Crear mapa
             map = L.map('map').setView(storeLocation, 13);
@@ -1802,13 +1874,13 @@
                 attribution: '© OpenStreetMap contributors'
             }).addTo(map);
             
-            // Agregar marcador de la tienda
-            L.marker(storeLocation)
+            // Agregar marcador de la tienda y guardar referencia
+            storeMarker = L.marker(storeLocation)
                 .addTo(map)
-                .bindPopup('Floristería Santa Bárbara<br>📍 Ubicación de la tienda')
+                .bindPopup('🌺 Floristería Santa Bárbara<br>📍 Santa Bárbara, Heredia, Costa Rica')
                 .openPopup();
             
-            console.log("🗺️ Mapa inicializado correctamente");
+            console.log("🗺️ Mapa inicializado correctamente - Santa Bárbara, Heredia");
         }
 
         function calculateShippingFromAddress() {
@@ -1828,48 +1900,62 @@
                 return;
             }
             
-            // Simular geocodificación (en producción usarías una API como Google Maps)
-            // Por ahora, estimamos distancia basada en texto de la dirección
+            // Convertir a minúsculas y normalizar acentos
+            const addressLower = address.toLowerCase()
+                .normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // Eliminar acentos
             
-            const addressLower = address.toLowerCase();
-            let estimatedDistance = 0;
+            let estimatedDistance = 10; // Distancia por defecto
             
-            // Estimaciones por zona
-            if (addressLower.includes('santa bárbara') || addressLower.includes('santa barbara')) {
-                estimatedDistance = 1; // Muy cerca
-            } else if (addressLower.includes('heredia centro') || addressLower.includes('heredia')) {
-                estimatedDistance = 8;
-            } else if (addressLower.includes('san josé') || addressLower.includes('san jose')) {
-                estimatedDistance = 15;
-            } else if (addressLower.includes('alajuela')) {
-                estimatedDistance = 20;
-            } else if (addressLower.includes('cartago')) {
-                estimatedDistance = 25;
-            } else {
-                // Distancia por defecto para otras áreas
-                estimatedDistance = 10;
+            // Buscar coincidencias por zona
+            for (const [zone, distance] of Object.entries(ZONE_DISTANCES)) {
+                if (addressLower.includes(zone)) {
+                    estimatedDistance = distance;
+                    console.log(`📍 Zona detectada: ${zone} -> ${distance}km`);
+                    break;
+                }
+            }
+            
+            // Detección específica para "Desamparados"
+            if (addressLower.includes('desamparados')) {
+                // Verificar si es Desamparados de Alajuela (cerca) o de San José (lejos)
+                if (addressLower.includes('alajuela') || 
+                    (!addressLower.includes('san josé') && 
+                     !addressLower.includes('san jose'))) {
+                    estimatedDistance = 5; // Desamparados de Alajuela está CERCA
+                    console.log("📍 Desamparados de Alajuela detectado: 5km");
+                } else {
+                    estimatedDistance = 20; // Desamparados de San José está más lejos
+                    console.log("📍 Desamparados de San José detectado: 20km");
+                }
             }
             
             distanceKm = estimatedDistance;
             
-            // Actualizar mapa con marcador estimado
+            // Actualizar mapa con marcador estimado (solo visual)
             if (map) {
-                // Limpiar marcadores anteriores
+                // Limpiar marcadores anteriores (excepto tienda)
                 map.eachLayer(function(layer) {
-                    if (layer instanceof L.Marker && layer !== storeLocation) {
+                    if (layer instanceof L.Marker && layer !== storeMarker) {
                         map.removeLayer(layer);
                     }
                 });
                 
-                // Agregar marcador estimado (un poco al norte de la tienda para ejemplo)
-                const estimatedLocation = [storeLocation[0] + 0.05, storeLocation[1] + 0.05];
+                // Crear marcador estimado basado en distancia
+                const angle = Math.random() * Math.PI * 2; // Dirección aleatoria
+                const distanceInDegrees = estimatedDistance * 0.01; // Conversión aproximada
+                
+                const estimatedLat = STORE_COORDINATES[0] + Math.cos(angle) * distanceInDegrees;
+                const estimatedLng = STORE_COORDINATES[1] + Math.sin(angle) * distanceInDegrees;
+                
+                const estimatedLocation = [estimatedLat, estimatedLng];
+                
                 L.marker(estimatedLocation)
                     .addTo(map)
-                    .bindPopup('📍 Dirección estimada del cliente')
+                    .bindPopup(`📍 Dirección estimada del cliente<br>Distancia: ${estimatedDistance}km`)
                     .openPopup();
                 
-                // Ajustar vista del mapa
-                map.fitBounds([storeLocation, estimatedLocation]);
+                // Ajustar vista para mostrar ambos puntos
+                map.fitBounds([STORE_COORDINATES, estimatedLocation]);
             }
             
             updateShippingCost();
@@ -2046,10 +2132,13 @@
             });
             event.target.classList.add('active');
             
-            // Filtrar y mostrar productos
-            const filteredProducts = category === 'all' 
+            // Filtrar y mostrar productos (EXCLUYENDO productos bloqueados)
+            let filteredProducts = category === 'all' 
                 ? products 
                 : products.filter(p => p.category === category || p.categoria === category);
+            
+            // Filtrar productos bloqueados
+            filteredProducts = filteredProducts.filter(product => !product.blocked);
             
             renderProducts(filteredProducts);
         }
@@ -2078,19 +2167,22 @@
         }
 
         // ============================================
-        // PRODUCTOS
+        // PRODUCTOS - CON FILTRO DE BLOQUEADOS
         // ============================================
 
         function renderProducts(productsToRender) {
             const productsGrid = document.getElementById('productsGrid');
             if (!productsGrid) return;
             
-            if (!productsToRender || productsToRender.length === 0) {
+            // 🔥 FILTRAR productos bloqueados ANTES de mostrar
+            const activeProducts = productsToRender.filter(product => !product.blocked);
+            
+            if (!activeProducts || activeProducts.length === 0) {
                 productsGrid.innerHTML = `
                     <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--gray);">
                         <i class="fas fa-leaf" style="font-size: 3rem; margin-bottom: 15px; color: var(--gray-light);"></i>
-                        <h3>No hay productos en esta categoría</h3>
-                        <p>Prueba con otra categoría o agrega productos desde el panel de administración.</p>
+                        <h3>No hay productos disponibles</h3>
+                        <p>Todos los productos en esta categoría están temporalmente no disponibles.</p>
                     </div>
                 `;
                 return;
@@ -2098,7 +2190,7 @@
             
             productsGrid.innerHTML = '';
             
-            productsToRender.forEach(product => {
+            activeProducts.forEach(product => {
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
                 
@@ -2110,9 +2202,12 @@
                 const productImage = product.imagen || product.image || 'https://images.unsplash.com/photo-1560749003-f4b1e17e2dff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80';
                 const productStock = product.stock || 0;
                 
+                // Determinar si mostrar badge de "Últimas unidades"
+                const showStockBadge = productStock < 5;
+                
                 productCard.innerHTML = `
                     <div class="product-image-container">
-                        ${productStock < 5 ? '<span class="product-badge">¡Últimas unidades!</span>' : ''}
+                        ${showStockBadge ? '<span class="product-badge">¡Últimas unidades!</span>' : ''}
                         <img src="${productImage}" 
                              alt="${productName}" 
                              class="product-image"
@@ -2130,6 +2225,16 @@
                     </div>
                 `;
                 
+                // 🔥 DESHABILITAR botón si no hay stock
+                if (productStock <= 0) {
+                    const button = productCard.querySelector('.add-to-cart-btn');
+                    button.innerHTML = '<i class="fas fa-ban"></i> Sin Stock';
+                    button.disabled = true;
+                    button.style.opacity = '0.6';
+                    button.style.cursor = 'not-allowed';
+                    button.style.background = 'var(--gray)';
+                }
+                
                 productsGrid.appendChild(productCard);
             });
         }
@@ -2142,7 +2247,9 @@
                 createDefaultData();
             }
             
-            renderProducts(products);
+            // Mostrar solo productos NO bloqueados
+            const activeProducts = products.filter(product => !product.blocked);
+            renderProducts(activeProducts);
         }
 
         // ============================================
@@ -2173,6 +2280,18 @@
             const product = products.find(p => p.id == productId);
             if (!product) {
                 showNotification('Producto no encontrado', 'error');
+                return;
+            }
+
+            // Verificar si el producto está bloqueado
+            if (product.blocked) {
+                showNotification('Este producto no está disponible temporalmente', 'warning');
+                return;
+            }
+
+            // Verificar stock
+            if ((product.stock || 0) <= 0) {
+                showNotification('No hay stock disponible de este producto', 'warning');
                 return;
             }
 
@@ -2502,6 +2621,7 @@
                 }
                 
                 message += `• 📍 Ubicación en Google Maps: ${googleMapsLink}\n`;
+                message += `• Distancia estimada: ${distanceKm} km\n`;
             }
             
             message += `• Fecha de entrega: ${new Date(date).toLocaleDateString('es-ES')}\n`;
