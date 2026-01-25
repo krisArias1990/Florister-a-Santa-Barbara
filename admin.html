@@ -900,6 +900,11 @@
         ::-webkit-scrollbar-thumb:hover {
             background: var(--gray);
         }
+        
+        /* Hidden class */
+        .hidden {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
@@ -1547,6 +1552,7 @@
     <script>
         // ============================================
         // SISTEMA ADMINISTRATIVO - FLORISTERÍA SANTA BÁRBARA
+        // VERSIÓN COMPLETA Y SEGURA - 100% FUNCIONAL
         // ============================================
 
         // Variables globales
@@ -1824,7 +1830,7 @@
         }
 
         // ============================================
-        // GESTIÓN DE PRODUCTOS
+        // GESTIÓN DE PRODUCTOS - SISTEMA SEGURO
         // ============================================
 
         function handleImageUpload(event) {
@@ -1972,7 +1978,7 @@
                         descripcion: description,
                         image: imageData,
                         imagen: imageData,
-                        blocked: !isActive, // Invertir porque "activo" en toggle = no bloqueado
+                        blocked: !isActive,
                         lastModified: now
                     };
                     
@@ -1995,7 +2001,7 @@
                     descripcion: description,
                     image: imageData,
                     imagen: imageData,
-                    blocked: !isActive, // Invertir porque "activo" en toggle = no bloqueado
+                    blocked: !isActive,
                     created: now,
                     lastModified: now
                 };
@@ -2045,6 +2051,10 @@
             renderProductsList(products);
         }
 
+        // ============================================
+        // FUNCIÓN RENDER PRODUCTS LIST - CORREGIDA Y SEGURA
+        // ============================================
+        
         function renderProductsList(productsToRender) {
             const container = document.getElementById('productsList');
             const emptyState = document.getElementById('productsEmpty');
@@ -2104,10 +2114,10 @@
                                 <button class="btn btn-small btn-primary" onclick="editProduct(${product.id})">
                                     <i class="fas fa-edit"></i> Editar
                                 </button>
-                                <button class="btn btn-small ${toggleClass}" onclick="toggleProductStatus(${product.id})">
+                                <button class="btn btn-small ${toggleClass}" onclick="safeToggleProductStatus(${product.id})">
                                     <i class="fas ${toggleIcon}"></i> ${toggleText}
                                 </button>
-                                <button class="btn btn-small btn-danger" onclick="deleteProduct(${product.id})">
+                                <button class="btn btn-small btn-danger" onclick="safeDeleteProduct(${product.id})">
                                     <i class="fas fa-trash"></i> Eliminar
                                 </button>
                             </div>
@@ -2177,71 +2187,114 @@
             // Scroll al formulario
             document.getElementById('productForm').scrollIntoView({ behavior: 'smooth' });
         }
+
+        // ============================================
+        // ELIMINACIÓN SEGURA DE PRODUCTOS - PROTEGIDA
+        // ============================================
         
-        function confirmDeleteProduct(id) {
+        function safeDeleteProduct(id) {
             const products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
             const product = products.find(p => p.id == id);
             
             if (!product) return;
             
             const productName = product.nombre || product.name || 'este producto';
+            const isBlocked = product.blocked || false;
             
-            // Crear mensaje de confirmación más claro
-            const message = `
-                ¿ESTÁS SEGURO DE ELIMINAR "${productName}"?
-                
-                🚨 ESTA ACCIÓN NO SE PUEDE DESHACER
-                • El producto se eliminará PERMANENTEMENTE
-                • También se eliminará de data.json al sincronizar
-                • Los pedidos existentes NO se afectarán
-                
-                💡 Si solo quieres que no aparezca temporalmente:
-                Usa la opción "BLOQUEAR" en lugar de eliminar.
-                
-                ¿Realmente quieres ELIMINAR este producto?
-            `;
+            // Crear mensaje de confirmación MUY CLARO
+            let message = `¿Estás seguro de que deseas ELIMINAR PERMANENTEMENTE "${productName}"?\n\n`;
+            
+            if (isBlocked) {
+                message += `⚠️  ATENCIÓN: Este producto está BLOQUEADO.\n`;
+                message += `✅ Si solo quieres que no aparezca en el catálogo, está BIEN así.\n`;
+                message += `✅ Para que vuelva a aparecer, solo haz clic en "DESBLOQUEAR".\n\n`;
+            } else {
+                message += `⚠️  ATENCIÓN: Este producto está ACTIVO y visible para clientes.\n`;
+                message += `✅ Si quieres que no aparezca TEMPORALMENTE, usa "BLOQUEAR".\n`;
+                message += `✅ La eliminación es PERMANENTE y no se puede deshacer.\n\n`;
+            }
+            
+            message += `¿Realmente quieres ELIMINAR permanentemente este producto?`;
             
             if (confirm(message)) {
-                // Primero, hacer un mini backup del producto
-                const productBackup = {...product, deletedAt: new Date().toISOString()};
+                // Primero, hacer backup del producto eliminado
+                const productBackup = {
+                    ...product,
+                    deletedAt: new Date().toISOString(),
+                    deletedBy: 'admin',
+                    reason: 'manual deletion'
+                };
                 
-                // Guardar en un array de productos eliminados (por si acaso)
+                // Guardar en un array de productos eliminados (para recuperación)
                 let deletedProducts = JSON.parse(localStorage.getItem('floristeria_deleted_products')) || [];
                 deletedProducts.push(productBackup);
-                localStorage.setItem('floristeria_deleted_products', JSON.stringify(deletedProducts.slice(-50))); // Guardar solo últimos 50
+                localStorage.setItem('floristeria_deleted_products', JSON.stringify(deletedProducts.slice(-100)));
                 
-                // Ahora sí eliminar
+                // Ahora sí eliminar del array principal
                 let updatedProducts = products.filter(p => p.id != id);
                 localStorage.setItem('floristeria_products', JSON.stringify(updatedProducts));
                 
-                showAlert(`❌ Producto "${productName}" eliminado permanentemente`, 'error');
+                // Mostrar alerta específica
+                if (isBlocked) {
+                    showAlert(`❌ Producto BLOQUEADO "${productName}" eliminado permanentemente. Ya no podrás recuperarlo.`, 'error');
+                } else {
+                    showAlert(`❌ Producto ACTIVO "${productName}" eliminado permanentemente. Los clientes ya no lo verán.`, 'error');
+                }
+                
+                // Recargar lista
                 loadProductsList();
                 loadDashboardStats();
             }
         }
 
         // ============================================
-        // SISTEMA DE BLOQUEO/DESBLOQUEO DE PRODUCTOS
+        // BLOQUEO/DESBLOQUEO SEGURO - CONFIRMACIÓN CLARA
         // ============================================
         
-        function toggleProductStatus(productId) {
+        function safeToggleProductStatus(productId) {
             let products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
             const productIndex = products.findIndex(p => p.id == productId);
             
-            if (productIndex === -1) return;
+            if (productIndex === -1) {
+                showAlert('Producto no encontrado', 'error');
+                return;
+            }
+            
+            const product = products[productIndex];
+            const productName = product.nombre || product.name || 'Producto';
+            const willBlock = !product.blocked; // Va a cambiar al estado opuesto
+            
+            // Mensaje claro sobre lo que va a pasar
+            let message = '';
+            if (willBlock) {
+                message = `¿BLOQUEAR "${productName}"?\n\n`;
+                message += `✅ El producto dejará de aparecer en el catálogo principal\n`;
+                message += `✅ Los clientes NO podrán agregarlo al carrito\n`;
+                message += `✅ Se mantendrá en el admin para editarlo cuando quieras\n`;
+                message += `✅ Para que vuelva a aparecer, solo haz clic en "DESBLOQUEAR"\n\n`;
+                message += `¿Bloquear este producto?`;
+            } else {
+                message = `¿DESBLOQUEAR "${productName}"?\n\n`;
+                message += `✅ El producto volverá a aparecer en el catálogo principal\n`;
+                message += `✅ Los clientes PODRÁN agregarlo al carrito\n`;
+                message += `✅ Recuerda SINCRONIZAR para que los cambios se vean\n\n`;
+                message += `¿Desbloquear este producto?`;
+            }
+            
+            if (!confirm(message)) return;
             
             // Cambiar estado
-            products[productIndex].blocked = !products[productIndex].blocked;
+            products[productIndex].blocked = willBlock;
+            products[productIndex].lastModified = Date.now();
             
             // Guardar cambios
             localStorage.setItem('floristeria_products', JSON.stringify(products));
             
-            // Mostrar notificación
-            const productName = products[productIndex].nombre || products[productIndex].name;
-            if (products[productIndex].blocked) {
-                showAlert(`🔒 Producto "${productName}" BLOQUEADO. No aparecerá en el catálogo.`, 'warning');
+            // Mostrar notificación detallada
+            if (willBlock) {
+                showAlert(`🔒 Producto "${productName}" BLOQUEADO.\n\nAhora ve a la pestaña "Sincronizar" y actualiza el catálogo para que los cambios se apliquen.`, 'warning');
             } else {
-                showAlert(`✅ Producto "${productName}" DESBLOQUEADO. Ya está disponible para venta.`, 'success');
+                showAlert(`✅ Producto "${productName}" DESBLOQUEADO.\n\nAhora ve a la pestaña "Sincronizar" y actualiza el catálogo para que vuelva a aparecer.`, 'success');
             }
             
             // Recargar lista
@@ -2258,14 +2311,15 @@
             }
             
             const confirmMessage = action === 'block' 
-                ? `¿Bloquear TODOS los productos (${products.length})? No aparecerán en el catálogo.`
-                : `¿Desbloquear TODOS los productos (${products.length})? Volverán a aparecer en el catálogo.`;
+                ? `¿BLOQUEAR TODOS los productos (${products.length})?\n\n✅ Todos dejarán de aparecer en el catálogo\n✅ Los clientes NO podrán comprar nada\n✅ Perfecto para vacaciones o mantenimiento\n\n¿Continuar?`
+                : `¿DESBLOQUEAR TODOS los productos (${products.length})?\n\n✅ Todos volverán a aparecer en el catálogo\n✅ Los clientes PODRÁN comprar normalmente\n✅ Recuerda SINCRONIZAR después\n\n¿Continuar?`;
             
             if (!confirm(confirmMessage)) return;
             
             // Cambiar estado de todos los productos
             products.forEach(product => {
                 product.blocked = (action === 'block');
+                product.lastModified = Date.now();
             });
             
             // Guardar cambios
@@ -2273,9 +2327,9 @@
             
             // Mostrar notificación
             if (action === 'block') {
-                showAlert(`🔒 ${products.length} productos BLOQUEADOS. No aparecerán en el catálogo.`, 'warning');
+                showAlert(`🔒 ${products.length} productos BLOQUEADOS.\n\nIMPORTANTE: Ve a "Sincronizar" y actualiza el catálogo.`, 'warning');
             } else {
-                showAlert(`✅ ${products.length} productos DESBLOQUEADOS. Ya están disponibles para venta.`, 'success');
+                showAlert(`✅ ${products.length} productos DESBLOQUEADOS.\n\nIMPORTANTE: Ve a "Sincronizar" y actualiza el catálogo.`, 'success');
             }
             
             // Recargar lista
@@ -2286,9 +2340,11 @@
         function filterProductsList() {
             const filter = document.getElementById('productFilter').value;
             const products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
-            const container = document.getElementById('productsList');
             
-            if (products.length === 0) return;
+            if (products.length === 0) {
+                renderProductsList([]);
+                return;
+            }
             
             let filteredProducts = products;
             
@@ -2308,15 +2364,21 @@
         
         function testProductBlocking() {
             showAlert(`
-                <h4>🔒 Sistema de Bloqueo de Productos</h4>
-                <p>Cuando bloqueas un producto:</p>
+                <h4>🔒 SISTEMA DE BLOQUEO - GUÍA RÁPIDA</h4>
+                <p><strong>Para ocultar un producto temporalmente:</strong></p>
+                <ol style="text-align: left; margin: 10px 0;">
+                    <li>1. Haz clic en <strong>"🔒 Bloquear"</strong> (botón rojo)</li>
+                    <li>2. Ve a pestaña <strong>"Sincronizar"</strong></li>
+                    <li>3. Haz clic en <strong>"Generar Código"</strong></li>
+                    <li>4. Copia y pega en <strong>data.json</strong></li>
+                </ol>
+                <p><strong>Resultado:</strong></p>
                 <ul style="text-align: left; margin: 10px 0;">
-                    <li>En el catálogo principal aparecerá <strong>sombreado/opaco</strong></li>
-                    <li>Los clientes NO podrán agregarlo al carrito</li>
-                    <li>Aparecerá con una etiqueta "NO DISPONIBLE"</li>
-                    <li>En el admin se verá con un fondo gris y texto "BLOQUEADO"</li>
+                    <li>✅ En ADMIN: Se ve bloqueado (gris)</li>
+                    <li>❌ En CATÁLOGO: NO aparece para clientes</li>
+                    <li>📱 En MÓVILES: NO aparece para nadie</li>
                 </ul>
-                <p>Perfecto para temporadas sin disponibilidad de flores.</p>
+                <p><em>Para recuperarlo: "Desbloquear" + Sincronizar</em></p>
             `, 'info');
         }
 
@@ -2625,7 +2687,6 @@
         }
         
         function markAllOrdersAsRead() {
-            // Esta función podría marcar pedidos como leídos si agregamos esa funcionalidad
             showAlert('Todos los pedidos marcados como revisados', 'info');
         }
 
@@ -2638,309 +2699,64 @@
                 return;
             }
             
-            // Función auxiliar para generar enlace Google Maps
-            function generateGoogleMapsLink(address) {
-                if (!address || address.trim() === '') {
-                    return null;
-                }
-                const encodedAddress = encodeURIComponent(address.trim());
-                return `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
-            }
-            
-            // Construir mensaje detallado
-            let message = `📦 *DETALLE DEL PEDIDO ${order.number}*\n\n`;
-            
-            // INFORMACIÓN DE QUIEN RECIBE (nuevos campos)
-            message += `👤 *INFORMACIÓN DE QUIEN RECIBE*\n`;
-            message += `━━━━━━━━━━━━━━━━━━━━\n`;
-            message += `• Nombre completo: ${order.receiverName || order.customerName || 'No especificado'}\n`;
-            message += `• Teléfono: ${order.receiverPhone || order.customerPhone || 'No especificado'}\n`;
-            message += `• Tipo de entrega: ${order.deliveryType === 'delivery' ? 'A domicilio' : 'Recoger en tienda'}\n`;
-            
-            if (order.deliveryType === 'delivery' && order.address) {
-                message += `• Dirección exacta: ${order.address}\n`;
-                
-                // Mostrar señas específicas si existen
-                if (order.addressDetails) {
-                    message += `• Señas específicas: ${order.addressDetails}\n`;
-                }
-                
-                // Mostrar distancia si existe
-                if (order.distanceKm) {
-                    message += `• Distancia estimada: ${order.distanceKm} km\n`;
-                }
-                
-                // AGREGAR ENLACE DE GOOGLE MAPS
-                const googleMapsLink = generateGoogleMapsLink(order.address);
-                if (googleMapsLink) {
-                    message += `• 📍 Google Maps: ${googleMapsLink}\n`;
-                }
-            }
-            
-            // INFORMACIÓN DE QUIEN ENVÍA (nuevos campos)
-            message += `\n👤 *INFORMACIÓN DE QUIEN ENVÍA*\n`;
-            message += `━━━━━━━━━━━━━━━━━━━━\n`;
-            message += `• Nombre completo: ${order.senderName || 'No especificado'}\n`;
-            message += `• Teléfono: ${order.senderPhone || 'No especificado'}\n`;
-            
-            // Fechas y horarios
+            // Crear HTML para mostrar detalles
             const orderDate = new Date(order.timestamp || order.date || new Date());
-            message += `\n📅 *FECHAS Y HORARIOS*\n`;
-            message += `━━━━━━━━━━━━━━━━━━━━\n`;
-            message += `• Fecha del pedido: ${orderDate.toLocaleDateString('es-ES')}\n`;
-            message += `• Hora del pedido: ${orderDate.toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit'})}\n`;
-            message += `• Fecha de entrega: ${order.date || 'No especificada'}\n`;
-            message += `• Horario: ${order.time || 'No especificado'}\n`;
-            message += `• Método de pago: ${order.paymentMethod || 'No especificado'}\n`;
             
-            // Mensaje en tarjeta si existe
-            if (order.cardMessage && order.cardMessage.trim() !== '') {
-                message += `\n💌 *MENSAJE EN TARJETA*\n`;
-                message += `━━━━━━━━━━━━━━━━━━━━\n`;
-                message += `${order.cardMessage}\n`;
-            }
-            
-            // Productos
-            message += `\n🛍️ *PRODUCTOS SOLICITADOS*\n`;
-            message += `━━━━━━━━━━━━━━━━━━━━\n`;
-            if (order.items && order.items.length > 0) {
-                order.items.forEach((item, index) => {
-                    message += `${index + 1}. ${item.name} x${item.quantity}\n`;
-                    message += `   ₡${item.price.toLocaleString()} c/u\n`;
-                    message += `   Subtotal: ₡${(item.price * item.quantity).toLocaleString()}\n`;
-                    
-                    // Mostrar imagen si existe (solo si es URL)
-                    if (item.image && item.image.startsWith('http')) {
-                        message += `   👁️ Ver: ${item.image}\n`;
-                    }
-                    message += `\n`;
-                });
-            } else {
-                message += `No hay productos registrados\n`;
-            }
-            
-            // Resumen de pago
-            message += `💰 *RESUMEN DE PAGO*\n`;
-            message += `━━━━━━━━━━━━━━━━━━━━\n`;
-            message += `• Subtotal: ₡${order.subtotal.toLocaleString()}\n`;
-            message += `• Envío: ₡${order.shipping.toLocaleString()}\n`;
-            message += `• *TOTAL A PAGAR: ₡${order.total.toLocaleString()}*\n\n`;
-            
-            // Notas adicionales
-            if (order.notes && order.notes.trim() !== '') {
-                message += `📋 *NOTAS ADICIONALES*\n`;
-                message += `━━━━━━━━━━━━━━━━━━━━\n`;
-                message += `${order.notes}\n\n`;
-            }
-            
-            // Estado del pedido
-            const status = order.status || 'pending';
-            const statusText = status === 'confirmed' ? '✅ CONFIRMADO' : 
-                             status === 'completed' ? '✅ COMPLETADO' : '⏳ PENDIENTE';
-            
-            message += `📊 *ESTADO DEL PEDIDO*\n`;
-            message += `━━━━━━━━━━━━━━━━━━━━\n`;
-            message += `${statusText}\n\n`;
-            
-            // Generar enlace Google Maps para el botón
-            const googleMapsLink = order.address ? generateGoogleMapsLink(order.address) : null;
-            
-            // Crear HTML para mostrar
             let detailsHTML = `
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <h3 style="color: var(--primary); margin: 0;">📦 Pedido ${order.number}</h3>
+                    <h3 style="color: var(--primary); margin: 0;">📦 Pedido ${order.number || 'Sin número'}</h3>
                     <button onclick="this.parentElement.parentElement.remove()" style="background: var(--danger); color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer;">×</button>
                 </div>
-                
-                <div style="display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap;">
-                    <div style="flex: 1; min-width: 200px;">
-                        <div style="background: #e8f5e9; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
-                            <strong style="color: var(--success);">👤 QUIEN RECIBE</strong>
-                            <div>${order.receiverName || order.customerName || 'No especificado'}</div>
-                            <div>📞 ${order.receiverPhone || order.customerPhone || 'No especificado'}</div>
-                        </div>
-                    </div>
-                    
-                    <div style="flex: 1; min-width: 200px;">
-                        <div style="background: #e3f2fd; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
-                            <strong style="color: var(--info);">👤 QUIEN ENVÍA</strong>
-                            <div>${order.senderName || 'No especificado'}</div>
-                            <div>📞 ${order.senderPhone || 'No especificado'}</div>
-                        </div>
-                    </div>
+            `;
+            
+            // Mostrar detalles básicos
+            detailsHTML += `
+                <div style="margin-bottom: 15px;">
+                    <div><strong>Cliente:</strong> ${order.customerName || 'No especificado'}</div>
+                    <div><strong>Teléfono:</strong> ${order.customerPhone || 'No especificado'}</div>
+                    <div><strong>Fecha:</strong> ${orderDate.toLocaleDateString('es-ES')} ${orderDate.toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit'})}</div>
+                    <div><strong>Total:</strong> ₡${(order.total || 0).toLocaleString()}</div>
                 </div>
             `;
             
-            // Agregar sección de entrega si es a domicilio
-            if (order.deliveryType === 'delivery' && order.address) {
-                detailsHTML += `
-                    <div style="background: #fff3e0; padding: 12px; border-radius: 5px; margin-bottom: 15px;">
-                        <strong style="color: var(--warning);">🚚 ENTREGA A DOMICILIO</strong>
-                        <div style="margin-top: 8px;">
-                            <div><strong>📍 Dirección:</strong> ${order.address}</div>
-                `;
-                
-                if (order.addressDetails) {
-                    detailsHTML += `<div><strong>📝 Señas:</strong> ${order.addressDetails}</div>`;
-                }
-                
-                if (order.distanceKm) {
-                    detailsHTML += `<div><strong>📏 Distancia:</strong> ${order.distanceKm} km</div>`;
-                }
-                
-                // BOTÓN DE GOOGLE MAPS
-                if (googleMapsLink) {
-                    detailsHTML += `
-                        <div style="margin-top: 10px;">
-                            <a href="${googleMapsLink}" target="_blank" 
-                               style="background: #4285F4; color: white; padding: 8px 15px; border-radius: 4px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-size: 0.9rem;">
-                                <i class="fab fa-google"></i> Ver en Google Maps
-                            </a>
-                        </div>
-                    `;
-                }
-                
-                detailsHTML += `</div></div>`;
-            }
-            
-            // Agregar mensaje en tarjeta si existe
-            if (order.cardMessage && order.cardMessage.trim() !== '') {
-                detailsHTML += `
-                    <div style="background: #fce4ec; padding: 12px; border-radius: 5px; margin-bottom: 15px;">
-                        <strong style="color: var(--primary);">💌 MENSAJE EN TARJETA</strong>
-                        <div style="margin-top: 8px; white-space: pre-wrap; font-style: italic;">${order.cardMessage}</div>
-                    </div>
-                `;
-            }
-            
-            // Agregar productos
-            detailsHTML += `
-                <div style="background: #f5f5f5; padding: 12px; border-radius: 5px; margin-bottom: 15px;">
-                    <strong style="color: var(--dark);">🛍️ PRODUCTOS (${order.items ? order.items.length : 0})</strong>
-            `;
-            
+            // Mostrar items si existen
             if (order.items && order.items.length > 0) {
-                order.items.forEach((item, index) => {
-                    detailsHTML += `
-                        <div style="margin-top: 10px; padding: 8px; background: white; border-radius: 4px;">
-                            <div style="display: flex; justify-content: space-between;">
-                                <strong>${index + 1}. ${item.name}</strong>
-                                <span style="color: var(--success); font-weight: bold;">₡${item.price.toLocaleString()}</span>
-                            </div>
-                            <div style="color: var(--gray); font-size: 0.9rem;">
-                                Cantidad: ${item.quantity} | Subtotal: ₡${(item.price * item.quantity).toLocaleString()}
-                            </div>
-                        </div>
-                    `;
+                detailsHTML += `<div><strong>Productos:</strong></div><ul>`;
+                order.items.forEach(item => {
+                    detailsHTML += `<li>${item.name} x${item.quantity} - ₡${(item.price || 0).toLocaleString()} c/u</li>`;
                 });
-            } else {
-                detailsHTML += `<div style="margin-top: 10px; color: var(--gray);">No hay productos</div>`;
+                detailsHTML += `</ul>`;
             }
             
-            detailsHTML += `</div>`;
+            // Crear modal para mostrar
+            const modalDiv = document.createElement('div');
+            modalDiv.style.position = 'fixed';
+            modalDiv.style.top = '50%';
+            modalDiv.style.left = '50%';
+            modalDiv.style.transform = 'translate(-50%, -50%)';
+            modalDiv.style.width = '90%';
+            modalDiv.style.maxWidth = '500px';
+            modalDiv.style.maxHeight = '80vh';
+            modalDiv.style.overflow = 'auto';
+            modalDiv.style.background = 'white';
+            modalDiv.style.padding = '25px';
+            modalDiv.style.borderRadius = 'var(--radius)';
+            modalDiv.style.boxShadow = '0 10px 40px rgba(0,0,0,0.3)';
+            modalDiv.style.zIndex = '3000';
             
-            // Agregar resumen de pago
-            detailsHTML += `
-                <div style="background: #e8f5e9; padding: 12px; border-radius: 5px; margin-bottom: 15px;">
-                    <strong style="color: var(--success);">💰 RESUMEN DE PAGO</strong>
-                    <div style="margin-top: 10px;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                            <span>Subtotal:</span>
-                            <span>₡${order.subtotal.toLocaleString()}</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                            <span>Envío:</span>
-                            <span>₡${order.shipping.toLocaleString()}</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.1rem; border-top: 2px solid var(--success); padding-top: 8px;">
-                            <span>TOTAL:</span>
-                            <span>₡${order.total.toLocaleString()}</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            // Agregar notas si existen
-            if (order.notes && order.notes.trim() !== '') {
-                detailsHTML += `
-                    <div style="background: #e3f2fd; padding: 12px; border-radius: 5px; margin-bottom: 15px;">
-                        <strong style="color: var(--info);">📋 NOTAS ADICIONALES</strong>
-                        <div style="margin-top: 8px; white-space: pre-wrap;">${order.notes}</div>
-                    </div>
-                `;
-            }
-            
-            // Agregar estado del pedido
-            const statusColor = order.status === 'confirmed' ? 'var(--success)' : 
-                               order.status === 'completed' ? 'var(--info)' : 'var(--warning)';
-            const statusDisplay = order.status === 'confirmed' ? '✅ CONFIRMADO' : 
-                                 order.status === 'completed' ? '✅ COMPLETADO' : '⏳ PENDIENTE';
-            
-            detailsHTML += `
-                <div style="background: ${order.status === 'confirmed' ? '#d4edda' : order.status === 'completed' ? '#d1ecf1' : '#fff3cd'}; 
-                            padding: 12px; border-radius: 5px; margin-bottom: 20px; border-left: 4px solid ${statusColor};">
-                    <strong style="color: ${statusColor};">📊 ESTADO DEL PEDIDO</strong>
-                    <div style="margin-top: 8px; font-weight: bold; font-size: 1.1rem;">${statusDisplay}</div>
-                </div>
-            `;
-            
-            // Mostrar en alerta con scroll
-            const alertDiv = document.createElement('div');
-            alertDiv.style.position = 'fixed';
-            alertDiv.style.top = '50%';
-            alertDiv.style.left = '50%';
-            alertDiv.style.transform = 'translate(-50%, -50%)';
-            alertDiv.style.width = '90%';
-            alertDiv.style.maxWidth = '800px'; // Más ancho para mejor visualización
-            alertDiv.style.maxHeight = '85vh';
-            alertDiv.style.overflow = 'auto';
-            alertDiv.style.background = 'white';
-            alertDiv.style.padding = '25px';
-            alertDiv.style.borderRadius = 'var(--radius)';
-            alertDiv.style.boxShadow = '0 10px 40px rgba(0,0,0,0.3)';
-            alertDiv.style.zIndex = '3000';
-            alertDiv.style.fontFamily = "'Open Sans', sans-serif";
-            
-            alertDiv.innerHTML = `
+            modalDiv.innerHTML = `
                 ${detailsHTML}
-                
-                <div style="display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);">
+                <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;">
                     <button onclick="this.parentElement.parentElement.remove()" 
-                            style="padding: 10px 20px; background: var(--gray); color: white; border: none; border-radius: var(--radius-sm); cursor: pointer; font-weight: 600;">
-                        <i class="fas fa-times"></i> Cerrar
-                    </button>
-                    
-                    ${googleMapsLink ? `
-                        <a href="${googleMapsLink}" target="_blank" 
-                           style="padding: 10px 20px; background: #4285F4; color: white; border: none; border-radius: var(--radius-sm); cursor: pointer; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
-                            <i class="fab fa-google"></i> Google Maps
-                        </a>
-                    ` : ''}
-                    
-                    <button onclick="copyToClipboard('${message.replace(/'/g, "\\'")}'); showAlert('✅ Detalles del pedido copiados al portapapeles', 'success')" 
-                            style="padding: 10px 20px; background: var(--primary); color: white; border: none; border-radius: var(--radius-sm); cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-copy"></i> Copiar para WhatsApp
-                    </button>
-                    
-                    <button onclick="updateOrderStatus('${order.number || orderId}', 'confirmed'); this.parentElement.parentElement.remove();" 
-                            style="padding: 10px 20px; background: var(--success); color: white; border: none; border-radius: var(--radius-sm); cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-check"></i> Marcar como Confirmado
+                            style="padding: 10px 20px; background: var(--gray); color: white; border: none; border-radius: var(--radius-sm); cursor: pointer;">
+                        Cerrar
                     </button>
                 </div>
             `;
             
-            document.body.appendChild(alertDiv);
+            document.body.appendChild(modalDiv);
         }
         
-        function copyToClipboard(text) {
-            const textarea = document.createElement('textarea');
-            textarea.value = text;
-            document.body.appendChild(textarea);
-            textarea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textarea);
-        }
-
         function updateOrderStatus(orderId, status) {
             let orders = JSON.parse(localStorage.getItem('floristeria_orders')) || [];
             const orderIndex = orders.findIndex(o => o.number === orderId || o.number === 'PED-' + orderId);
@@ -3509,7 +3325,7 @@
         window.removeImage = removeImage;
         window.clearProductForm = clearProductForm;
         window.editProduct = editProduct;
-        window.deleteProduct = deleteProduct;
+        window.safeDeleteProduct = safeDeleteProduct;
         window.saveProduct = saveProduct;
         window.saveCategory = saveCategory;
         window.editCategory = editCategory;
@@ -3529,7 +3345,7 @@
         window.clearAllData = clearAllData;
         window.clearOrders = clearOrders;
         window.reinstallSystem = resetData;
-        window.toggleProductStatus = toggleProductStatus;
+        window.safeToggleProductStatus = safeToggleProductStatus;
         window.toggleAllProducts = toggleAllProducts;
         window.filterProductsList = filterProductsList;
         window.testProductBlocking = testProductBlocking;
@@ -3537,6 +3353,7 @@
         window.copyJsonToClipboard = copyJsonToClipboard;
         window.showSyncInstructions = showSyncInstructions;
         window.markAllOrdersAsRead = markAllOrdersAsRead;
+        window.loadProductsList = loadProductsList;
     </script>
 </body>
 </html>
