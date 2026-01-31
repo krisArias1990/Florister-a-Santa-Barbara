@@ -1,5 +1,5 @@
 // ============================================
-// SISTEMA PRINCIPAL COMPLETO CON MAPA GOOGLE
+// SISTEMA PRINCIPAL COMPLETO
 // ============================================
 
 // Variables globales
@@ -11,7 +11,6 @@ let currentCarouselSlide = 0;
 let carouselInterval;
 let storeConfig = {};
 let selectedPaymentMethod = '';
-let map; // Para Google Maps
 
 // ============================================
 // INICIALIZACIÓN
@@ -51,7 +50,6 @@ function loadAllData() {
     const savedConfig = localStorage.getItem('floristeria_config');
     if (savedConfig) {
         storeConfig = JSON.parse(savedConfig);
-        console.log('Configuración cargada:', storeConfig);
     } else {
         storeConfig = getDefaultConfig();
         localStorage.setItem('floristeria_config', JSON.stringify(storeConfig));
@@ -73,7 +71,7 @@ function getDefaultProducts() {
         {
             id: 1,
             name: "Ramos de Rosas Rojas",
-            description: "Elegante ramo con 24 rosas rojas frescas, perfecto para aniversarios y declaraciones de amor.",
+            description: "Elegante ramo con 24 rosas rojas frescas.",
             price: 25000,
             seasonPrice: 22000,
             category: "Rosas",
@@ -84,7 +82,7 @@ function getDefaultProducts() {
         {
             id: 2,
             name: "Arreglo de Girasoles",
-            description: "Colorido arreglo con girasoles frescos que iluminarán cualquier espacio.",
+            description: "Colorido arreglo con girasoles frescos.",
             price: 18000,
             seasonPrice: 15000,
             category: "Girasoles",
@@ -100,14 +98,14 @@ function getDefaultCarousel() {
         {
             id: 1,
             image: "https://images.unsplash.com/photo-1464207687429-7505649dae38?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
-            title: "Flores Frescas para Cada Ocasión",
-            description: "Encuentra el arreglo perfecto para celebrar la vida"
+            title: "Flores Frescas",
+            description: "Encuentra el arreglo perfecto"
         },
         {
             id: 2,
             image: "https://images.unsplash.com/photo-1563178406-4cdc2923acbc?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
-            title: "Envío a Domicilio Gratis",
-            description: "Llevamos felicidad hasta tu puerta en Santa Bárbara y alrededores"
+            title: "Envío a Domicilio",
+            description: "Llevamos felicidad hasta tu puerta"
         }
     ];
 }
@@ -117,7 +115,7 @@ function getDefaultConfig() {
         phone: "(506) 8605-3613",
         email: "ventas@floristeriasantabarbara.com",
         address: "Santa Bárbara, Heredia, Costa Rica",
-        description: "Flores frescas y arreglos florales para toda ocasión. Calidad y elegancia en cada detalle.",
+        description: "Flores frescas y arreglos florales para toda ocasión.",
         showDelivery: true,
         hours: [
             "Lunes a Viernes: 9:00 AM - 7:00 PM",
@@ -154,7 +152,7 @@ function renderProducts(filteredProducts = null) {
     productsGrid.innerHTML = productsToShow.map(product => {
         const imageSrc = product.image && product.image.startsWith('data:image') ? 
             product.image : 
-            (product.image || 'https://via.placeholder.com/600x400?text=Floristería+Santa+Bárbara');
+            (product.image || 'https://via.placeholder.com/600x400?text=Floristería');
         
         return `
         <div class="product-card" data-category="${product.category}">
@@ -253,14 +251,10 @@ function updateContactInfo() {
 }
 
 function updateFooterInfo() {
-    console.log('Actualizando footer con:', storeConfig);
-    
     // Descripción
     const footerDesc = document.getElementById('footer-description');
     if (footerDesc && storeConfig.description) {
         footerDesc.textContent = storeConfig.description;
-    } else if (footerDesc) {
-        footerDesc.textContent = "Flores frescas y arreglos florales para toda ocasión. Calidad y elegancia en cada detalle.";
     }
     
     // Dirección
@@ -287,13 +281,6 @@ function updateFooterInfo() {
         hoursList.innerHTML = storeConfig.hours.map(hour => `
             <li>${hour}</li>
         `).join('');
-    } else if (hoursList) {
-        hoursList.innerHTML = `
-            <li><strong>Lunes a Viernes:</strong> 9:00 AM - 7:00 PM</li>
-            <li><strong>Sábados:</strong> 9:30 AM - 7:00 PM</li>
-            <li><strong>Almuerzo:</strong> 12:30 PM - 1:30 PM</li>
-            <li><strong>Domingos:</strong> <span style="color: var(--danger);">CERRADO</span></li>
-        `;
     }
     
     // Información de delivery
@@ -308,13 +295,6 @@ function updateFooterInfo() {
         paymentList.innerHTML = storeConfig.paymentMethods.map(method => `
             <li><i class="fas fa-check"></i> ${method}</li>
         `).join('');
-    } else if (paymentList) {
-        paymentList.innerHTML = `
-            <li><i class="fas fa-check"></i> SINPE Móvil</li>
-            <li><i class="fas fa-check"></i> Efectivo</li>
-            <li><i class="fas fa-check"></i> Tarjetas</li>
-            <li><i class="fas fa-check"></i> Transferencia</li>
-        `;
     }
 }
 
@@ -326,26 +306,8 @@ function updateFooterYear() {
 }
 
 // ============================================
-// SISTEMA DE ENVÍO INTELIGENTE CON MAPA
+// SISTEMA DE ENVÍO
 // ============================================
-
-function calculateShippingCost() {
-    const deliveryType = document.querySelector('input[name="deliveryType"]:checked');
-    const addressField = document.getElementById('deliveryAddress');
-    
-    // Si es recoger en tienda, no hay envío
-    if (deliveryType && deliveryType.value === 'pickup') {
-        return 0;
-    }
-    
-    // Si no hay dirección, mostrar 0
-    if (!addressField || !addressField.value.trim()) {
-        return 0;
-    }
-    
-    // 🆓 ENVÍO GRATIS HASTA CONFIRMACIÓN
-    return 0;
-}
 
 function calculateShippingFromAddress() {
     const addressField = document.getElementById('deliveryAddress');
@@ -356,7 +318,6 @@ function calculateShippingFromAddress() {
         if (shippingElement) {
             shippingElement.textContent = '₡0';
             shippingElement.style.color = 'inherit';
-            shippingElement.style.fontWeight = 'normal';
         }
         if (shippingDistance) {
             shippingDistance.innerHTML = '';
@@ -364,7 +325,7 @@ function calculateShippingFromAddress() {
         return;
     }
     
-    // 🆓 MOSTRAR "POR CONFIRMAR" PARA ENVÍOS
+    // 🆓 ENVÍO POR CONFIRMAR
     if (shippingElement) {
         shippingElement.textContent = 'POR CONFIRMAR';
         shippingElement.style.color = 'var(--warning)';
@@ -390,7 +351,7 @@ function calculateShippingFromAddress() {
         `;
     }
     
-    // Recalcular total (solo productos)
+    // Recalcular total
     const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
     const cartTotal = document.getElementById('cartTotal');
     if (cartTotal) {
@@ -428,32 +389,21 @@ function setupDeliveryForm() {
                     if (shippingElement) {
                         shippingElement.textContent = 'Gratis';
                         shippingElement.style.color = 'var(--success)';
-                        shippingElement.style.fontWeight = '600';
                     }
                 }
                 calculateShippingFromAddress();
             });
         });
-        
-        // Estado inicial
-        const initialValue = document.querySelector('input[name="deliveryType"]:checked');
-        if (initialValue && initialValue.value === 'pickup') {
-            addressField.style.display = 'none';
-            const addressInput = document.getElementById('deliveryAddress');
-            if (addressInput) addressInput.required = false;
-        }
     }
 }
 
 function setupDatePicker() {
     const dateInput = document.getElementById('deliveryDate');
     if (dateInput) {
-        // Fecha mínima: hoy
         const today = new Date();
         const minDate = today.toISOString().split('T')[0];
         dateInput.min = minDate;
         
-        // Fecha por defecto: mañana
         const tomorrow = new Date(today);
         tomorrow.setDate(tomorrow.getDate() + 1);
         const defaultDate = tomorrow.toISOString().split('T')[0];
@@ -464,12 +414,10 @@ function setupDatePicker() {
 function selectPayment(method) {
     selectedPaymentMethod = method;
     
-    // Remover selección anterior
     document.querySelectorAll('.payment-method').forEach(el => {
         el.classList.remove('selected');
     });
     
-    // Agregar selección actual
     const selectedEl = document.querySelector(`.payment-method[onclick*="${method}"]`);
     if (selectedEl) {
         selectedEl.classList.add('selected');
@@ -519,86 +467,6 @@ function updateCartCount() {
     }
 }
 
-function renderCartItems() {
-    const cartItemsContainer = document.getElementById('cartItemsContainer');
-    const cartSubtotal = document.getElementById('cartSubtotal');
-    const cartShipping = document.getElementById('cartShipping');
-    const cartTotal = document.getElementById('cartTotal');
-    
-    if (cart.length === 0) {
-        cartItemsContainer.innerHTML = `
-            <div class="cart-empty">
-                <i class="fas fa-shopping-cart"></i>
-                <h3>Tu carrito está vacío</h3>
-                <p>Agrega productos desde el catálogo</p>
-            </div>
-        `;
-        cartSubtotal.textContent = '₡0';
-        cartShipping.textContent = '₡0';
-        cartTotal.textContent = '₡0';
-        return;
-    }
-    
-    // Calcular subtotal
-    const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
-    
-    // Calcular envío
-    const shipping = calculateShippingCost();
-    
-    // Calcular total
-    const total = subtotal + shipping;
-    
-    // Renderizar items
-    cartItemsContainer.innerHTML = cart.map(item => {
-        const imageSrc = item.image && item.image.startsWith('data:image') ? 
-            item.image : 
-            (item.image || 'https://via.placeholder.com/60x60?text=Imagen');
-        
-        return `
-        <div class="cart-item">
-            <img src="${imageSrc}" alt="${item.name}" class="cart-item-image">
-            <div class="cart-item-details">
-                <div class="cart-item-title">${item.name}</div>
-                <div class="cart-item-price">₡${item.price.toLocaleString()}</div>
-            </div>
-            <div class="cart-item-actions">
-                <button class="quantity-btn" onclick="updateCartQuantity(${item.id}, ${item.quantity - 1})">
-                    <i class="fas fa-minus"></i>
-                </button>
-                <span class="item-quantity">${item.quantity}</span>
-                <button class="quantity-btn" onclick="updateCartQuantity(${item.id}, ${item.quantity + 1})">
-                    <i class="fas fa-plus"></i>
-                </button>
-                <button class="remove-item-btn" onclick="removeFromCart(${item.id})">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
-        </div>
-        `;
-    }).join('');
-    
-    // Actualizar totales
-    cartSubtotal.textContent = `₡${subtotal.toLocaleString()}`;
-    
-    const deliveryType = document.querySelector('input[name="deliveryType"]:checked');
-    if (deliveryType && deliveryType.value === 'pickup') {
-        cartShipping.textContent = 'Gratis';
-        cartShipping.style.color = 'var(--success)';
-        cartTotal.textContent = `₡${total.toLocaleString()}`;
-    } else {
-        const addressField = document.getElementById('deliveryAddress');
-        if (addressField && addressField.value.trim()) {
-            cartShipping.textContent = 'POR CONFIRMAR';
-            cartShipping.style.color = 'var(--warning)';
-            cartTotal.textContent = `₡${subtotal.toLocaleString()} + ENVÍO`;
-        } else {
-            cartShipping.textContent = '₡0';
-            cartShipping.style.color = 'inherit';
-            cartTotal.textContent = `₡${total.toLocaleString()}`;
-        }
-    }
-}
-
 function updateCartQuantity(productId, newQuantity) {
     const item = cart.find(item => item.id === productId);
     
@@ -636,11 +504,10 @@ function clearCart() {
 }
 
 // ============================================
-// WHATSAPP ORDER MEJORADO
+// WHATSAPP ORDER
 // ============================================
 
 function sendWhatsAppOrder() {
-    // Obtener datos del formulario
     const receiverName = document.getElementById('receiverName').value.trim();
     const receiverPhone = document.getElementById('receiverPhone').value.trim();
     const senderName = document.getElementById('senderName').value.trim();
@@ -656,13 +523,11 @@ function sendWhatsAppOrder() {
     // Validaciones
     if (!receiverName || !receiverPhone) {
         showNotification('Por favor ingresa el nombre y teléfono de QUIEN RECIBE', true);
-        document.getElementById('receiverName').focus();
         return;
     }
     
     if (!senderName || !senderPhone) {
         showNotification('Por favor ingresa tu nombre y teléfono (QUIEN ENVÍA)', true);
-        document.getElementById('senderName').focus();
         return;
     }
     
@@ -673,19 +538,16 @@ function sendWhatsAppOrder() {
     
     if (deliveryType.value === 'delivery' && !deliveryAddress) {
         showNotification('Por favor ingresa la dirección para el envío', true);
-        document.getElementById('deliveryAddress').focus();
         return;
     }
     
     if (!deliveryDate) {
         showNotification('Por favor selecciona la fecha de entrega', true);
-        document.getElementById('deliveryDate').focus();
         return;
     }
     
     if (!deliveryTime) {
         showNotification('Por favor selecciona el horario de entrega', true);
-        document.getElementById('deliveryTime').focus();
         return;
     }
     
@@ -701,12 +563,11 @@ function sendWhatsAppOrder() {
     
     // Calcular totales
     const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
-    const shipping = calculateShippingCost();
     
     // Formatear mensaje
     let message = `¡Hola! Quiero hacer un pedido:\n\n`;
     
-    // Información de envío/recepción
+    // Información del pedido
     message += `📦 *INFORMACIÓN DEL PEDIDO*\n`;
     message += `📍 *Tipo:* ${deliveryType.value === 'delivery' ? 'ENVÍO A DOMICILIO' : 'RECOGER EN TIENDA'}\n`;
     message += `📅 *Fecha:* ${formatDate(deliveryDate)}\n`;
@@ -730,7 +591,6 @@ function sendWhatsAppOrder() {
             message += `• Señas: ${addressDetails}\n`;
         }
         
-        // Generar enlaces de Google Maps y Waze
         const googleMapsLink = generateGoogleMapsLink(deliveryAddress);
         const wazeLink = generateWazeLink(deliveryAddress);
         
@@ -738,7 +598,7 @@ function sendWhatsAppOrder() {
         message += `• 🚗 Waze: ${wazeLink}\n\n`;
         
         message += `💰 *COSTO DE ENVÍO:* *POR CONFIRMAR*\n`;
-        message += `   Nuestro equipo calculará el costo exacto según la ubicación.\n\n`;
+        message += `   Nuestro equipo calculará el costo exacto.\n\n`;
     }
     
     // Método de pago
@@ -767,13 +627,6 @@ function sendWhatsAppOrder() {
         message += `• *Total productos:* ₡${subtotal.toLocaleString()}\n`;
         message += `• *+ Envío (por confirmar):* ---\n`;
         message += `• *Total final (con envío):* POR CONFIRMAR\n\n`;
-        
-        message += `🔔 *PROCESO DE CONFIRMACIÓN:*\n`;
-        message += `1. Recibimos tu pedido\n`;
-        message += `2. Calculamos el costo exacto de envío\n`;
-        message += `3. Te enviamos el monto final por WhatsApp\n`;
-        message += `4. Confirmas y realizas el pago\n`;
-        message += `5. Preparamos y entregamos tu pedido\n\n`;
     } else {
         message += `• Recoger en tienda: Gratis\n`;
         message += `• *Total a pagar:* ₡${subtotal.toLocaleString()}\n\n`;
@@ -795,8 +648,7 @@ function sendWhatsAppOrder() {
     message += `---\n`;
     message += `📞 *Floristería Santa Bárbara*\n`;
     message += `• Teléfono: ${storeConfig.phone || '(506) 8605-3613'}\n`;
-    message += `• Dirección: ${storeConfig.address || 'Santa Bárbara, Heredia, Costa Rica'}\n`;
-    message += `• Horario: ${storeConfig.hours?.[0] || 'Lunes a Sábado: 9am - 7pm'}\n\n`;
+    message += `• Dirección: ${storeConfig.address || 'Santa Bárbara, Heredia, Costa Rica'}\n\n`;
     
     message += `¿Podrían confirmarme la disponibilidad? ¡Gracias!`;
     
@@ -877,8 +729,6 @@ function openCart() {
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
     renderCartItems();
-    
-    // Configurar fecha mínima cada vez que se abre el carrito
     setupDatePicker();
 }
 
@@ -918,7 +768,6 @@ function renderCarousel() {
                     <div style="text-align: center;">
                         <i class="fas fa-spa" style="font-size: 4rem; margin-bottom: 1rem;"></i>
                         <h2>Floristería Santa Bárbara</h2>
-                        <p>Agrega imágenes al carrusel desde el panel de administración</p>
                     </div>
                 </div>
             </div>
@@ -930,7 +779,7 @@ function renderCarousel() {
     carouselInner.innerHTML = carouselImages.map((slide, index) => {
         const imageSrc = slide.image && slide.image.startsWith('data:image') ? 
             slide.image : 
-            (slide.image || 'https://via.placeholder.com/1200x400?text=Floristería+Santa+Bárbara');
+            (slide.image || 'https://via.placeholder.com/1200x400?text=Floristería');
         
         return `
         <div class="carousel-item ${index === 0 ? 'active' : ''}">
@@ -1034,7 +883,7 @@ window.addEventListener('storage', function(event) {
 });
 
 // ============================================
-// FUNCIONES PÚBLICAS PARA HTML
+// FUNCIONES PÚBLICAS
 // ============================================
 
 window.addToCart = addToCart;
