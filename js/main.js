@@ -1,8 +1,8 @@
 // ============================================
-// SISTEMA PRINCIPAL MODIFICADO PARA IMÁGENES BASE64
+// SISTEMA PRINCIPAL COMPLETO CON ENVÍOS POR KM
 // ============================================
 
-// Variables globales (se sincronizan con admin.js)
+// Variables globales
 let cart = JSON.parse(localStorage.getItem('floristeria_cart')) || [];
 let products = [];
 let categories = [];
@@ -10,6 +10,7 @@ let carouselImages = [];
 let currentCarouselSlide = 0;
 let carouselInterval;
 let storeConfig = {};
+let selectedPaymentMethod = '';
 
 // ============================================
 // INICIALIZACIÓN
@@ -20,8 +21,16 @@ document.addEventListener('DOMContentLoaded', function() {
     initCarousel();
     updateCartCount();
     updateFooterYear();
+    setupDeliveryForm();
     
     console.log('✅ Tienda inicializada correctamente');
+    
+    // Configurar fecha mínima (hoy)
+    const today = new Date();
+    const dateInput = document.getElementById('deliveryDate');
+    if (dateInput) {
+        dateInput.min = today.toISOString().split('T')[0];
+    }
 });
 
 function loadAllData() {
@@ -47,6 +56,7 @@ function loadAllData() {
     const savedConfig = localStorage.getItem('floristeria_config');
     if (savedConfig) {
         storeConfig = JSON.parse(savedConfig);
+        console.log('Configuración cargada:', storeConfig);
     } else {
         storeConfig = getDefaultConfig();
         localStorage.setItem('floristeria_config', JSON.stringify(storeConfig));
@@ -147,7 +157,6 @@ function renderProducts(filteredProducts = null) {
     noResults.style.display = 'none';
     
     productsGrid.innerHTML = productsToShow.map(product => {
-        // Verificar si la imagen es Base64 o URL
         const imageSrc = product.image && product.image.startsWith('data:image') ? 
             product.image : 
             (product.image || 'https://via.placeholder.com/600x400?text=Floristería+Santa+Bárbara');
@@ -157,8 +166,7 @@ function renderProducts(filteredProducts = null) {
             <div class="product-image-container">
                 ${product.seasonActive && product.seasonPrice > 0 ? '<span class="product-badge">Oferta</span>' : ''}
                 <img src="${imageSrc}" alt="${product.name}" class="product-image" 
-                     onclick="openImageModal('${imageSrc.replace(/'/g, "\\'")}')"
-                     onerror="this.src='https://via.placeholder.com/600x400?text=Imagen+no+disponible'">
+                     onclick="openImageModal('${imageSrc.replace(/'/g, "\\'")}')">
             </div>
             <div class="product-info">
                 <div class="product-category">${product.category}</div>
@@ -185,219 +193,60 @@ function renderProducts(filteredProducts = null) {
     }).join('');
 }
 
-function renderCategories() {
-    const categoryFilters = document.getElementById('categoryFilters');
-    
-    categoryFilters.innerHTML = `
-        <button class="category-btn active" data-category="all" onclick="filterByCategory('all')">
-            Todos
-        </button>
-        ${categories.map(category => `
-            <button class="category-btn" data-category="${category}" onclick="filterByCategory('${category}')">
-                ${category}
-            </button>
-        `).join('')}
-    `;
-}
-
 // ============================================
-// FILTROS Y BÚSQUEDA
-// ============================================
-
-function filterByCategory(category) {
-    // Actualizar botones activos
-    document.querySelectorAll('.category-btn').forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.dataset.category === category) {
-            btn.classList.add('active');
-        }
-    });
-    
-    if (category === 'all') {
-        renderProducts();
-    } else {
-        const filteredProducts = products.filter(p => 
-            !p.blocked && p.category === category
-        );
-        renderProducts(filteredProducts);
-    }
-}
-
-function searchProducts() {
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-    
-    if (!searchTerm) {
-        renderProducts();
-        return;
-    }
-    
-    const filteredProducts = products.filter(p => 
-        !p.blocked && (
-            p.name.toLowerCase().includes(searchTerm) ||
-            p.description.toLowerCase().includes(searchTerm) ||
-            p.category.toLowerCase().includes(searchTerm)
-        )
-    );
-    
-    renderProducts(filteredProducts);
-}
-
-// ============================================
-// CARRUSEL
-// ============================================
-
-function renderCarousel() {
-    const carouselInner = document.getElementById('carousel-inner');
-    const carouselIndicators = document.getElementById('carousel-indicators');
-    
-    if (carouselImages.length === 0) {
-        carouselInner.innerHTML = `
-            <div class="carousel-item">
-                <div style="background: linear-gradient(135deg, var(--primary), var(--secondary)); height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">
-                    <div style="text-align: center;">
-                        <i class="fas fa-spa" style="font-size: 4rem; margin-bottom: 1rem;"></i>
-                        <h2>Floristería Santa Bárbara</h2>
-                        <p>Agrega imágenes al carrusel desde el panel de administración</p>
-                    </div>
-                </div>
-            </div>
-        `;
-        carouselIndicators.innerHTML = '';
-        return;
-    }
-    
-    carouselInner.innerHTML = carouselImages.map((slide, index) => {
-        // Verificar si la imagen es Base64 o URL
-        const imageSrc = slide.image && slide.image.startsWith('data:image') ? 
-            slide.image : 
-            (slide.image || 'https://via.placeholder.com/1200x400?text=Floristería+Santa+Bárbara');
-        
-        return `
-        <div class="carousel-item ${index === 0 ? 'active' : ''}">
-            <img src="${imageSrc}" alt="${slide.title || 'Imagen del carrusel'}" class="carousel-img"
-                 onerror="this.src='https://via.placeholder.com/1200x400?text=Error+cargando+imagen'">
-            ${slide.title || slide.description ? `
-                <div class="carousel-caption">
-                    ${slide.title ? `<h2>${slide.title}</h2>` : ''}
-                    ${slide.description ? `<p>${slide.description}</p>` : ''}
-                </div>
-            ` : ''}
-        </div>
-        `;
-    }).join('');
-    
-    carouselIndicators.innerHTML = carouselImages.map((_, index) => `
-        <button class="carousel-indicator ${index === 0 ? 'active' : ''}" 
-                onclick="goToSlide(${index})"></button>
-    `).join('');
-}
-
-function initCarousel() {
-    // Iniciar rotación automática
-    startCarouselRotation();
-    
-    // Detener rotación al pasar el mouse
-    const carousel = document.querySelector('.carousel');
-    if (carousel) {
-        carousel.addEventListener('mouseenter', stopCarouselRotation);
-        carousel.addEventListener('mouseleave', startCarouselRotation);
-    }
-}
-
-function startCarouselRotation() {
-    stopCarouselRotation(); // Detener cualquier intervalo existente
-    carouselInterval = setInterval(nextSlide, 5000);
-}
-
-function stopCarouselRotation() {
-    if (carouselInterval) {
-        clearInterval(carouselInterval);
-        carouselInterval = null;
-    }
-}
-
-function nextSlide() {
-    if (carouselImages.length === 0) return;
-    
-    currentCarouselSlide = (currentCarouselSlide + 1) % carouselImages.length;
-    updateCarousel();
-}
-
-function prevSlide() {
-    if (carouselImages.length === 0) return;
-    
-    currentCarouselSlide = (currentCarouselSlide - 1 + carouselImages.length) % carouselImages.length;
-    updateCarousel();
-}
-
-function goToSlide(index) {
-    currentCarouselSlide = index;
-    updateCarousel();
-}
-
-function updateCarousel() {
-    const carouselInner = document.getElementById('carousel-inner');
-    const indicators = document.querySelectorAll('.carousel-indicator');
-    
-    if (!carouselInner || carouselImages.length === 0) return;
-    
-    // Mover el carrusel
-    carouselInner.style.transform = `translateX(-${currentCarouselSlide * 100}%)`;
-    
-    // Actualizar indicadores
-    indicators.forEach((indicator, index) => {
-        indicator.classList.toggle('active', index === currentCarouselSlide);
-    });
-    
-    // Reiniciar temporizador
-    startCarouselRotation();
-}
-
-// ============================================
-// INFORMACIÓN DE CONTACTO Y FOOTER
+// FOOTER Y CONTACTO
 // ============================================
 
 function updateContactInfo() {
     if (!storeConfig.phone) return;
     
     document.getElementById('contact-phone').textContent = `Tel: ${storeConfig.phone}`;
-    document.getElementById('contact-address').textContent = storeConfig.address;
-    document.getElementById('contact-hours').textContent = storeConfig.hours?.[0] || 'Lunes a Sábado: 8am - 7pm';
+    document.getElementById('contact-address').textContent = storeConfig.address || 'Santa Bárbara, Heredia, Costa Rica';
+    document.getElementById('contact-hours').textContent = storeConfig.hours?.[0] || 'Lunes a Sábado: 9am - 7pm';
 }
 
 function updateFooterInfo() {
-    if (!storeConfig) return;
+    console.log('Actualizando footer con:', storeConfig);
     
     // Descripción
     const footerDesc = document.getElementById('footer-description');
     if (footerDesc && storeConfig.description) {
         footerDesc.textContent = storeConfig.description;
+    } else if (footerDesc) {
+        footerDesc.textContent = "Flores frescas y arreglos florales para toda ocasión. Calidad y elegancia en cada detalle.";
     }
     
     // Dirección
     const footerAddress = document.getElementById('footer-address');
-    if (footerAddress && storeConfig.address) {
-        footerAddress.textContent = storeConfig.address;
+    if (footerAddress) {
+        footerAddress.textContent = storeConfig.address || 'Santa Bárbara, Heredia, Costa Rica';
     }
     
     // Teléfono
     const footerPhone = document.getElementById('footer-phone');
-    if (footerPhone && storeConfig.phone) {
-        footerPhone.textContent = `Tel: ${storeConfig.phone}`;
+    if (footerPhone) {
+        footerPhone.textContent = storeConfig.phone ? `Tel: ${storeConfig.phone}` : 'Tel: (506) 8605-3613';
     }
     
     // Email
     const footerEmail = document.getElementById('footer-email');
-    if (footerEmail && storeConfig.email) {
-        footerEmail.textContent = storeConfig.email;
+    if (footerEmail) {
+        footerEmail.textContent = storeConfig.email || 'ventas@floristeriasantabarbara.com';
     }
     
     // Horarios
     const hoursList = document.getElementById('hours-list');
-    if (hoursList && storeConfig.hours) {
+    if (hoursList && storeConfig.hours && storeConfig.hours.length > 0) {
         hoursList.innerHTML = storeConfig.hours.map(hour => `
             <li>${hour}</li>
         `).join('');
+    } else if (hoursList) {
+        hoursList.innerHTML = `
+            <li><strong>Lunes a Viernes:</strong> 9:00 AM - 7:00 PM</li>
+            <li><strong>Sábados:</strong> 9:30 AM - 7:00 PM</li>
+            <li><strong>Almuerzo:</strong> 12:30 PM - 1:30 PM</li>
+            <li><strong>Domingos:</strong> <span style="color: var(--danger);">CERRADO</span></li>
+        `;
     }
     
     // Información de delivery
@@ -408,10 +257,17 @@ function updateFooterInfo() {
     
     // Métodos de pago
     const paymentList = document.getElementById('payment-list');
-    if (paymentList && storeConfig.paymentMethods) {
+    if (paymentList && storeConfig.paymentMethods && storeConfig.paymentMethods.length > 0) {
         paymentList.innerHTML = storeConfig.paymentMethods.map(method => `
             <li><i class="fas fa-check"></i> ${method}</li>
         `).join('');
+    } else if (paymentList) {
+        paymentList.innerHTML = `
+            <li><i class="fas fa-check"></i> SINPE Móvil</li>
+            <li><i class="fas fa-check"></i> Efectivo</li>
+            <li><i class="fas fa-check"></i> Tarjetas</li>
+            <li><i class="fas fa-check"></i> Transferencia</li>
+        `;
     }
 }
 
@@ -423,7 +279,7 @@ function updateFooterYear() {
 }
 
 // ============================================
-// CARRITO DE COMPRAS
+// CARRITO DE COMPRAS MEJORADO
 // ============================================
 
 function addToCart(productId) {
@@ -448,7 +304,6 @@ function addToCart(productId) {
     updateCartCount();
     showNotification(`"${product.name}" agregado al carrito`);
     
-    // Si el carrito está abierto, actualizarlo
     if (document.getElementById('cartModal').classList.contains('active')) {
         renderCartItems();
     }
@@ -489,23 +344,21 @@ function renderCartItems() {
     // Calcular subtotal
     const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
     
-    // Calcular envío (gratis para compras mayores a ₡30,000)
-    const shipping = subtotal >= 30000 ? 0 : 2000;
+    // Calcular envío basado en dirección
+    const shipping = calculateShippingCost();
     
     // Calcular total
     const total = subtotal + shipping;
     
     // Renderizar items
     cartItemsContainer.innerHTML = cart.map(item => {
-        // Verificar si la imagen es Base64 o URL
         const imageSrc = item.image && item.image.startsWith('data:image') ? 
             item.image : 
             (item.image || 'https://via.placeholder.com/60x60?text=Imagen');
         
         return `
         <div class="cart-item">
-            <img src="${imageSrc}" alt="${item.name}" class="cart-item-image"
-                 onerror="this.src='https://via.placeholder.com/60x60?text=Imagen'">
+            <img src="${imageSrc}" alt="${item.name}" class="cart-item-image">
             <div class="cart-item-details">
                 <div class="cart-item-title">${item.name}</div>
                 <div class="cart-item-price">₡${item.price.toLocaleString()}</div>
@@ -528,8 +381,134 @@ function renderCartItems() {
     
     // Actualizar totales
     cartSubtotal.textContent = `₡${subtotal.toLocaleString()}`;
-    cartShipping.textContent = shipping === 0 ? 'Gratis' : `₡${shipping.toLocaleString()}`;
+    
+    if (shipping === 0) {
+        cartShipping.textContent = 'Gratis';
+    } else {
+        cartShipping.textContent = `₡${shipping.toLocaleString()}`;
+    }
+    
     cartTotal.textContent = `₡${total.toLocaleString()}`;
+}
+
+function calculateShippingCost() {
+    const deliveryType = document.querySelector('input[name="deliveryType"]:checked');
+    const addressField = document.getElementById('deliveryAddress');
+    
+    // Si es recoger en tienda, no hay envío
+    if (deliveryType && deliveryType.value === 'pickup') {
+        return 0;
+    }
+    
+    // Si no hay dirección o está vacío, mostrar 0
+    if (!addressField || !addressField.value.trim()) {
+        return 0;
+    }
+    
+    // Simulación de cálculo por KM (₡650 por KM)
+    // En un sistema real, aquí llamarías a una API de Google Maps
+    const distance = calculateDistance(addressField.value);
+    return Math.round(distance * 650);
+}
+
+function calculateDistance(address) {
+    // Simulación: basado en palabras clave en la dirección
+    let distance = 5; // Distancia base en KM
+    
+    if (address.toLowerCase().includes('santa bárbara') || 
+        address.toLowerCase().includes('santa barbara')) {
+        distance = 2; // Muy cerca
+    } else if (address.toLowerCase().includes('heredia')) {
+        distance = 5;
+    } else if (address.toLowerCase().includes('san josé') || 
+               address.toLowerCase().includes('san jose')) {
+        distance = 15;
+    } else if (address.toLowerCase().includes('alajuela')) {
+        distance = 10;
+    } else if (address.toLowerCase().includes('cartago')) {
+        distance = 20;
+    }
+    
+    return distance;
+}
+
+function calculateShippingFromAddress() {
+    const addressField = document.getElementById('deliveryAddress');
+    const shippingElement = document.getElementById('cartShipping');
+    const shippingDistance = document.getElementById('shippingDistance');
+    
+    if (!addressField || !addressField.value.trim()) {
+        if (shippingElement) shippingElement.textContent = '₡0';
+        if (shippingDistance) shippingDistance.textContent = '';
+        return;
+    }
+    
+    const distance = calculateDistance(addressField.value);
+    const shippingCost = Math.round(distance * 650);
+    
+    if (shippingElement) {
+        shippingElement.textContent = `₡${shippingCost.toLocaleString()}`;
+    }
+    
+    if (shippingDistance) {
+        shippingDistance.textContent = `(Aprox. ${distance} km)`;
+    }
+    
+    // Recalcular total
+    const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+    const total = subtotal + shippingCost;
+    const cartTotal = document.getElementById('cartTotal');
+    if (cartTotal) {
+        cartTotal.textContent = `₡${total.toLocaleString()}`;
+    }
+}
+
+function setupDeliveryForm() {
+    const deliveryTypeRadios = document.querySelectorAll('input[name="deliveryType"]');
+    const addressField = document.getElementById('addressField');
+    
+    if (deliveryTypeRadios.length > 0 && addressField) {
+        // Configurar evento para mostrar/ocultar dirección
+        deliveryTypeRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.value === 'delivery') {
+                    addressField.style.display = 'block';
+                    // Hacer campos de dirección requeridos
+                    const addressInput = document.getElementById('deliveryAddress');
+                    if (addressInput) addressInput.required = true;
+                } else {
+                    addressField.style.display = 'none';
+                    // Quitar requerido
+                    const addressInput = document.getElementById('deliveryAddress');
+                    if (addressInput) addressInput.required = false;
+                }
+                calculateShippingFromAddress();
+            });
+        });
+        
+        // Estado inicial
+        const initialValue = document.querySelector('input[name="deliveryType"]:checked');
+        if (initialValue && initialValue.value === 'pickup') {
+            addressField.style.display = 'none';
+            const addressInput = document.getElementById('deliveryAddress');
+            if (addressInput) addressInput.required = false;
+        }
+    }
+}
+
+function selectPayment(method) {
+    selectedPaymentMethod = method;
+    
+    // Remover selección anterior
+    document.querySelectorAll('.payment-method').forEach(el => {
+        el.classList.remove('selected');
+    });
+    
+    // Agregar selección actual
+    const selectedEl = document.querySelector(`.payment-method[onclick*="${method}"]`);
+    if (selectedEl) {
+        selectedEl.classList.add('selected');
+    }
 }
 
 function updateCartQuantity(productId, newQuantity) {
@@ -557,29 +536,73 @@ function removeFromCart(productId) {
 }
 
 function clearCart() {
-    cart = [];
-    saveCart();
-    updateCartCount();
-    renderCartItems();
-    showNotification('Carrito vaciado');
+    if (cart.length === 0) return;
+    
+    if (confirm('¿Estás seguro de que quieres vaciar el carrito?')) {
+        cart = [];
+        saveCart();
+        updateCartCount();
+        renderCartItems();
+        showNotification('Carrito vaciado');
+    }
 }
 
+// ============================================
+// WHATSAPP ORDER MEJORADO
+// ============================================
+
 function sendWhatsAppOrder() {
-    const name = document.getElementById('customerName').value.trim();
-    const phone = document.getElementById('customerPhone').value.trim();
-    const address = document.getElementById('customerAddress').value.trim();
-    const notes = document.getElementById('orderNotes').value.trim();
+    // Obtener datos del formulario
+    const receiverName = document.getElementById('receiverName').value.trim();
+    const receiverPhone = document.getElementById('receiverPhone').value.trim();
+    const senderName = document.getElementById('senderName').value.trim();
+    const senderPhone = document.getElementById('senderPhone').value.trim();
+    const deliveryType = document.querySelector('input[name="deliveryType"]:checked');
+    const deliveryAddress = document.getElementById('deliveryAddress').value.trim();
+    const addressDetails = document.getElementById('addressDetails').value.trim();
+    const cardMessage = document.getElementById('cardMessage').value.trim();
+    const deliveryDate = document.getElementById('deliveryDate').value;
+    const deliveryTime = document.getElementById('deliveryTime').value;
+    const orderNotes = document.getElementById('orderNotes').value.trim();
     
-    // Validaciones básicas
-    if (!name) {
-        showNotification('Por favor ingresa tu nombre', true);
-        document.getElementById('customerName').focus();
+    // Validaciones
+    if (!receiverName || !receiverPhone) {
+        showNotification('Por favor ingresa el nombre y teléfono de QUIEN RECIBE', true);
+        document.getElementById('receiverName').focus();
         return;
     }
     
-    if (!phone) {
-        showNotification('Por favor ingresa tu teléfono', true);
-        document.getElementById('customerPhone').focus();
+    if (!senderName || !senderPhone) {
+        showNotification('Por favor ingresa tu nombre y teléfono (QUIEN ENVÍA)', true);
+        document.getElementById('senderName').focus();
+        return;
+    }
+    
+    if (!deliveryType) {
+        showNotification('Por favor selecciona cómo quieres recibir el pedido', true);
+        return;
+    }
+    
+    if (deliveryType.value === 'delivery' && !deliveryAddress) {
+        showNotification('Por favor ingresa la dirección para el envío', true);
+        document.getElementById('deliveryAddress').focus();
+        return;
+    }
+    
+    if (!deliveryDate) {
+        showNotification('Por favor selecciona la fecha de entrega', true);
+        document.getElementById('deliveryDate').focus();
+        return;
+    }
+    
+    if (!deliveryTime) {
+        showNotification('Por favor selecciona el horario de entrega', true);
+        document.getElementById('deliveryTime').focus();
+        return;
+    }
+    
+    if (!selectedPaymentMethod) {
+        showNotification('Por favor selecciona un método de pago', true);
         return;
     }
     
@@ -590,85 +613,147 @@ function sendWhatsAppOrder() {
     
     // Calcular totales
     const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
-    const shipping = subtotal >= 30000 ? 0 : 2000;
+    const shipping = calculateShippingCost();
     const total = subtotal + shipping;
     
     // Formatear mensaje
     let message = `¡Hola! Quiero hacer un pedido:\n\n`;
-    message += `*Cliente:* ${name}\n`;
-    message += `*Teléfono:* ${phone}\n`;
-    if (address) message += `*Dirección:* ${address}\n`;
-    if (notes) message += `*Notas:* ${notes}\n\n`;
-    message += `*Pedido:*\n`;
     
+    // Información de envío/recepción
+    message += `📦 *INFORMACIÓN DEL PEDIDO*\n`;
+    message += `📍 *Tipo:* ${deliveryType.value === 'delivery' ? 'ENVÍO A DOMICILIO' : 'RECOGER EN TIENDA'}\n`;
+    message += `📅 *Fecha:* ${formatDate(deliveryDate)}\n`;
+    message += `⏰ *Horario:* ${deliveryTime}\n\n`;
+    
+    // Quien recibe
+    message += `👤 *QUIEN RECIBE*\n`;
+    message += `• Nombre: ${receiverName}\n`;
+    message += `• Teléfono: ${receiverPhone}\n\n`;
+    
+    // Quien envía
+    message += `👤 *QUIEN ENVÍA*\n`;
+    message += `• Nombre: ${senderName}\n`;
+    message += `• Teléfono: ${senderPhone}\n\n`;
+    
+    // Dirección si aplica
+    if (deliveryType.value === 'delivery' && deliveryAddress) {
+        message += `🏠 *DIRECCIÓN DE ENVÍO*\n`;
+        message += `• Dirección: ${deliveryAddress}\n`;
+        if (addressDetails) {
+            message += `• Señas: ${addressDetails}\n`;
+        }
+        
+        // Generar enlace de Google Maps
+        const mapsLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(deliveryAddress + ', Santa Bárbara, Heredia, Costa Rica')}`;
+        message += `• 📍 Google Maps: ${mapsLink}\n\n`;
+    }
+    
+    // Método de pago
+    const paymentMethods = {
+        'sinpe': 'SINPE Móvil',
+        'efectivo': 'Efectivo',
+        'tarjeta': 'Tarjetas',
+        'transferencia': 'Transferencia'
+    };
+    message += `💳 *MÉTODO DE PAGO*\n`;
+    message += `• ${paymentMethods[selectedPaymentMethod] || selectedPaymentMethod}\n`;
+    message += `• Referencia SINPE: 8605-3613\n\n`;
+    
+    // Productos
+    message += `🛒 *PRODUCTOS*\n`;
     cart.forEach((item, index) => {
         message += `${index + 1}. ${item.name} x${item.quantity} - ₡${(item.price * item.quantity).toLocaleString()}\n`;
     });
     
-    message += `\n*Subtotal:* ₡${subtotal.toLocaleString()}\n`;
-    message += `*Envío:* ${shipping === 0 ? 'Gratis' : `₡${shipping.toLocaleString()}`}\n`;
-    message += `*Total:* ₡${total.toLocaleString()}\n\n`;
-    message += `¿Podrían confirmarme la disponibilidad y el tiempo de entrega? ¡Gracias!`;
+    // Total
+    message += `\n💰 *TOTAL*\n`;
+    message += `• Subtotal: ₡${subtotal.toLocaleString()}\n`;
+    if (shipping > 0) {
+        const distance = calculateDistance(deliveryAddress);
+        message += `• Envío: ₡${shipping.toLocaleString()} (${distance} km x ₡650)\n`;
+    } else {
+        message += `• Envío: Gratis\n`;
+    }
+    message += `• *Total a pagar:* ₡${total.toLocaleString()}\n\n`;
     
-    // Codificar mensaje para URL
+    // Mensaje de tarjeta
+    if (cardMessage) {
+        message += `💌 *MENSAJE EN TARJETA*\n`;
+        message += `"${cardMessage}"\n\n`;
+    }
+    
+    // Notas adicionales
+    if (orderNotes) {
+        message += `📝 *NOTAS ADICIONALES*\n`;
+        message += `${orderNotes}\n\n`;
+    }
+    
+    // Información de contacto
+    message += `---\n`;
+    message += `📞 *Floristería Santa Bárbara*\n`;
+    message += `• Teléfono: ${storeConfig.phone || '(506) 8605-3613'}\n`;
+    message += `• Dirección: ${storeConfig.address || 'Santa Bárbara, Heredia, Costa Rica'}\n`;
+    message += `• Horario: ${storeConfig.hours?.[0] || 'Lunes a Sábado: 9am - 7pm'}\n\n`;
+    
+    message += `¿Podrían confirmarme la disponibilidad? ¡Gracias!`;
+    
+    // Codificar mensaje
     const encodedMessage = encodeURIComponent(message);
     const phoneNumber = storeConfig.phone ? storeConfig.phone.replace(/\D/g, '') : '50686053613';
     
     // Abrir WhatsApp
     window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
     
-    // Limpiar carrito después de enviar
-    clearCart();
-    closeCart();
+    // Limpiar después de enviar
+    clearCartAfterOrder();
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-ES', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+}
+
+function clearCartAfterOrder() {
+    cart = [];
+    saveCart();
+    updateCartCount();
     
     // Limpiar formulario
-    document.getElementById('customerName').value = '';
-    document.getElementById('customerPhone').value = '';
-    document.getElementById('customerAddress').value = '';
+    document.getElementById('receiverName').value = '';
+    document.getElementById('receiverPhone').value = '';
+    document.getElementById('senderName').value = '';
+    document.getElementById('senderPhone').value = '';
+    document.getElementById('deliveryAddress').value = '';
+    document.getElementById('addressDetails').value = '';
+    document.getElementById('cardMessage').value = '';
+    document.getElementById('deliveryDate').value = '';
+    document.getElementById('deliveryTime').value = '';
     document.getElementById('orderNotes').value = '';
     
-    showNotification('Pedido enviado por WhatsApp');
-}
-
-// ============================================
-// MODALES
-// ============================================
-
-function openCart() {
-    const modal = document.getElementById('cartModal');
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-    renderCartItems();
-}
-
-function closeCart() {
-    const modal = document.getElementById('cartModal');
-    modal.classList.remove('active');
-    document.body.style.overflow = 'auto';
-}
-
-function openImageModal(imageUrl) {
-    const modal = document.getElementById('imageModal');
-    const modalImage = document.getElementById('modalImage');
+    // Resetear método de pago
+    selectedPaymentMethod = '';
+    document.querySelectorAll('.payment-method').forEach(el => {
+        el.classList.remove('selected');
+    });
     
-    modalImage.src = imageUrl;
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-}
-
-function closeImageModal() {
-    const modal = document.getElementById('imageModal');
-    modal.classList.remove('active');
-    document.body.style.overflow = 'auto';
+    showNotification('Pedido enviado por WhatsApp');
+    closeCart();
 }
 
 // ============================================
-// NOTIFICACIONES
+// NOTIFICACIONES Y MODALES
 // ============================================
 
 function showNotification(message, isError = false) {
     const notification = document.getElementById('notification');
     const notificationText = document.getElementById('notificationText');
+    
+    if (!notification || !notificationText) return;
     
     notificationText.textContent = message;
     notification.classList.remove('error');
@@ -684,54 +769,57 @@ function showNotification(message, isError = false) {
     }, 3000);
 }
 
+function openCart() {
+    const modal = document.getElementById('cartModal');
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    renderCartItems();
+}
+
+function closeCart() {
+    const modal = document.getElementById('cartModal');
+    modal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+}
+
 // ============================================
-// SISTEMA DE SINCRONIZACIÓN
+// SINCRONIZACIÓN
 // ============================================
 
-// Escuchar cambios en localStorage desde otras pestañas
 window.addEventListener('storage', function(event) {
     if (event.key === 'floristeria_products') {
         products = JSON.parse(event.newValue || '[]');
         renderProducts();
         renderCategories();
-        console.log('🔄 Productos actualizados desde otra pestaña');
     }
     
     if (event.key === 'floristeria_carousel') {
         carouselImages = JSON.parse(event.newValue || '[]');
         renderCarousel();
-        console.log('🔄 Carrusel actualizado desde otra pestaña');
     }
     
     if (event.key === 'floristeria_config') {
         storeConfig = JSON.parse(event.newValue || '{}');
         updateContactInfo();
         updateFooterInfo();
-        console.log('🔄 Configuración actualizada desde otra pestaña');
     }
     
     if (event.key === 'floristeria_cart') {
         cart = JSON.parse(event.newValue || '[]');
         updateCartCount();
-        console.log('🔄 Carrito actualizado desde otra pestaña');
     }
 });
 
 // ============================================
-// FUNCIONES PÚBLICAS PARA HTML
+// FUNCIONES PÚBLICAS
 // ============================================
 
-// Estas funciones son llamadas desde los onclick en el HTML
 window.addToCart = addToCart;
 window.openCart = openCart;
 window.closeCart = closeCart;
 window.updateCartQuantity = updateCartQuantity;
 window.removeFromCart = removeFromCart;
+window.clearCart = clearCart;
 window.sendWhatsAppOrder = sendWhatsAppOrder;
-window.nextSlide = nextSlide;
-window.prevSlide = prevSlide;
-window.goToSlide = goToSlide;
-window.openImageModal = openImageModal;
-window.closeImageModal = closeImageModal;
-window.filterByCategory = filterByCategory;
-window.searchProducts = searchProducts;
+window.selectPayment = selectPayment;
+window.calculateShippingFromAddress = calculateShippingFromAddress;
