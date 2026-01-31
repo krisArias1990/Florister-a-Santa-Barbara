@@ -1,8 +1,8 @@
 // ============================================
-// SISTEMA PRINCIPAL - FLORISTERÍA SANTA BÁRBARA
+// SISTEMA PRINCIPAL MODIFICADO PARA IMÁGENES BASE64
 // ============================================
 
-// Variables globales
+// Variables globales (se sincronizan con admin.js)
 let cart = JSON.parse(localStorage.getItem('floristeria_cart')) || [];
 let products = [];
 let categories = [];
@@ -30,7 +30,6 @@ function loadAllData() {
     if (savedProducts) {
         products = JSON.parse(savedProducts);
     } else {
-        // Datos de ejemplo si no hay nada
         products = getDefaultProducts();
         localStorage.setItem('floristeria_products', JSON.stringify(products));
     }
@@ -87,50 +86,6 @@ function getDefaultProducts() {
             image: "https://images.unsplash.com/photo-1497534446932-c925b458314e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
             seasonActive: true,
             blocked: false
-        },
-        {
-            id: 3,
-            name: "Centro de Mesa Premium",
-            description: "Elegante centro de mesa para eventos especiales con flores de temporada.",
-            price: 35000,
-            seasonPrice: 0,
-            category: "Arreglos",
-            image: "https://images.unsplash.com/photo-1459156212016-c812468e2115?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-            seasonActive: false,
-            blocked: false
-        },
-        {
-            id: 4,
-            name: "Orquídeas Exóticas",
-            description: "Hermosa planta de orquídea en maceta decorativa, ideal para regalo corporativo.",
-            price: 22000,
-            seasonPrice: 19000,
-            category: "Plantas",
-            image: "https://images.unsplash.com/photo-1463154545680-d59320fd685d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-            seasonActive: true,
-            blocked: false
-        },
-        {
-            id: 5,
-            name: "Tulipanes Holandeses",
-            description: "Delicado ramo de tulipanes importados de Holanda en colores variados.",
-            price: 28000,
-            seasonPrice: 0,
-            category: "Tulipanes",
-            image: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-            seasonActive: false,
-            blocked: false
-        },
-        {
-            id: 6,
-            name: "Rosas Blancas Premium",
-            description: "Exquisito ramo de 36 rosas blancas para bodas y eventos especiales.",
-            price: 32000,
-            seasonPrice: 28000,
-            category: "Rosas",
-            image: "https://images.unsplash.com/photo-1553531889-e5864f8a0672?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-            seasonActive: true,
-            blocked: false
         }
     ];
 }
@@ -148,12 +103,6 @@ function getDefaultCarousel() {
             image: "https://images.unsplash.com/photo-1563178406-4cdc2923acbc?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
             title: "Envío a Domicilio Gratis",
             description: "Llevamos felicidad hasta tu puerta en Santa Bárbara y alrededores"
-        },
-        {
-            id: 3,
-            image: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
-            title: "Ofertas de Temporada",
-            description: "Descuentos especiales en nuestros arreglos más populares"
         }
     ];
 }
@@ -197,12 +146,19 @@ function renderProducts(filteredProducts = null) {
     
     noResults.style.display = 'none';
     
-    productsGrid.innerHTML = productsToShow.map(product => `
+    productsGrid.innerHTML = productsToShow.map(product => {
+        // Verificar si la imagen es Base64 o URL
+        const imageSrc = product.image && product.image.startsWith('data:image') ? 
+            product.image : 
+            (product.image || 'https://via.placeholder.com/600x400?text=Floristería+Santa+Bárbara');
+        
+        return `
         <div class="product-card" data-category="${product.category}">
             <div class="product-image-container">
-                ${product.seasonActive && product.seasonPrice ? '<span class="product-badge">Oferta</span>' : ''}
-                <img src="${product.image}" alt="${product.name}" class="product-image" 
-                     onclick="openImageModal('${product.image}')">
+                ${product.seasonActive && product.seasonPrice > 0 ? '<span class="product-badge">Oferta</span>' : ''}
+                <img src="${imageSrc}" alt="${product.name}" class="product-image" 
+                     onclick="openImageModal('${imageSrc.replace(/'/g, "\\'")}')"
+                     onerror="this.src='https://via.placeholder.com/600x400?text=Imagen+no+disponible'">
             </div>
             <div class="product-info">
                 <div class="product-category">${product.category}</div>
@@ -210,7 +166,7 @@ function renderProducts(filteredProducts = null) {
                 <p class="product-description">${product.description}</p>
                 
                 <div class="price-container">
-                    ${product.seasonActive && product.seasonPrice ? `
+                    ${product.seasonActive && product.seasonPrice > 0 ? `
                         <span class="season-price">₡${product.seasonPrice.toLocaleString()}</span>
                         <span class="original-price">₡${product.price.toLocaleString()}</span>
                     ` : `
@@ -225,7 +181,8 @@ function renderProducts(filteredProducts = null) {
                 </button>
             </div>
         </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 function renderCategories() {
@@ -283,6 +240,117 @@ function searchProducts() {
     );
     
     renderProducts(filteredProducts);
+}
+
+// ============================================
+// CARRUSEL
+// ============================================
+
+function renderCarousel() {
+    const carouselInner = document.getElementById('carousel-inner');
+    const carouselIndicators = document.getElementById('carousel-indicators');
+    
+    if (carouselImages.length === 0) {
+        carouselInner.innerHTML = `
+            <div class="carousel-item">
+                <div style="background: linear-gradient(135deg, var(--primary), var(--secondary)); height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">
+                    <div style="text-align: center;">
+                        <i class="fas fa-spa" style="font-size: 4rem; margin-bottom: 1rem;"></i>
+                        <h2>Floristería Santa Bárbara</h2>
+                        <p>Agrega imágenes al carrusel desde el panel de administración</p>
+                    </div>
+                </div>
+            </div>
+        `;
+        carouselIndicators.innerHTML = '';
+        return;
+    }
+    
+    carouselInner.innerHTML = carouselImages.map((slide, index) => {
+        // Verificar si la imagen es Base64 o URL
+        const imageSrc = slide.image && slide.image.startsWith('data:image') ? 
+            slide.image : 
+            (slide.image || 'https://via.placeholder.com/1200x400?text=Floristería+Santa+Bárbara');
+        
+        return `
+        <div class="carousel-item ${index === 0 ? 'active' : ''}">
+            <img src="${imageSrc}" alt="${slide.title || 'Imagen del carrusel'}" class="carousel-img"
+                 onerror="this.src='https://via.placeholder.com/1200x400?text=Error+cargando+imagen'">
+            ${slide.title || slide.description ? `
+                <div class="carousel-caption">
+                    ${slide.title ? `<h2>${slide.title}</h2>` : ''}
+                    ${slide.description ? `<p>${slide.description}</p>` : ''}
+                </div>
+            ` : ''}
+        </div>
+        `;
+    }).join('');
+    
+    carouselIndicators.innerHTML = carouselImages.map((_, index) => `
+        <button class="carousel-indicator ${index === 0 ? 'active' : ''}" 
+                onclick="goToSlide(${index})"></button>
+    `).join('');
+}
+
+function initCarousel() {
+    // Iniciar rotación automática
+    startCarouselRotation();
+    
+    // Detener rotación al pasar el mouse
+    const carousel = document.querySelector('.carousel');
+    if (carousel) {
+        carousel.addEventListener('mouseenter', stopCarouselRotation);
+        carousel.addEventListener('mouseleave', startCarouselRotation);
+    }
+}
+
+function startCarouselRotation() {
+    stopCarouselRotation(); // Detener cualquier intervalo existente
+    carouselInterval = setInterval(nextSlide, 5000);
+}
+
+function stopCarouselRotation() {
+    if (carouselInterval) {
+        clearInterval(carouselInterval);
+        carouselInterval = null;
+    }
+}
+
+function nextSlide() {
+    if (carouselImages.length === 0) return;
+    
+    currentCarouselSlide = (currentCarouselSlide + 1) % carouselImages.length;
+    updateCarousel();
+}
+
+function prevSlide() {
+    if (carouselImages.length === 0) return;
+    
+    currentCarouselSlide = (currentCarouselSlide - 1 + carouselImages.length) % carouselImages.length;
+    updateCarousel();
+}
+
+function goToSlide(index) {
+    currentCarouselSlide = index;
+    updateCarousel();
+}
+
+function updateCarousel() {
+    const carouselInner = document.getElementById('carousel-inner');
+    const indicators = document.querySelectorAll('.carousel-indicator');
+    
+    if (!carouselInner || carouselImages.length === 0) return;
+    
+    // Mover el carrusel
+    carouselInner.style.transform = `translateX(-${currentCarouselSlide * 100}%)`;
+    
+    // Actualizar indicadores
+    indicators.forEach((indicator, index) => {
+        indicator.classList.toggle('active', index === currentCarouselSlide);
+    });
+    
+    // Reiniciar temporizador
+    startCarouselRotation();
 }
 
 // ============================================
@@ -355,8 +423,229 @@ function updateFooterYear() {
 }
 
 // ============================================
+// CARRITO DE COMPRAS
+// ============================================
+
+function addToCart(productId) {
+    const product = products.find(p => p.id === productId);
+    if (!product || product.blocked) return;
+    
+    const existingItem = cart.find(item => item.id === productId);
+    
+    if (existingItem) {
+        existingItem.quantity++;
+    } else {
+        cart.push({
+            id: product.id,
+            name: product.name,
+            price: product.seasonActive && product.seasonPrice > 0 ? product.seasonPrice : product.price,
+            image: product.image,
+            quantity: 1
+        });
+    }
+    
+    saveCart();
+    updateCartCount();
+    showNotification(`"${product.name}" agregado al carrito`);
+    
+    // Si el carrito está abierto, actualizarlo
+    if (document.getElementById('cartModal').classList.contains('active')) {
+        renderCartItems();
+    }
+}
+
+function saveCart() {
+    localStorage.setItem('floristeria_cart', JSON.stringify(cart));
+}
+
+function updateCartCount() {
+    const cartCount = document.querySelector('.cart-count');
+    if (cartCount) {
+        const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+        cartCount.textContent = totalItems;
+    }
+}
+
+function renderCartItems() {
+    const cartItemsContainer = document.getElementById('cartItemsContainer');
+    const cartSubtotal = document.getElementById('cartSubtotal');
+    const cartShipping = document.getElementById('cartShipping');
+    const cartTotal = document.getElementById('cartTotal');
+    
+    if (cart.length === 0) {
+        cartItemsContainer.innerHTML = `
+            <div class="cart-empty">
+                <i class="fas fa-shopping-cart"></i>
+                <h3>Tu carrito está vacío</h3>
+                <p>Agrega productos desde el catálogo</p>
+            </div>
+        `;
+        cartSubtotal.textContent = '₡0';
+        cartShipping.textContent = '₡0';
+        cartTotal.textContent = '₡0';
+        return;
+    }
+    
+    // Calcular subtotal
+    const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+    
+    // Calcular envío (gratis para compras mayores a ₡30,000)
+    const shipping = subtotal >= 30000 ? 0 : 2000;
+    
+    // Calcular total
+    const total = subtotal + shipping;
+    
+    // Renderizar items
+    cartItemsContainer.innerHTML = cart.map(item => {
+        // Verificar si la imagen es Base64 o URL
+        const imageSrc = item.image && item.image.startsWith('data:image') ? 
+            item.image : 
+            (item.image || 'https://via.placeholder.com/60x60?text=Imagen');
+        
+        return `
+        <div class="cart-item">
+            <img src="${imageSrc}" alt="${item.name}" class="cart-item-image"
+                 onerror="this.src='https://via.placeholder.com/60x60?text=Imagen'">
+            <div class="cart-item-details">
+                <div class="cart-item-title">${item.name}</div>
+                <div class="cart-item-price">₡${item.price.toLocaleString()}</div>
+            </div>
+            <div class="cart-item-actions">
+                <button class="quantity-btn" onclick="updateCartQuantity(${item.id}, ${item.quantity - 1})">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <span class="item-quantity">${item.quantity}</span>
+                <button class="quantity-btn" onclick="updateCartQuantity(${item.id}, ${item.quantity + 1})">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <button class="remove-item-btn" onclick="removeFromCart(${item.id})">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+        `;
+    }).join('');
+    
+    // Actualizar totales
+    cartSubtotal.textContent = `₡${subtotal.toLocaleString()}`;
+    cartShipping.textContent = shipping === 0 ? 'Gratis' : `₡${shipping.toLocaleString()}`;
+    cartTotal.textContent = `₡${total.toLocaleString()}`;
+}
+
+function updateCartQuantity(productId, newQuantity) {
+    const item = cart.find(item => item.id === productId);
+    
+    if (!item) return;
+    
+    if (newQuantity < 1) {
+        removeFromCart(productId);
+        return;
+    }
+    
+    item.quantity = newQuantity;
+    saveCart();
+    updateCartCount();
+    renderCartItems();
+}
+
+function removeFromCart(productId) {
+    cart = cart.filter(item => item.id !== productId);
+    saveCart();
+    updateCartCount();
+    renderCartItems();
+    showNotification('Producto eliminado del carrito');
+}
+
+function clearCart() {
+    cart = [];
+    saveCart();
+    updateCartCount();
+    renderCartItems();
+    showNotification('Carrito vaciado');
+}
+
+function sendWhatsAppOrder() {
+    const name = document.getElementById('customerName').value.trim();
+    const phone = document.getElementById('customerPhone').value.trim();
+    const address = document.getElementById('customerAddress').value.trim();
+    const notes = document.getElementById('orderNotes').value.trim();
+    
+    // Validaciones básicas
+    if (!name) {
+        showNotification('Por favor ingresa tu nombre', true);
+        document.getElementById('customerName').focus();
+        return;
+    }
+    
+    if (!phone) {
+        showNotification('Por favor ingresa tu teléfono', true);
+        document.getElementById('customerPhone').focus();
+        return;
+    }
+    
+    if (cart.length === 0) {
+        showNotification('Tu carrito está vacío', true);
+        return;
+    }
+    
+    // Calcular totales
+    const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+    const shipping = subtotal >= 30000 ? 0 : 2000;
+    const total = subtotal + shipping;
+    
+    // Formatear mensaje
+    let message = `¡Hola! Quiero hacer un pedido:\n\n`;
+    message += `*Cliente:* ${name}\n`;
+    message += `*Teléfono:* ${phone}\n`;
+    if (address) message += `*Dirección:* ${address}\n`;
+    if (notes) message += `*Notas:* ${notes}\n\n`;
+    message += `*Pedido:*\n`;
+    
+    cart.forEach((item, index) => {
+        message += `${index + 1}. ${item.name} x${item.quantity} - ₡${(item.price * item.quantity).toLocaleString()}\n`;
+    });
+    
+    message += `\n*Subtotal:* ₡${subtotal.toLocaleString()}\n`;
+    message += `*Envío:* ${shipping === 0 ? 'Gratis' : `₡${shipping.toLocaleString()}`}\n`;
+    message += `*Total:* ₡${total.toLocaleString()}\n\n`;
+    message += `¿Podrían confirmarme la disponibilidad y el tiempo de entrega? ¡Gracias!`;
+    
+    // Codificar mensaje para URL
+    const encodedMessage = encodeURIComponent(message);
+    const phoneNumber = storeConfig.phone ? storeConfig.phone.replace(/\D/g, '') : '50686053613';
+    
+    // Abrir WhatsApp
+    window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
+    
+    // Limpiar carrito después de enviar
+    clearCart();
+    closeCart();
+    
+    // Limpiar formulario
+    document.getElementById('customerName').value = '';
+    document.getElementById('customerPhone').value = '';
+    document.getElementById('customerAddress').value = '';
+    document.getElementById('orderNotes').value = '';
+    
+    showNotification('Pedido enviado por WhatsApp');
+}
+
+// ============================================
 // MODALES
 // ============================================
+
+function openCart() {
+    const modal = document.getElementById('cartModal');
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    renderCartItems();
+}
+
+function closeCart() {
+    const modal = document.getElementById('cartModal');
+    modal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+}
 
 function openImageModal(imageUrl) {
     const modal = document.getElementById('imageModal');
@@ -396,34 +685,6 @@ function showNotification(message, isError = false) {
 }
 
 // ============================================
-// EVENT LISTENERS GLOBALES
-// ============================================
-
-// Cerrar modales al hacer clic fuera
-document.addEventListener('click', function(event) {
-    const cartModal = document.getElementById('cartModal');
-    const imageModal = document.getElementById('imageModal');
-    
-    if (cartModal && cartModal.classList.contains('active') && 
-        event.target === cartModal) {
-        closeCart();
-    }
-    
-    if (imageModal && imageModal.classList.contains('active') && 
-        event.target === imageModal) {
-        closeImageModal();
-    }
-});
-
-// Cerrar modales con ESC
-document.addEventListener('keydown', function(event) {
-    if (event.key === 'Escape') {
-        closeCart();
-        closeImageModal();
-    }
-});
-
-// ============================================
 // SISTEMA DE SINCRONIZACIÓN
 // ============================================
 
@@ -461,43 +722,16 @@ window.addEventListener('storage', function(event) {
 // ============================================
 
 // Estas funciones son llamadas desde los onclick en el HTML
-window.addToCart = function(productId) {
-    const product = products.find(p => p.id === productId);
-    if (!product || product.blocked) return;
-    
-    const existingItem = cart.find(item => item.id === productId);
-    
-    if (existingItem) {
-        existingItem.quantity++;
-    } else {
-        cart.push({
-            id: product.id,
-            name: product.name,
-            price: product.seasonActive && product.seasonPrice ? product.seasonPrice : product.price,
-            image: product.image,
-            quantity: 1
-        });
-    }
-    
-    saveCart();
-    updateCartCount();
-    showNotification(`"${product.name}" agregado al carrito`);
-    
-    // Si el carrito está abierto, actualizarlo
-    if (document.getElementById('cartModal').classList.contains('active')) {
-        renderCartItems();
-    }
-};
-
-window.openCart = function() {
-    const modal = document.getElementById('cartModal');
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-    renderCartItems();
-};
-
-window.closeCart = function() {
-    const modal = document.getElementById('cartModal');
-    modal.classList.remove('active');
-    document.body.style.overflow = 'auto';
-};
+window.addToCart = addToCart;
+window.openCart = openCart;
+window.closeCart = closeCart;
+window.updateCartQuantity = updateCartQuantity;
+window.removeFromCart = removeFromCart;
+window.sendWhatsAppOrder = sendWhatsAppOrder;
+window.nextSlide = nextSlide;
+window.prevSlide = prevSlide;
+window.goToSlide = goToSlide;
+window.openImageModal = openImageModal;
+window.closeImageModal = closeImageModal;
+window.filterByCategory = filterByCategory;
+window.searchProducts = searchProducts;
