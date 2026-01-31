@@ -3,27 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Administrativo - Floristería Santa Bárbara</title>
+    <title>Panel Admin - Floristería Santa Bárbara</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        /* ===== VARIABLES Y RESET ===== */
         :root {
             --primary: #e91e63;
             --primary-dark: #c2185b;
             --secondary: #9c27b0;
             --success: #4caf50;
-            --info: #2196f3;
-            --warning: #ff9800;
             --danger: #f44336;
+            --warning: #ff9800;
+            --info: #2196f3;
             --light: #f8f9fa;
             --dark: #2c3e50;
             --gray: #6c757d;
-            --gray-light: #e9ecef;
             --border: #dee2e6;
             --shadow: 0 5px 15px rgba(0,0,0,0.08);
-            --shadow-hover: 0 10px 25px rgba(0,0,0,0.12);
-            --transition: all 0.3s ease;
             --radius: 12px;
             --radius-sm: 8px;
         }
@@ -35,392 +30,111 @@
         }
         
         body {
-            font-family: 'Open Sans', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             padding: 20px;
         }
         
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 600;
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
         }
         
-        /* ===== LOGIN SCREEN ===== */
-        .login-container {
-            background: white;
-            padding: 40px;
-            border-radius: var(--radius);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-            width: 100%;
-            max-width: 450px;
-            text-align: center;
-            animation: slideUp 0.5s ease;
-        }
-        
-        @keyframes slideUp {
-            from { transform: translateY(30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        
-        .login-header {
-            margin-bottom: 30px;
-        }
-        
-        .login-header i {
-            font-size: 3rem;
-            color: var(--primary);
-            margin-bottom: 15px;
-        }
-        
-        .login-header h1 {
-            color: var(--primary);
-            font-size: 1.8rem;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--dark);
-            font-size: 0.95rem;
-        }
-        
-        .form-control {
-            width: 100%;
-            padding: 14px;
-            border: 2px solid var(--border);
-            border-radius: var(--radius-sm);
-            font-size: 16px;
-            transition: var(--transition);
-        }
-        
-        .form-control:focus {
-            border-color: var(--primary);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
-        }
-        
-        .btn-login {
-            background: linear-gradient(to right, #25D366, #1DA851);
-            color: white;
-            border: none;
-            padding: 16px;
-            width: 100%;
-            border-radius: var(--radius-sm);
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        
-        .btn-login:hover {
-            background: linear-gradient(to right, #1DA851, #25D366);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
-        }
-        
-        .error-message {
-            color: var(--danger);
-            margin-top: 15px;
-            padding: 12px;
-            background: rgba(220, 53, 69, 0.1);
-            border-radius: var(--radius-sm);
-            display: none;
-            font-size: 0.9rem;
-        }
-        
-        .login-info {
-            margin-top: 25px;
-            color: var(--gray);
-            font-size: 0.85rem;
-            background: var(--light);
-            padding: 15px;
-            border-radius: var(--radius-sm);
-            text-align: left;
-        }
-        
-        .login-info p {
-            margin-bottom: 5px;
-        }
-        
-        .login-info strong {
-            color: var(--dark);
-        }
-        
-        /* ===== ADMIN PANEL ===== */
-        .admin-panel {
-            display: none;
-            width: 100%;
-            max-width: 1400px;
-            margin: 20px auto;
-            background: white;
-            border-radius: var(--radius);
-            overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
-            min-height: 90vh;
-        }
-        
-        /* Admin Header */
         .admin-header {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            padding: 1.5rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 2rem;
+            border-radius: var(--radius);
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            text-align: center;
         }
         
         .admin-header h1 {
-            font-size: 1.5rem;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin: 0;
+            justify-content: center;
+            gap: 15px;
         }
         
-        .logout-btn {
-            background: rgba(255,255,255,0.15);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 50px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .admin-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
         }
         
-        .logout-btn:hover {
-            background: rgba(255,255,255,0.25);
-            transform: translateY(-2px);
+        .admin-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
         }
         
-        /* Admin Tabs */
-        .admin-tabs {
-            display: flex;
-            background: var(--light);
-            border-bottom: 1px solid var(--border);
-            overflow-x: auto;
-            scrollbar-width: thin;
+        @media (max-width: 992px) {
+            .admin-grid {
+                grid-template-columns: 1fr;
+            }
         }
         
-        .admin-tabs::-webkit-scrollbar {
-            height: 6px;
-        }
-        
-        .admin-tabs::-webkit-scrollbar-thumb {
-            background: var(--gray-light);
-            border-radius: 3px;
-        }
-        
-        .tab-btn {
-            padding: 18px 25px;
-            border: none;
-            background: transparent;
-            color: var(--gray);
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            white-space: nowrap;
-            border-bottom: 3px solid transparent;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .tab-btn:hover {
-            color: var(--primary);
-            background: rgba(233, 30, 99, 0.05);
-        }
-        
-        .tab-btn.active {
-            color: var(--primary);
-            border-bottom-color: var(--primary);
-            background: white;
-        }
-        
-        /* Tab Content */
-        .tab-content {
-            display: none;
-            padding: 2rem;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        /* Cards */
-        .card {
+        .admin-card {
             background: white;
             border-radius: var(--radius);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
+            padding: 2rem;
             box-shadow: var(--shadow);
             border: 1px solid var(--border);
         }
         
-        .card h3 {
+        .admin-card h2 {
             color: var(--dark);
             margin-bottom: 1.5rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 2px solid var(--light);
+            padding-bottom: 1rem;
+            border-bottom: 3px solid var(--primary);
             display: flex;
             align-items: center;
             gap: 10px;
         }
         
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+        .form-group {
+            margin-bottom: 1.5rem;
         }
         
-        .stat-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: var(--radius);
-            text-align: center;
-            box-shadow: var(--shadow);
-            border-top: 4px solid var(--primary);
-            transition: var(--transition);
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-hover);
-        }
-        
-        .stat-icon {
-            font-size: 2.5rem;
-            color: var(--primary);
-            margin-bottom: 1rem;
-        }
-        
-        .stat-number {
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: var(--dark);
+        .form-label {
+            display: block;
             margin-bottom: 0.5rem;
-        }
-        
-        .stat-label {
-            color: var(--gray);
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-        
-        /* Forms */
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        /* Product Status Toggle */
-        .status-toggle {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 1rem;
-            padding: 10px;
-            background: var(--light);
-            border-radius: var(--radius-sm);
-        }
-        
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 26px;
-        }
-        
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        
-        .toggle-slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 34px;
-        }
-        
-        .toggle-slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-        
-        input:checked + .toggle-slider {
-            background-color: var(--success);
-        }
-        
-        input:checked + .toggle-slider:before {
-            transform: translateX(24px);
-        }
-        
-        .toggle-label {
             font-weight: 600;
             color: var(--dark);
         }
         
-        .toggle-label.active {
-            color: var(--success);
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+            transition: all 0.3s;
         }
         
-        .toggle-label.inactive {
-            color: var(--danger);
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(233,30,99,0.1);
         }
         
-        /* Buttons */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
         .btn {
             padding: 12px 24px;
-            border: none;
             border-radius: var(--radius-sm);
             font-weight: 600;
             font-size: 1rem;
             cursor: pointer;
-            transition: var(--transition);
+            border: none;
+            transition: all 0.3s;
             display: inline-flex;
             align-items: center;
             gap: 10px;
@@ -434,7 +148,6 @@
         .btn-primary:hover {
             background: var(--primary-dark);
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(233, 30, 99, 0.3);
         }
         
         .btn-success {
@@ -443,13 +156,18 @@
         }
         
         .btn-success:hover {
-            background: #3d8b40;
+            background: #388e3c;
             transform: translateY(-2px);
         }
         
-        .btn-secondary {
-            background: var(--gray);
+        .btn-warning {
+            background: var(--warning);
             color: white;
+        }
+        
+        .btn-warning:hover {
+            background: #f57c00;
+            transform: translateY(-2px);
         }
         
         .btn-danger {
@@ -459,2901 +177,1021 @@
         
         .btn-danger:hover {
             background: #d32f2f;
+            transform: translateY(-2px);
         }
         
-        .btn-warning {
-            background: var(--warning);
-            color: white;
+        .btn-block {
+            width: 100%;
+            justify-content: center;
         }
         
-        .btn-warning:hover {
-            background: #e68900;
+        .products-list {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 15px;
         }
         
-        .btn-info {
-            background: var(--info);
-            color: white;
+        .product-item {
+            background: var(--light);
+            padding: 15px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 10px;
+            border-left: 4px solid var(--primary);
         }
         
-        .btn-small {
+        .product-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .product-item-title {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 1.1rem;
+        }
+        
+        .product-item-price {
+            color: var(--success);
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        
+        .product-item-category {
+            display: inline-block;
+            background: rgba(233,30,99,0.1);
+            color: var(--primary);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .product-item-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .product-item-actions button {
             padding: 6px 12px;
             font-size: 0.85rem;
         }
         
-        /* Image Upload System */
-        .image-upload-container {
-            border: 3px dashed var(--border);
-            border-radius: var(--radius);
-            padding: 2rem;
-            text-align: center;
-            margin: 1.5rem 0;
-            cursor: pointer;
-            transition: var(--transition);
-            background: var(--light);
-        }
-        
-        .image-upload-container:hover {
-            border-color: var(--primary);
-            background: rgba(233, 30, 99, 0.05);
-        }
-        
-        .upload-icon {
-            font-size: 3rem;
-            color: var(--gray);
-            margin-bottom: 1rem;
-        }
-        
-        .upload-text h4 {
-            color: var(--gray);
-            margin-bottom: 0.5rem;
-        }
-        
-        .upload-text p {
-            color: var(--gray);
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-        
-        .image-preview-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-        
-        .image-preview {
-            width: 120px;
-            height: 100px;
-            object-fit: cover;
-            border-radius: var(--radius-sm);
-            border: 2px solid var(--border);
-            transition: var(--transition);
-        }
-        
-        .image-preview:hover {
-            transform: scale(1.05);
-            border-color: var(--primary);
-        }
-        
-        .image-item {
-            position: relative;
-        }
-        
-        .image-remove {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: var(--danger);
-            color: white;
-            border: none;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            transition: var(--transition);
-        }
-        
-        .image-remove:hover {
-            background: #d32f2f;
-            transform: scale(1.1);
-        }
-        
-        .upload-progress {
-            height: 6px;
-            background: var(--gray-light);
-            border-radius: 3px;
-            margin-top: 1rem;
-            overflow: hidden;
-        }
-        
-        .upload-progress-bar {
-            height: 100%;
-            background: linear-gradient(to right, #25D366, #1DA851);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-        
-        /* Tables */
-        .table-container {
-            overflow-x: auto;
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-            margin-top: 1.5rem;
-        }
-        
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 600px;
-        }
-        
-        .data-table th {
-            background: var(--light);
-            padding: 1rem;
-            text-align: left;
-            font-weight: 600;
-            color: var(--dark);
-            border-bottom: 2px solid var(--border);
-            white-space: nowrap;
-        }
-        
-        .data-table td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border);
-            vertical-align: middle;
-        }
-        
-        .data-table tr:hover {
-            background: rgba(233, 30, 99, 0.02);
-        }
-        
-        .data-table tr:last-child td {
-            border-bottom: none;
-        }
-        
-        /* Producto bloqueado en la tabla */
-        .product-blocked {
-            opacity: 0.6;
-            background: rgba(0,0,0,0.03);
-            position: relative;
-        }
-        
-        .product-blocked::before {
-            content: "🔒 BLOQUEADO";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-15deg);
-            background: rgba(220, 53, 69, 0.9);
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            z-index: 1;
-            pointer-events: none;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-        }
-        
-        .product-img-small {
-            width: 60px;
-            height: 60px;
-            object-fit: cover;
-            border-radius: var(--radius-sm);
-            border: 2px solid var(--border);
-        }
-        
-        /* Producto bloqueado - imagen sombreada */
-        .product-img-small.blocked {
-            filter: grayscale(100%);
-            opacity: 0.5;
-        }
-        
-        /* Order Status */
-        .order-status {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            display: inline-block;
-        }
-        
-        .status-pending {
-            background: #fff3cd;
-            color: #856404;
-        }
-        
-        .status-confirmed {
-            background: #d1ecf1;
-            color: #0c5460;
-        }
-        
-        .status-completed {
-            background: #d4edda;
-            color: #155724;
-        }
-        
-        /* Action Buttons */
-        .action-buttons {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-        
-        /* Store Configuration */
-        .config-section {
-            margin-bottom: 2rem;
-        }
-        
-        .config-section:last-child {
-            margin-bottom: 0;
-        }
-        
-        /* Data Management */
-        .data-management {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
-            flex-wrap: wrap;
-        }
-        
-        /* Sincronización con Data.json */
         .sync-section {
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            padding: 1.5rem;
-            border-radius: var(--radius);
-            margin-top: 2rem;
-            border-left: 4px solid var(--info);
+            background: #f0f8ff;
+            border: 2px dashed var(--info);
         }
         
-        .sync-instructions {
-            background: white;
-            padding: 1rem;
+        .sync-code {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
             border-radius: var(--radius-sm);
-            margin-top: 1rem;
-            border: 1px solid var(--border);
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 200px;
+            overflow-y: auto;
+            margin: 15px 0;
         }
         
-        .sync-instructions ol {
-            margin-left: 1.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .sync-instructions li {
-            margin-bottom: 0.5rem;
-            color: var(--dark);
-        }
-        
-        /* Responsive */
-        @media (max-width: 992px) {
-            .admin-panel {
-                margin: 10px;
-                min-height: auto;
-            }
-            
-            .tab-content {
-                padding: 1.5rem;
-            }
-            
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .login-container {
-                padding: 30px 20px;
-            }
-            
-            .admin-header {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-                padding: 1.5rem 1rem;
-            }
-            
-            .admin-tabs {
-                flex-wrap: nowrap;
-                overflow-x: auto;
-            }
-            
-            .tab-btn {
-                padding: 15px 20px;
-                font-size: 0.9rem;
-            }
-            
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-            
-            .data-management {
-                flex-direction: column;
-            }
-            
-            .btn {
-                width: 100%;
-                justify-content: center;
-            }
-            
-            .action-buttons {
-                flex-direction: column;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .login-container {
-                padding: 25px 15px;
-            }
-            
-            .login-header h1 {
-                font-size: 1.5rem;
-            }
-            
-            .admin-panel {
-                margin: 5px;
-            }
-            
-            .tab-content {
-                padding: 1rem;
-            }
-            
-            .card {
-                padding: 1rem;
-            }
-            
-            .image-upload-container {
-                padding: 1.5rem;
-            }
-            
-            .data-table th, 
-            .data-table td {
-                padding: 0.75rem 0.5rem;
-                font-size: 0.9rem;
-            }
-        }
-        
-        /* Loading States */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        /* Empty States */
-        .empty-state {
-            text-align: center;
-            padding: 3rem 1rem;
-            color: var(--gray);
-        }
-        
-        .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            color: var(--gray-light);
-        }
-        
-        .empty-state h3 {
-            color: var(--gray);
-            margin-bottom: 0.5rem;
-        }
-        
-        /* Alerts */
-        .alert {
-            padding: 1rem;
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 15px 25px;
             border-radius: var(--radius-sm);
-            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            z-index: 1000;
             display: flex;
             align-items: center;
             gap: 10px;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
         }
         
-        .alert-success {
-            background: rgba(76, 175, 80, 0.1);
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.error {
+            background: var(--danger);
+        }
+        
+        .notification.warning {
+            background: var(--warning);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .status-active {
+            background: rgba(76, 175, 80, 0.2);
             color: var(--success);
-            border-left: 4px solid var(--success);
         }
         
-        .alert-error {
-            background: rgba(244, 67, 54, 0.1);
+        .status-blocked {
+            background: rgba(244, 67, 54, 0.2);
             color: var(--danger);
-            border-left: 4px solid var(--danger);
         }
         
-        .alert-warning {
-            background: rgba(255, 152, 0, 0.1);
-            color: var(--warning);
-            border-left: 4px solid var(--warning);
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
         }
         
-        /* Scrollbar Styling */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: var(--radius-sm);
+            text-align: center;
+            box-shadow: var(--shadow);
         }
         
-        ::-webkit-scrollbar-track {
-            background: var(--light);
-            border-radius: 4px;
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 5px;
         }
         
-        ::-webkit-scrollbar-thumb {
-            background: var(--gray-light);
-            border-radius: 4px;
+        .stat-label {
+            color: var(--gray);
+            font-size: 0.9rem;
         }
         
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--gray);
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
         }
         
-        /* Hidden class */
-        .hidden {
-            display: none !important;
+        .back-button:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateX(-5px);
+        }
+        
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 10px;
+        }
+        
+        .tab-btn {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            font-weight: 600;
+            color: var(--gray);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
         }
     </style>
 </head>
 <body>
-    <!-- Login Screen -->
-    <div class="login-container" id="loginScreen">
-        <div class="login-header">
-            <i class="fas fa-user-shield"></i>
-            <h1>Acceso Administrativo</h1>
-        </div>
+    <div class="admin-container">
+        <a href="index.html" class="back-button">
+            <i class="fas fa-arrow-left"></i> Volver a la tienda
+        </a>
         
-        <form id="loginForm">
-            <div class="form-group">
-                <label><i class="fas fa-envelope"></i> Correo electrónico</label>
-                <input type="email" id="adminEmail" class="form-control" placeholder="admin@floristeria.com" required>
-            </div>
-            
-            <div class="form-group">
-                <label><i class="fas fa-key"></i> Contraseña</label>
-                <input type="password" id="adminPassword" class="form-control" placeholder="SantaBarbara2024" required>
-            </div>
-            
-            <div class="form-group">
-                <label><i class="fas fa-shield-alt"></i> Código de acceso</label>
-                <input type="text" id="adminCode" class="form-control" placeholder="FLOR-ADMIN-123" required>
-            </div>
-            
-            <button type="submit" class="btn-login">
-                <i class="fas fa-sign-in-alt"></i> Acceder al Panel
-            </button>
-            
-            <div class="error-message" id="errorMessage">
-                <i class="fas fa-exclamation-circle"></i> Credenciales incorrectas
-            </div>
-        </form>
-        
-        <div class="login-info">
-            <p><strong>Credenciales por defecto:</strong></p>
-            <p>Email: admin@floristeria.com</p>
-            <p>Contraseña: SantaBarbara2024</p>
-            <p>Código: FLOR-ADMIN-123</p>
-        </div>
-    </div>
-
-    <!-- Admin Panel -->
-    <div class="admin-panel" id="adminPanel">
-        <!-- Header -->
         <div class="admin-header">
-            <h1><i class="fas fa-spa"></i> Panel Administrativo - Floristería Santa Bárbara</h1>
-            <button class="logout-btn" onclick="logout()">
-                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-            </button>
+            <h1><i class="fas fa-user-cog"></i> Panel de Administración</h1>
+            <p>Gestiona productos, categorías y configuración de la floristería</p>
         </div>
         
-        <!-- Tabs -->
-        <div class="admin-tabs">
-            <button class="tab-btn active" onclick="switchTab('dashboard')">
-                <i class="fas fa-tachometer-alt"></i> Dashboard
+        <div class="tab-buttons">
+            <button class="tab-btn active" onclick="showTab('productos')">
+                <i class="fas fa-box"></i> Productos
             </button>
-            <button class="tab-btn" onclick="switchTab('products')">
-                <i class="fas fa-shopping-bag"></i> Productos
-            </button>
-            <button class="tab-btn" onclick="switchTab('categories')">
-                <i class="fas fa-tags"></i> Categorías
-            </button>
-            <button class="tab-btn" onclick="switchTab('orders')">
-                <i class="fas fa-shopping-cart"></i> Pedidos
-            </button>
-            <button class="tab-btn" onclick="switchTab('store')">
-                <i class="fas fa-store"></i> Tienda
-            </button>
-            <button class="tab-btn" onclick="switchTab('sync')">
-                <i class="fas fa-sync-alt"></i> Sincronizar
-            </button>
-            <button class="tab-btn" onclick="switchTab('settings')">
+            <button class="tab-btn" onclick="showTab('configuracion')">
                 <i class="fas fa-cog"></i> Configuración
             </button>
+            <button class="tab-btn" onclick="showTab('sincronizar')">
+                <i class="fas fa-sync"></i> Sincronizar
+            </button>
+            <button class="tab-btn" onclick="showTab('estadisticas')">
+                <i class="fas fa-chart-bar"></i> Estadísticas
+            </button>
         </div>
         
-        <!-- Dashboard Tab -->
-        <div id="dashboard" class="tab-content active">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-box"></i>
-                    </div>
-                    <div class="stat-number" id="totalProducts">0</div>
-                    <div class="stat-label">Productos Activos</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-shopping-cart"></i>
-                    </div>
-                    <div class="stat-number" id="totalOrders">0</div>
-                    <div class="stat-label">Pedidos Totales</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <div class="stat-number" id="totalSales">₡0</div>
-                    <div class="stat-label">Ventas Totales</div>
-                </div>
-                
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-ban"></i>
-                    </div>
-                    <div class="stat-number" id="totalBlocked">0</div>
-                    <div class="stat-label">Productos Bloqueados</div>
-                </div>
-            </div>
-            
-            <div class="card">
-                <h3><i class="fas fa-info-circle"></i> Resumen de Actividad</h3>
-                <p>Bienvenido al panel de administración de Floristería Santa Bárbara.</p>
-                <p>Desde aquí puedes gestionar todos los aspectos de tu tienda en línea.</p>
-                
-                <div style="margin-top: 1.5rem; padding: 1rem; background: var(--light); border-radius: var(--radius-sm);">
-                    <h4 style="margin-bottom: 0.75rem; color: var(--dark);">📊 Estadísticas Recientes</h4>
-                    <div id="recentStats">
-                        <p style="color: var(--gray);">Cargando estadísticas...</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="card">
-                <h3><i class="fas fa-question-circle"></i> Guía Rápida</h3>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
-                    <div>
-                        <h4 style="color: var(--primary); margin-bottom: 0.5rem;">➕ Productos</h4>
-                        <p style="color: var(--gray); font-size: 0.9rem;">Agrega nuevos productos con imágenes, precios y descripciones.</p>
-                    </div>
-                    <div>
-                        <h4 style="color: var(--primary); margin-bottom: 0.5rem;">🔒 Bloquear Productos</h4>
-                        <p style="color: var(--gray); font-size: 0.9rem;">Bloquea productos temporalmente cuando no hay disponibilidad.</p>
-                    </div>
-                    <div>
-                        <h4 style="color: var(--primary); margin-bottom: 0.5rem;">📦 Pedidos</h4>
-                        <p style="color: var(--gray); font-size: 0.9rem;">Revisa y gestiona los pedidos recibidos de tus clientes.</p>
-                    </div>
-                    <div>
-                        <h4 style="color: var(--primary); margin-bottom: 0.5rem;">🔄 Sincronizar</h4>
-                        <p style="color: var(--gray); font-size: 0.9rem;">Actualiza el catálogo para que todos los clientes vean los cambios.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Products Tab -->
-        <div id="products" class="tab-content">
-            <div class="card">
-                <h3><i class="fas fa-plus-circle"></i> Agregar Nuevo Producto</h3>
-                <form id="productForm">
-                    <div class="status-toggle">
-                        <div class="toggle-switch">
-                            <input type="checkbox" id="productStatus" checked>
-                            <span class="toggle-slider"></span>
-                        </div>
-                        <span class="toggle-label active" id="statusLabel">Producto ACTIVO (disponible para venta)</span>
-                    </div>
+        <!-- TAB: PRODUCTOS -->
+        <div id="tab-productos" class="tab-content active">
+            <div class="admin-grid">
+                <!-- Formulario para agregar/editar producto -->
+                <div class="admin-card">
+                    <h2><i class="fas fa-plus-circle"></i> 
+                        <span id="form-title">Agregar Nuevo Producto</span>
+                    </h2>
                     
-                    <div class="form-row">
-                        <div>
-                            <label>Nombre del Producto *</label>
-                            <input type="text" id="productName" class="form-control" required>
-                        </div>
-                        <div>
-                            <label>Categoría *</label>
-                            <select id="productCategory" class="form-control" required>
-                                <option value="">Seleccionar categoría</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div>
-                            <label>Precio (₡) *</label>
-                            <input type="number" id="productPrice" class="form-control" min="0" required>
-                        </div>
-                        <div>
-                            <label>Stock disponible</label>
-                            <input type="number" id="productStock" class="form-control" min="0" value="10">
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div style="grid-column: 1 / -1;">
-                            <label>Descripción *</label>
-                            <textarea id="productDescription" class="form-control" rows="3" required></textarea>
-                        </div>
-                    </div>
-                    
-                    <!-- Image Upload -->
-                    <div class="form-row">
-                        <div style="grid-column: 1 / -1;">
-                            <label>Imágenes del Producto *</label>
-                            <div class="image-upload-container" onclick="document.getElementById('imageUpload').click()">
-                                <div class="upload-icon">
-                                    <i class="fas fa-cloud-upload-alt"></i>
-                                </div>
-                                <div class="upload-text">
-                                    <h4>Subir Imágenes JPG/PNG</h4>
-                                    <p>Haz clic aquí para seleccionar imágenes (Máx. 2MB cada una)</p>
-                                    <p style="font-size: 0.8rem; color: var(--gray);">Puedes seleccionar múltiples imágenes</p>
-                                </div>
-                                <input type="file" id="imageUpload" accept="image/jpeg,image/png,image/gif" 
-                                       style="display: none;" onchange="handleImageUpload(event)" multiple>
-                                
-                                <div class="upload-progress">
-                                    <div class="upload-progress-bar" id="uploadProgressBar"></div>
-                                </div>
+                    <form id="productForm">
+                        <input type="hidden" id="productId">
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Nombre del Producto *</label>
+                                <input type="text" id="productName" class="form-control" 
+                                       placeholder="Ej: Ramos de Rosas Rojas" required>
                             </div>
-                            
-                            <div class="image-preview-container" id="imagePreviewContainer">
-                                <!-- Las imágenes se mostrarán aquí -->
-                            </div>
-                            
-                            <div style="margin-top: 1rem;">
-                                <label>URL de imagen externa (opcional)</label>
-                                <input type="url" id="productImageUrl" class="form-control" 
-                                       placeholder="https://ejemplo.com/imagen.jpg">
-                                <small style="color: var(--gray); display: block; margin-top: 0.5rem;">
-                                    Usar solo si no subes imágenes. Las URLs deben comenzar con http:// o https://
-                                </small>
+                            <div class="form-group">
+                                <label class="form-label">Categoría *</label>
+                                <input type="text" id="productCategory" class="form-control" 
+                                       placeholder="Ej: Rosas, Arreglos, Tulipanes" required>
+                                <small style="color: var(--gray);">Usa categorías existentes o crea una nueva</small>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Guardar Producto
-                        </button>
-                        <button type="button" class="btn btn-secondary" onclick="clearProductForm()">
-                            <i class="fas fa-times"></i> Limpiar Formulario
-                        </button>
-                        <div style="margin-left: auto;">
-                            <button type="button" class="btn btn-info" onclick="testProductBlocking()">
-                                <i class="fas fa-eye"></i> Ver cómo se ve bloqueado
+                        
+                        <div class="form-group">
+                            <label class="form-label">Descripción</label>
+                            <textarea id="productDescription" class="form-control" rows="3" 
+                                      placeholder="Describe el producto..."></textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Precio (₡) *</label>
+                                <input type="number" id="productPrice" class="form-control" 
+                                       placeholder="25000" min="0" step="500" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Stock disponible</label>
+                                <input type="number" id="productStock" class="form-control" 
+                                       placeholder="10" min="0">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">URL de la imagen</label>
+                            <input type="url" id="productImage" class="form-control" 
+                                   placeholder="https://ejemplo.com/imagen.jpg">
+                            <small style="color: var(--gray);">
+                                Usa imágenes de Unsplash o sube a imgur.com
+                            </small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">
+                                <input type="checkbox" id="productBlocked">
+                                <span style="margin-left: 8px;">Producto bloqueado (no visible en tienda)</span>
+                            </label>
+                        </div>
+                        
+                        <div class="form-row">
+                            <button type="button" class="btn btn-danger" onclick="resetForm()">
+                                <i class="fas fa-times"></i> Cancelar
+                            </button>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save"></i> 
+                                <span id="submit-text">Guardar Producto</span>
                             </button>
                         </div>
+                    </form>
+                </div>
+                
+                <!-- Lista de productos -->
+                <div class="admin-card">
+                    <h2><i class="fas fa-list"></i> Productos Activos 
+                        <span id="products-count" class="status-badge status-active">0</span>
+                    </h2>
+                    
+                    <div class="products-list" id="productsList">
+                        <!-- Los productos se cargan aquí -->
                     </div>
-                </form>
+                    
+                    <div style="margin-top: 20px;">
+                        <button class="btn btn-warning btn-block" onclick="loadProducts()">
+                            <i class="fas fa-redo"></i> Recargar Productos
+                        </button>
+                    </div>
+                </div>
             </div>
             
-            <div class="card">
-                <h3><i class="fas fa-boxes"></i> Productos Registrados</h3>
-                
-                <div style="margin-bottom: 1rem; display: flex; gap: 1rem; flex-wrap: wrap;">
-                    <button class="btn btn-success" onclick="loadProductsList()">
-                        <i class="fas fa-sync-alt"></i> Actualizar Lista
-                    </button>
-                    <button class="btn btn-warning" onclick="toggleAllProducts('block')">
-                        <i class="fas fa-ban"></i> Bloquear Todos
-                    </button>
-                    <button class="btn btn-info" onclick="toggleAllProducts('unblock')">
-                        <i class="fas fa-check"></i> Desbloquear Todos
-                    </button>
-                    <div style="margin-left: auto;">
-                        <select id="productFilter" class="form-control" onchange="filterProductsList()" style="width: 200px;">
-                            <option value="all">Todos los productos</option>
-                            <option value="active">Solo activos</option>
-                            <option value="blocked">Solo bloqueados</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="table-container">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Estado</th>
-                                <th>Imagen</th>
-                                <th>Producto</th>
-                                <th>Categoría</th>
-                                <th>Precio</th>
-                                <th>Stock</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="productsList">
-                            <!-- Los productos se cargarán aquí -->
-                        </tbody>
-                    </table>
-                </div>
-                <div id="productsEmpty" class="empty-state hidden">
-                    <i class="fas fa-box-open"></i>
-                    <h3>No hay productos</h3>
-                    <p>Agrega tu primer producto usando el formulario superior.</p>
+            <!-- Categorías existentes -->
+            <div class="admin-card" style="margin-top: 2rem;">
+                <h2><i class="fas fa-tags"></i> Categorías Existentes</h2>
+                <div id="categoriesList" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px;">
+                    <!-- Las categorías se cargan aquí -->
                 </div>
             </div>
         </div>
         
-        <!-- Categories Tab -->
-        <div id="categories" class="tab-content">
-            <div class="card">
-                <h3><i class="fas fa-plus-circle"></i> Agregar Nueva Categoría</h3>
-                <form id="categoryForm">
-                    <div class="form-row">
-                        <div>
-                            <label>Nombre de la Categoría *</label>
-                            <input type="text" id="categoryName" class="form-control" required>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div style="grid-column: 1 / -1;">
-                            <label>Descripción (opcional)</label>
-                            <textarea id="categoryDescription" class="form-control" rows="2"></textarea>
-                        </div>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Guardar Categoría
-                    </button>
-                </form>
-            </div>
-            
-            <div class="card">
-                <h3><i class="fas fa-tags"></i> Categorías Existentes</h3>
-                <div class="table-container">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Categoría</th>
-                                <th>Descripción</th>
-                                <th>Productos</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="categoriesList">
-                            <!-- Las categorías se cargarán aquí -->
-                        </tbody>
-                    </table>
-                </div>
-                <div id="categoriesEmpty" class="empty-state hidden">
-                    <i class="fas fa-tags"></i>
-                    <h3>No hay categorías</h3>
-                    <p>Agrega tu primera categoría usando el formulario superior.</p>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Orders Tab -->
-        <div id="orders" class="tab-content">
-            <div class="card">
-                <h3><i class="fas fa-shopping-cart"></i> Pedidos Recibidos</h3>
+        <!-- TAB: CONFIGURACIÓN -->
+        <div id="tab-configuracion" class="tab-content">
+            <div class="admin-card">
+                <h2><i class="fas fa-store"></i> Configuración de la Tienda</h2>
                 
-                <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
-                    <button class="btn btn-primary" onclick="loadOrders()">
-                        <i class="fas fa-sync-alt"></i> Actualizar
-                    </button>
-                    <button class="btn btn-secondary" onclick="exportOrders()">
-                        <i class="fas fa-file-export"></i> Exportar a Excel
-                    </button>
-                    <button class="btn btn-info" onclick="markAllOrdersAsRead()">
-                        <i class="fas fa-check-double"></i> Marcar todos como leídos
-                    </button>
-                    <div style="margin-left: auto;">
-                        <select id="orderFilter" class="form-control" style="width: 200px;" onchange="filterOrders()">
-                            <option value="all">Todos los pedidos</option>
-                            <option value="today">Hoy</option>
-                            <option value="week">Esta semana</option>
-                            <option value="month">Este mes</option>
-                            <option value="pending">Pendientes</option>
-                            <option value="confirmed">Confirmados</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div class="table-container">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>N° Pedido</th>
-                                <th>Cliente</th>
-                                <th>Fecha/Hora</th>
-                                <th>Total</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="ordersList">
-                            <!-- Los pedidos se cargarán aquí -->
-                        </tbody>
-                    </table>
-                </div>
-                <div id="ordersEmpty" class="empty-state hidden">
-                    <i class="fas fa-shopping-cart"></i>
-                    <h3>No hay pedidos</h3>
-                    <p>Los pedidos recibidos aparecerán aquí automáticamente.</p>
-                </div>
-            </div>
-            
-            <div class="card">
-                <h3><i class="fas fa-chart-bar"></i> Análisis de Ventas</h3>
-                <div id="salesChart">
-                    <p style="color: var(--gray); text-align: center; padding: 2rem;">
-                        <i class="fas fa-chart-line" style="font-size: 3rem; margin-bottom: 1rem; color: var(--gray-light);"></i><br>
-                        Gráficos de ventas disponibles próximamente
-                    </p>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Store Tab -->
-        <div id="store" class="tab-content">
-            <div class="card">
-                <h3><i class="fas fa-store"></i> Información de la Tienda</h3>
-                <form id="storeForm">
-                    <div class="form-row">
-                        <div>
-                            <label>Nombre de la Tienda *</label>
-                            <input type="text" id="storeName" class="form-control" value="Floristería Santa Bárbara" required>
-                        </div>
-                        <div>
-                            <label>Teléfono de Contacto *</label>
-                            <input type="tel" id="storePhone" class="form-control" value="50686053613" required>
-                        </div>
+                <form id="configForm">
+                    <div class="form-group">
+                        <label class="form-label">Nombre de la Floristería *</label>
+                        <input type="text" id="storeName" class="form-control" 
+                               placeholder="Floristería Santa Bárbara" required>
                     </div>
                     
                     <div class="form-row">
-                        <div>
-                            <label>Dirección *</label>
-                            <input type="text" id="storeAddress" class="form-control" value="Santa Bárbara, Heredia, Costa Rica" required>
+                        <div class="form-group">
+                            <label class="form-label">Teléfono WhatsApp *</label>
+                            <input type="tel" id="storePhone" class="form-control" 
+                                   placeholder="50686053613" required>
+                            <small style="color: var(--gray);">Formato: 506 seguido del número sin espacios</small>
                         </div>
-                        <div>
-                            <label>Correo Electrónico</label>
-                            <input type="email" id="storeEmail" class="form-control" value="ventas@floristeriasantabarbara.com">
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div>
-                            <label>Costo por Kilómetro (₡) *</label>
-                            <input type="number" id="storeShippingPerKm" class="form-control" value="650" required>
-                            <small style="color: var(--gray);">Costo de envío por kilómetro (₡650/km)</small>
-                        </div>
-                        <div>
-                            <label>Símbolo de Moneda</label>
-                            <input type="text" id="storeCurrency" class="form-control" value="₡" maxlength="3">
+                        <div class="form-group">
+                            <label class="form-label">Costo de envío por km (₡) *</label>
+                            <input type="number" id="shippingCost" class="form-control" 
+                                   value="650" min="0" required>
                         </div>
                     </div>
                     
-                    <div class="form-row">
-                        <div style="grid-column: 1 / -1;">
-                            <label>Mensaje de WhatsApp *</label>
-                            <textarea id="storeWhatsapp" class="form-control" rows="6" required>Gracias por comunicarte con Floristería Santa Bárbara. En un momento te atendemos. 😊🌹 
-
-                            De Lunes a viernes de 9 am a 7 pm
-                            Sábado 9:30 a 7 pm 
-                            Almuerzo de 12:30 a 1:30pm
-                            Domingos CERRADO
-                            Contamos con Servicio a Domicilio
-                            
-                            Quiero hacer un pedido:</textarea>
-                        </div>
+                    <div class="form-group">
+                        <label class="form-label">Mensaje inicial de WhatsApp</label>
+                        <textarea id="whatsappMessage" class="form-control" rows="4">
+¡Hola! 😊
+Gracias por comunicarte con Floristería Santa Bárbara. En un momento te atendemos.😊🌹
+Quiero hacer un pedido:</textarea>
                     </div>
                     
-                    <button type="submit" class="btn btn-primary">
+                    <div class="form-group">
+                        <label class="form-label">Dirección de la tienda</label>
+                        <input type="text" id="storeAddress" class="form-control" 
+                               value="Santa Bárbara, Heredia, Costa Rica">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success btn-block">
                         <i class="fas fa-save"></i> Guardar Configuración
                     </button>
                 </form>
             </div>
-            
-            <div class="card">
-                <h3><i class="fas fa-clock"></i> Horarios de Atención</h3>
-                <form id="scheduleForm">
-                    <div class="form-row">
-                        <div>
-                            <label>Horario Lunes a Viernes</label>
-                            <input type="text" id="scheduleWeekdays" class="form-control" value="9:00 AM - 7:00 PM">
-                        </div>
-                        <div>
-                            <label>Horario Sábados</label>
-                            <input type="text" id="scheduleSaturday" class="form-control" value="9:30 AM - 7:00 PM">
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div>
-                            <label>Horario Almuerzo</label>
-                            <input type="text" id="scheduleLunch" class="form-control" value="12:30 PM - 1:30 PM">
-                        </div>
-                        <div>
-                            <label>Domingos</label>
-                            <input type="text" id="scheduleSunday" class="form-control" value="CERRADO">
-                        </div>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-success">
-                        <i class="fas fa-save"></i> Actualizar Horarios
-                    </button>
-                </form>
-            </div>
         </div>
         
-        <!-- Sync Tab -->
-        <div id="sync" class="tab-content">
-            <div class="card">
-                <h3><i class="fas fa-sync-alt"></i> Sincronización con Clientes</h3>
+        <!-- TAB: SINCRONIZAR -->
+        <div id="tab-sincronizar" class="tab-content">
+            <div class="admin-card sync-section">
+                <h2><i class="fas fa-cloud-upload-alt"></i> Sincronizar Datos</h2>
+                <p style="margin-bottom: 1rem; color: var(--gray);">
+                    Genera un código para actualizar la tienda principal con los cambios realizados.
+                </p>
                 
-                <div class="sync-section">
-                    <h4 style="color: var(--info); margin-bottom: 1rem;">
-                        <i class="fas fa-cloud-upload-alt"></i> Actualizar Catálogo para TODOS los Clientes
-                    </h4>
+                <div class="form-group">
+                    <label class="form-label">URL del repositorio GitHub</label>
+                    <input type="url" id="repoUrl" class="form-control" 
+                           value="https://krisarias1990.github.io/Florister-a-Santa-Barbara/" 
+                           readonly>
+                    <small style="color: var(--gray);">
+                        Los datos se sincronizan automáticamente con esta URL
+                    </small>
+                </div>
+                
+                <button class="btn btn-primary btn-block" onclick="generateSyncCode()">
+                    <i class="fas fa-code"></i> Generar Código de Sincronización
+                </button>
+                
+                <div id="syncCodeContainer" style="display: none; margin-top: 20px;">
+                    <h3><i class="fas fa-clipboard"></i> Código Generado:</h3>
+                    <div class="sync-code" id="syncCode"></div>
                     
-                    <p style="color: var(--dark); margin-bottom: 1rem;">
-                        Cuando hagas cambios en productos, categorías o configuraciones, debes sincronizar para que 
-                        <strong>todos los clientes vean los mismos datos</strong> en cualquier dispositivo.
-                    </p>
-                    
-                    <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
-                        <button class="btn btn-success" onclick="generateDataJson()">
-                            <i class="fas fa-code"></i> Generar Código para Sincronizar
+                    <div style="display: flex; gap: 10px; margin-top: 15px;">
+                        <button class="btn btn-success" onclick="copySyncCode()">
+                            <i class="fas fa-copy"></i> Copiar Código
                         </button>
-                        <button class="btn btn-info" onclick="showSyncInstructions()">
-                            <i class="fas fa-question-circle"></i> Instrucciones
+                        <button class="btn btn-warning" onclick="testSync()">
+                            <i class="fas fa-check"></i> Probar Sincronización
                         </button>
                     </div>
                     
-                    <div id="syncInstructions" class="sync-instructions hidden">
-                        <h5>📝 Cómo Sincronizar:</h5>
-                        <ol>
-                            <li>Haz clic en "Generar Código para Sincronizar"</li>
-                            <li>Copia TODO el código que aparece en el cuadro de texto</li>
-                            <li>Ve a tu repositorio en GitHub</li>
-                            <li>Haz clic en el archivo <strong>data.json</strong></li>
-                            <li>Haz clic en el ícono de lápiz (Editar)</li>
-                            <li>Borra TODO el contenido existente</li>
-                            <li>Pega el código nuevo que copiaste</li>
-                            <li>Haz clic en <strong>Commit changes</strong> (abajo de la página)</li>
-                            <li>Espera 1-2 minutos para que los cambios se reflejen</li>
+                    <div style="margin-top: 20px; padding: 15px; background: #e8f5e9; border-radius: var(--radius-sm);">
+                        <h4><i class="fas fa-info-circle"></i> Instrucciones:</h4>
+                        <ol style="margin-left: 20px; margin-top: 10px;">
+                            <li>Copia el código de arriba</li>
+                            <li>Ve a la página principal de la tienda</li>
+                            <li>Presiona F12 para abrir las herramientas de desarrollo</li>
+                            <li>Ve a la pestaña "Consola"</li>
+                            <li>Pega el código y presiona Enter</li>
+                            <li>Los productos se actualizarán automáticamente</li>
                         </ol>
-                        <p style="color: var(--gray); font-size: 0.9rem;">
-                            <i class="fas fa-info-circle"></i> Los cambios se verán automáticamente en todos los dispositivos.
-                        </p>
-                    </div>
-                    
-                    <div id="jsonOutput" style="margin-top: 1.5rem; display: none;">
-                        <h5>📋 Código para Copiar:</h5>
-                        <textarea id="jsonTextArea" style="width: 100%; height: 300px; font-family: monospace; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius-sm);" readonly></textarea>
-                        <button class="btn btn-primary" onclick="copyJsonToClipboard()" style="margin-top: 10px;">
-                            <i class="fas fa-copy"></i> Copiar al Portapapeles
-                        </button>
-                    </div>
-                </div>
-                
-                <div style="margin-top: 2rem; padding: 1rem; background: var(--light); border-radius: var(--radius-sm);">
-                    <h4 style="margin-bottom: 0.75rem; color: var(--dark);">Estado Actual del Catálogo</h4>
-                    <div id="syncStatus">
-                        <p>Cargando información del catálogo...</p>
                     </div>
                 </div>
             </div>
         </div>
         
-        <!-- Settings Tab -->
-        <div id="settings" class="tab-content">
-            <div class="card">
-                <h3><i class="fas fa-database"></i> Gestión de Datos</h3>
+        <!-- TAB: ESTADÍSTICAS -->
+        <div id="tab-estadisticas" class="tab-content">
+            <div class="admin-card">
+                <h2><i class="fas fa-chart-line"></i> Estadísticas</h2>
                 
-                <div class="data-management">
-                    <button class="btn btn-primary" onclick="exportData()">
-                        <i class="fas fa-file-export"></i> Exportar Datos
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-products">0</div>
+                        <div class="stat-label">Productos Totales</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-number" id="active-products">0</div>
+                        <div class="stat-label">Productos Activos</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-number" id="blocked-products">0</div>
+                        <div class="stat-label">Productos Bloqueados</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-categories">0</div>
+                        <div class="stat-label">Categorías</div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 30px;">
+                    <button class="btn btn-primary" onclick="updateStats()">
+                        <i class="fas fa-redo"></i> Actualizar Estadísticas
                     </button>
-                    <button class="btn btn-secondary" onclick="importData()">
-                        <i class="fas fa-file-import"></i> Importar Datos
-                    </button>
-                    <button class="btn btn-danger" onclick="resetData()">
-                        <i class="fas fa-trash"></i> Reiniciar Sistema
+                    <button class="btn btn-danger" onclick="clearAllData()" style="margin-left: 10px;">
+                        <i class="fas fa-trash"></i> Limpiar Todos los Datos
                     </button>
                 </div>
                 
-                <div style="margin-top: 1.5rem; padding: 1rem; background: var(--light); border-radius: var(--radius-sm);">
-                    <h4 style="margin-bottom: 0.75rem; color: var(--dark);">Resumen de Datos</h4>
-                    <div id="dataSummary">
-                        <p>Cargando información...</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="card">
-                <h3><i class="fas fa-user-cog"></i> Configuración de Administrador</h3>
-                <form id="adminForm">
-                    <div class="form-row">
-                        <div>
-                            <label>Nuevo Correo Electrónico</label>
-                            <input type="email" id="newEmail" class="form-control" placeholder="nuevo@email.com">
-                        </div>
-                        <div>
-                            <label>Nueva Contraseña</label>
-                            <input type="password" id="newPassword" class="form-control" placeholder="••••••••">
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div>
-                            <label>Confirmar Contraseña</label>
-                            <input type="password" id="confirmPassword" class="form-control" placeholder="••••••••">
-                        </div>
-                        <div>
-                            <label>Nuevo Código de Acceso</label>
-                            <input type="text" id="newCode" class="form-control" placeholder="NUEVO-CODIGO">
-                        </div>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-key"></i> Actualizar Credenciales
-                    </button>
-                </form>
-            </div>
-            
-            <div class="card">
-                <h3><i class="fas fa-exclamation-triangle"></i> Zona de Peligro</h3>
-                <div style="padding: 1rem; background: rgba(244, 67, 54, 0.1); border-radius: var(--radius-sm); border-left: 4px solid var(--danger);">
-                    <p style="color: var(--danger); margin-bottom: 1rem;">
-                        <strong><i class="fas fa-exclamation-circle"></i> ADVERTENCIA:</strong> Las siguientes acciones no se pueden deshacer.
-                    </p>
-                    
-                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                        <button class="btn btn-danger" onclick="clearAllData()">
-                            <i class="fas fa-broom"></i> Borrar Todos los Datos
-                        </button>
-                        <button class="btn btn-danger" onclick="clearOrders()">
-                            <i class="fas fa-trash-alt"></i> Eliminar Todos los Pedidos
-                        </button>
-                        <button class="btn btn-warning" onclick="reinstallSystem()">
-                            <i class="fas fa-redo"></i> Reinstalar Sistema
-                        </button>
-                    </div>
-                    
-                    <div style="margin-top: 1rem; font-size: 0.85rem; color: var(--gray);">
-                        <p><i class="fas fa-info-circle"></i> Recomendación: Exporta tus datos antes de realizar estas acciones.</p>
+                <div style="margin-top: 30px; padding: 20px; background: #fff3cd; border-radius: var(--radius-sm);">
+                    <h4><i class="fas fa-database"></i> Información de Almacenamiento</h4>
+                    <div id="storage-info" style="margin-top: 10px; font-family: monospace;">
+                        <!-- Información de localStorage -->
                     </div>
                 </div>
             </div>
         </div>
-        
-        <!-- Alert Container -->
-        <div id="alertContainer" style="position: fixed; top: 100px; right: 20px; z-index: 2000; max-width: 400px;"></div>
+    </div>
+    
+    <!-- Notificación -->
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationText">Operación completada</span>
     </div>
 
     <script>
         // ============================================
-        // SISTEMA ADMINISTRATIVO - FLORISTERÍA SANTA BÁRBARA
-        // VERSIÓN COMPLETA Y SEGURA - 100% FUNCIONAL
+        // VARIABLES GLOBALES
         // ============================================
-
-        // Variables globales
-        let adminData = {
-            email: "admin@floristeria.com",
-            password: "SantaBarbara2024",
-            code: "FLOR-ADMIN-123"
-        };
-
-        let currentImages = [];
+        let products = [];
+        let categories = [];
+        let storeConfig = {};
         let editingProductId = null;
-        let editingCategoryIndex = null;
 
         // ============================================
         // INICIALIZACIÓN
         // ============================================
-
         document.addEventListener('DOMContentLoaded', function() {
-            // Cargar credenciales guardadas si existen
-            const savedAdminData = JSON.parse(localStorage.getItem('floristeria_admin_data'));
-            if (savedAdminData) {
-                adminData = savedAdminData;
-            }
-            
-            // Verificar si ya está logueado
-            if (localStorage.getItem('floristeria_admin_logged') === 'true') {
-                showAdminPanel();
-            }
+            // Cargar datos existentes
+            loadAllData();
             
             // Configurar formularios
-            setupForms();
+            document.getElementById('productForm').addEventListener('submit', saveProduct);
+            document.getElementById('configForm').addEventListener('submit', saveConfig);
             
-            // Cargar categorías en select
-            loadCategoriesForSelect();
+            // Cargar productos inicialmente
+            loadProducts();
+            updateStats();
             
-            // Configurar toggle de estado de producto
-            setupProductStatusToggle();
+            console.log('✅ Panel Admin inicializado correctamente');
         });
 
-        function setupForms() {
-            // Login form
-            document.getElementById('loginForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                handleLogin();
-            });
+        // ============================================
+        // FUNCIONES DE DATOS
+        // ============================================
+        function loadAllData() {
+            // Cargar productos
+            products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
             
-            // Product form
-            document.getElementById('productForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                saveProduct();
-            });
+            // Cargar categorías
+            categories = JSON.parse(localStorage.getItem('floristeria_categories')) || [];
             
-            // Category form
-            document.getElementById('categoryForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                saveCategory();
-            });
+            // Cargar configuración
+            storeConfig = JSON.parse(localStorage.getItem('floristeria_config')) || {
+                storeName: "Floristería Santa Bárbara",
+                phoneNumber: "50686053613",
+                shippingCostPerKm: 650,
+                currency: "₡",
+                whatsappMessage: "¡Hola! 😊\n\nGracias por comunicarte con Floristería Santa Bárbara. En un momento te atendemos.😊🌹 \n\nQuiero hacer un pedido:",
+                address: "Santa Bárbara, Heredia, Costa Rica"
+            };
             
-            // Store form
-            document.getElementById('storeForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                saveStoreConfig();
-            });
+            // Llenar formulario de configuración
+            document.getElementById('storeName').value = storeConfig.storeName || '';
+            document.getElementById('storePhone').value = storeConfig.phoneNumber || '';
+            document.getElementById('shippingCost').value = storeConfig.shippingCostPerKm || 650;
+            document.getElementById('whatsappMessage').value = storeConfig.whatsappMessage || '';
+            document.getElementById('storeAddress').value = storeConfig.address || '';
             
-            // Schedule form
-            document.getElementById('scheduleForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                saveSchedule();
-            });
-            
-            // Admin form
-            document.getElementById('adminForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                updateAdminCredentials();
-            });
+            console.log('📥 Datos cargados:', products.length, 'productos');
         }
-        
-        function setupProductStatusToggle() {
-            const toggle = document.getElementById('productStatus');
-            const label = document.getElementById('statusLabel');
+
+        // ============================================
+        // FUNCIONES DE PRODUCTOS
+        // ============================================
+        function loadProducts() {
+            const productsList = document.getElementById('productsList');
+            const categoriesList = document.getElementById('categoriesList');
             
-            toggle.addEventListener('change', function() {
-                if (this.checked) {
-                    label.textContent = 'Producto ACTIVO (disponible para venta)';
-                    label.className = 'toggle-label active';
-                } else {
-                    label.textContent = 'Producto BLOQUEADO (no disponible temporalmente)';
-                    label.className = 'toggle-label inactive';
+            if (products.length === 0) {
+                productsList.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--gray);">
+                        <i class="fas fa-box-open" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;"></i>
+                        <h3 style="margin-bottom: 10px;">No hay productos</h3>
+                        <p>Agrega tu primer producto usando el formulario</p>
+                    </div>
+                `;
+                document.getElementById('products-count').textContent = '0';
+                return;
+            }
+            
+            // Actualizar contador
+            const activeProducts = products.filter(p => !p.blocked).length;
+            document.getElementById('products-count').textContent = `${activeProducts}/${products.length}`;
+            
+            // Generar lista de productos
+            let html = '';
+            products.forEach(product => {
+                const isBlocked = product.blocked || false;
+                
+                html += `
+                    <div class="product-item" style="border-left-color: ${isBlocked ? 'var(--danger)' : 'var(--primary)'}">
+                        <div class="product-item-header">
+                            <div class="product-item-title">
+                                ${product.nombre || product.name}
+                                ${isBlocked ? '<span class="status-badge status-blocked">BLOQUEADO</span>' : ''}
+                            </div>
+                            <div class="product-item-price">
+                                ₡${(product.precio || product.price || 0).toLocaleString('es-CR')}
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 10px;">
+                            <span class="product-item-category">
+                                ${product.categoria || product.category || 'General'}
+                            </span>
+                            ${(product.stock || 0) > 0 ? 
+                                `<span style="margin-left: 10px; color: var(--success);">
+                                    <i class="fas fa-cubes"></i> Stock: ${product.stock}
+                                </span>` : 
+                                `<span style="margin-left: 10px; color: var(--danger);">
+                                    <i class="fas fa-cubes"></i> Sin stock
+                                </span>`
+                            }
+                        </div>
+                        
+                        ${product.descripcion || product.description ? 
+                            `<p style="color: var(--gray); font-size: 0.9rem; margin-bottom: 10px;">
+                                ${(product.descripcion || product.description).substring(0, 100)}...
+                            </p>` : ''
+                        }
+                        
+                        <div class="product-item-actions">
+                            <button class="btn btn-primary" onclick="editProduct(${product.id})" style="padding: 6px 12px;">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            <button class="btn ${isBlocked ? 'btn-success' : 'btn-warning'}" 
+                                    onclick="toggleBlockProduct(${product.id})" style="padding: 6px 12px;">
+                                <i class="fas fa-${isBlocked ? 'check' : 'ban'}"></i>
+                                ${isBlocked ? 'Desbloquear' : 'Bloquear'}
+                            </button>
+                            <button class="btn btn-danger" onclick="deleteProduct(${product.id})" style="padding: 6px 12px;">
+                                <i class="fas fa-trash"></i> Eliminar
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            productsList.innerHTML = html;
+            
+            // Actualizar categorías
+            updateCategoriesList();
+            
+            showNotification(`Productos cargados: ${products.length}`, 'success');
+        }
+
+        function saveProduct(e) {
+            e.preventDefault();
+            
+            const productId = document.getElementById('productId').value;
+            const name = document.getElementById('productName').value.trim();
+            const category = document.getElementById('productCategory').value.trim();
+            const description = document.getElementById('productDescription').value.trim();
+            const price = parseFloat(document.getElementById('productPrice').value) || 0;
+            const stock = parseInt(document.getElementById('productStock').value) || 0;
+            const image = document.getElementById('productImage').value.trim();
+            const blocked = document.getElementById('productBlocked').checked;
+            
+            if (!name || !category || price <= 0) {
+                showNotification('Por favor complete los campos requeridos', 'error');
+                return;
+            }
+            
+            const newProduct = {
+                id: productId ? parseInt(productId) : Date.now(),
+                nombre: name,
+                name: name,
+                categoria: category,
+                category: category,
+                descripcion: description,
+                description: description,
+                precio: price,
+                price: price,
+                stock: stock,
+                imagen: image || 'https://images.unsplash.com/photo-1560749003-f4b1e17e2dff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                image: image || 'https://images.unsplash.com/photo-1560749003-f4b1e17e2dff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                blocked: blocked
+            };
+            
+            if (productId) {
+                // Actualizar producto existente
+                const index = products.findIndex(p => p.id == productId);
+                if (index !== -1) {
+                    products[index] = newProduct;
+                    showNotification('Producto actualizado correctamente', 'success');
+                }
+            } else {
+                // Agregar nuevo producto
+                products.push(newProduct);
+                showNotification('Producto agregado correctamente', 'success');
+            }
+            
+            // Guardar en localStorage
+            localStorage.setItem('floristeria_products', JSON.stringify(products));
+            
+            // Actualizar categorías
+            updateCategories();
+            
+            // Recargar lista
+            loadProducts();
+            
+            // Resetear formulario
+            resetForm();
+        }
+
+        function editProduct(id) {
+            const product = products.find(p => p.id == id);
+            if (!product) return;
+            
+            editingProductId = id;
+            
+            document.getElementById('productId').value = product.id;
+            document.getElementById('productName').value = product.nombre || product.name || '';
+            document.getElementById('productCategory').value = product.categoria || product.category || '';
+            document.getElementById('productDescription').value = product.descripcion || product.description || '';
+            document.getElementById('productPrice').value = product.precio || product.price || 0;
+            document.getElementById('productStock').value = product.stock || 0;
+            document.getElementById('productImage').value = product.imagen || product.image || '';
+            document.getElementById('productBlocked').checked = product.blocked || false;
+            
+            document.getElementById('form-title').textContent = 'Editar Producto';
+            document.getElementById('submit-text').textContent = 'Actualizar Producto';
+            
+            // Scroll al formulario
+            document.getElementById('productForm').scrollIntoView({ behavior: 'smooth' });
+            
+            showNotification(`Editando: ${product.nombre || product.name}`, 'info');
+        }
+
+        function deleteProduct(id) {
+            if (!confirm('¿Estás seguro de eliminar este producto?')) return;
+            
+            products = products.filter(p => p.id != id);
+            localStorage.setItem('floristeria_products', JSON.stringify(products));
+            
+            loadProducts();
+            updateStats();
+            
+            showNotification('Producto eliminado', 'success');
+        }
+
+        function toggleBlockProduct(id) {
+            const product = products.find(p => p.id == id);
+            if (!product) return;
+            
+            product.blocked = !product.blocked;
+            localStorage.setItem('floristeria_products', JSON.stringify(products));
+            
+            loadProducts();
+            
+            showNotification(
+                `Producto ${product.blocked ? 'bloqueado' : 'desbloqueado'}`,
+                product.blocked ? 'warning' : 'success'
+            );
+        }
+
+        function resetForm() {
+            document.getElementById('productForm').reset();
+            document.getElementById('productId').value = '';
+            editingProductId = null;
+            
+            document.getElementById('form-title').textContent = 'Agregar Nuevo Producto';
+            document.getElementById('submit-text').textContent = 'Guardar Producto';
+        }
+
+        // ============================================
+        // FUNCIONES DE CATEGORÍAS
+        // ============================================
+        function updateCategories() {
+            // Extraer todas las categorías únicas de los productos
+            const allCategories = new Set();
+            
+            products.forEach(product => {
+                if (product.categoria) allCategories.add(product.categoria);
+                if (product.category) allCategories.add(product.category);
+            });
+            
+            categories = Array.from(allCategories);
+            localStorage.setItem('floristeria_categories', JSON.stringify(categories));
+            
+            updateCategoriesList();
+        }
+
+        function updateCategoriesList() {
+            const categoriesList = document.getElementById('categoriesList');
+            
+            if (categories.length === 0) {
+                categoriesList.innerHTML = '<p style="color: var(--gray);">No hay categorías</p>';
+                return;
+            }
+            
+            let html = '';
+            categories.forEach(category => {
+                const productCount = products.filter(p => 
+                    (p.categoria === category || p.category === category) && !p.blocked
+                ).length;
+                
+                html += `
+                    <div style="background: rgba(233,30,99,0.1); padding: 8px 15px; 
+                                border-radius: 20px; color: var(--primary); 
+                                font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-tag"></i>
+                        ${category}
+                        <span style="background: white; color: var(--dark); padding: 2px 8px; 
+                                     border-radius: 10px; font-size: 0.8rem;">
+                            ${productCount}
+                        </span>
+                    </div>
+                `;
+            });
+            
+            categoriesList.innerHTML = html;
+        }
+
+        // ============================================
+        // FUNCIONES DE CONFIGURACIÓN
+        // ============================================
+        function saveConfig(e) {
+            e.preventDefault();
+            
+            storeConfig = {
+                storeName: document.getElementById('storeName').value.trim(),
+                phoneNumber: document.getElementById('storePhone').value.trim(),
+                shippingCostPerKm: parseFloat(document.getElementById('shippingCost').value) || 650,
+                whatsappMessage: document.getElementById('whatsappMessage').value.trim(),
+                address: document.getElementById('storeAddress').value.trim(),
+                currency: "₡"
+            };
+            
+            localStorage.setItem('floristeria_config', JSON.stringify(storeConfig));
+            
+            showNotification('Configuración guardada correctamente', 'success');
+        }
+
+        // ============================================
+        // FUNCIONES DE SINCRONIZACIÓN (CORREGIDAS)
+        // ============================================
+        function generateSyncCode() {
+            // Crear datos limpios para sincronización
+            const syncData = {
+                lastUpdated: new Date().toISOString(),
+                products: products.map(p => ({
+                    id: p.id,
+                    name: p.nombre || p.name,
+                    category: p.categoria || p.category,
+                    price: p.precio || p.price,
+                    description: p.descripcion || p.description,
+                    image: p.imagen || p.image,
+                    stock: p.stock || 0,
+                    blocked: p.blocked || false
+                })),
+                categories: categories,
+                storeConfig: storeConfig
+            };
+            
+            // Crear código JavaScript simple para ejecutar en la consola
+            const syncCode = `
+// ============================================
+// CÓDIGO DE SINCRONIZACIÓN - FLORISTERÍA SANTA BÁRBARA
+// ============================================
+// Fecha: ${new Date().toLocaleString('es-ES')}
+// Productos: ${products.length}
+// Categorías: ${categories.length}
+
+// 1. DATOS A SINCRONIZAR
+const syncData = ${JSON.stringify(syncData, null, 2)};
+
+// 2. GUARDAR EN LOCALSTORAGE
+localStorage.setItem('floristeria_products', JSON.stringify(syncData.products));
+localStorage.setItem('floristeria_categories', JSON.stringify(syncData.categories));
+localStorage.setItem('floristeria_config', JSON.stringify(syncData.storeConfig));
+
+// 3. RECARGAR PRODUCTOS EN LA PÁGINA
+if (typeof loadProducts === 'function') {
+    loadProducts();
+    alert('✅ Sincronización completada: ' + syncData.products.length + ' productos');
+} else {
+    alert('⚠️ Recarga la página para ver los cambios');
+}
+
+// 4. MOSTRAR RESUMEN
+console.log('🔄 Sincronización completada');
+console.log('📦 Productos:', syncData.products.length);
+console.log('🏷️ Categorías:', syncData.categories.length);
+console.log('⏰ Actualizado:', syncData.lastUpdated);
+            `;
+            
+            // Mostrar el código
+            document.getElementById('syncCode').textContent = syncCode;
+            document.getElementById('syncCodeContainer').style.display = 'block';
+            
+            showNotification('Código de sincronización generado', 'success');
+        }
+
+        function copySyncCode() {
+            const syncCode = document.getElementById('syncCode').textContent;
+            
+            navigator.clipboard.writeText(syncCode)
+                .then(() => {
+                    showNotification('Código copiado al portapapeles ✅', 'success');
+                })
+                .catch(err => {
+                    // Fallback manual
+                    const textArea = document.createElement('textarea');
+                    textArea.value = syncCode;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    showNotification('Código copiado ✅', 'success');
+                });
+        }
+
+        function testSync() {
+            // Probar sincronización local
+            localStorage.setItem('floristeria_products', JSON.stringify(products));
+            localStorage.setItem('floristeria_categories', JSON.stringify(categories));
+            localStorage.setItem('floristeria_config', JSON.stringify(storeConfig));
+            
+            showNotification('Sincronización local probada correctamente', 'success');
+        }
+
+        // ============================================
+        // FUNCIONES DE ESTADÍSTICAS
+        // ============================================
+        function updateStats() {
+            const totalProducts = products.length;
+            const activeProducts = products.filter(p => !p.blocked).length;
+            const blockedProducts = products.filter(p => p.blocked).length;
+            const totalCategories = categories.length;
+            
+            document.getElementById('total-products').textContent = totalProducts;
+            document.getElementById('active-products').textContent = activeProducts;
+            document.getElementById('blocked-products').textContent = blockedProducts;
+            document.getElementById('total-categories').textContent = totalCategories;
+            
+            // Mostrar información de almacenamiento
+            const storageInfo = document.getElementById('storage-info');
+            let totalSize = 0;
+            
+            ['floristeria_products', 'floristeria_categories', 'floristeria_config'].forEach(key => {
+                const data = localStorage.getItem(key);
+                if (data) {
+                    const size = new Blob([data]).size;
+                    totalSize += size;
+                    storageInfo.innerHTML += `
+                        <div style="margin-bottom: 5px;">
+                            <strong>${key}:</strong> ${(size / 1024).toFixed(2)} KB
+                        </div>
+                    `;
                 }
             });
+            
+            storageInfo.innerHTML += `
+                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #ddd;">
+                    <strong>Total almacenamiento:</strong> ${(totalSize / 1024).toFixed(2)} KB
+                </div>
+            `;
         }
 
-        // ============================================
-        // SISTEMA DE LOGIN
-        // ============================================
-
-        function handleLogin() {
-            const email = document.getElementById('adminEmail').value;
-            const password = document.getElementById('adminPassword').value;
-            const code = document.getElementById('adminCode').value;
-            const errorMessage = document.getElementById('errorMessage');
-            
-            // Primero intenta cargar credenciales actualizadas del localStorage
-            const savedAdminData = JSON.parse(localStorage.getItem('floristeria_admin_data'));
-            
-            // Usar credenciales guardadas o las por defecto
-            const currentAdminData = savedAdminData || adminData;
-            
-            // Validar credenciales
-            if (email === currentAdminData.email && 
-                password === currentAdminData.password && 
-                code === currentAdminData.code) {
-                
-                // Guardar estado de login
-                localStorage.setItem('floristeria_admin_logged', 'true');
-                
-                // Mostrar panel
-                showAdminPanel();
-                
-                // Mostrar alerta de éxito
-                showAlert('¡Bienvenido al Panel Administrativo!', 'success');
-                
-            } else {
-                // Mostrar error
-                errorMessage.style.display = 'block';
-                errorMessage.innerHTML = '<i class="fas fa-exclamation-circle"></i> Credenciales incorrectas. Intente nuevamente.';
-                
-                // Agitar el formulario
-                document.getElementById('loginForm').style.animation = 'none';
-                setTimeout(() => {
-                    document.getElementById('loginForm').style.animation = 'shake 0.5s';
-                }, 10);
-                
-                // Quitar animación
-                setTimeout(() => {
-                    document.getElementById('loginForm').style.animation = '';
-                }, 500);
+        function clearAllData() {
+            if (!confirm('⚠️ ¿ESTÁS SEGURO?\n\nEsto eliminará TODOS los productos, categorías y configuración.')) {
+                return;
             }
-        }
-
-        function showAdminPanel() {
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('adminPanel').style.display = 'block';
             
-            // Cargar datos iniciales
-            loadDashboardStats();
-            loadProductsList();
-            loadCategoriesList();
-            loadOrders();
-            loadDataSummary();
-            loadSyncStatus();
-        }
-
-        function logout() {
-            if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
-                localStorage.removeItem('floristeria_admin_logged');
-                document.getElementById('adminPanel').style.display = 'none';
-                document.getElementById('loginScreen').style.display = 'block';
-                
-                // Limpiar formulario de login
-                document.getElementById('adminEmail').value = '';
-                document.getElementById('adminPassword').value = '';
-                document.getElementById('adminCode').value = '';
-                document.getElementById('errorMessage').style.display = 'none';
-            }
+            localStorage.removeItem('floristeria_products');
+            localStorage.removeItem('floristeria_categories');
+            localStorage.removeItem('floristeria_config');
+            localStorage.removeItem('floristeria_cart');
+            localStorage.removeItem('floristeria_pedidos');
+            
+            products = [];
+            categories = [];
+            storeConfig = {};
+            
+            loadProducts();
+            updateStats();
+            
+            showNotification('Todos los datos han sido eliminados', 'warning');
         }
 
         // ============================================
-        // SISTEMA DE PESTAÑAS
+        // FUNCIONES DE INTERFAZ
         // ============================================
-
-        function switchTab(tabId) {
+        function showTab(tabName) {
             // Ocultar todas las pestañas
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
             
-            // Remover activo de todos los botones
+            // Desactivar todos los botones
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
             
             // Mostrar pestaña seleccionada
-            document.getElementById(tabId).classList.add('active');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            
+            // Activar botón
             event.target.classList.add('active');
             
-            // Cargar datos específicos de la pestaña
-            switch(tabId) {
-                case 'dashboard':
-                    loadDashboardStats();
-                    break;
-                case 'products':
-                    loadProductsList();
-                    break;
-                case 'categories':
-                    loadCategoriesList();
-                    break;
-                case 'orders':
-                    loadOrders();
-                    break;
-                case 'store':
-                    loadStoreSettings();
-                    break;
-                case 'sync':
-                    loadSyncStatus();
-                    break;
+            // Si es la pestaña de estadísticas, actualizarlas
+            if (tabName === 'estadisticas') {
+                updateStats();
             }
         }
 
-        // ============================================
-        // DASHBOARD
-        // ============================================
-
-        function loadDashboardStats() {
-            // Obtener datos del localStorage
-            const products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
-            const orders = JSON.parse(localStorage.getItem('floristeria_orders')) || [];
-            const categories = JSON.parse(localStorage.getItem('floristeria_categories')) || [];
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const text = document.getElementById('notificationText');
+            
+            text.textContent = message;
+            notification.className = 'notification';
+            notification.classList.add(type);
+            notification.classList.add('show');
             
-            // Calcular ventas totales y productos bloqueados
-            let totalSales = 0;
-            let blockedProducts = 0;
-            let activeProducts = 0;
-            
-            orders.forEach(order => {
-                if (order.total) {
-                    totalSales += order.total;
-                }
-            });
-            
-            products.forEach(product => {
-                if (product.blocked) {
-                    blockedProducts++;
-                } else {
-                    activeProducts++;
-                }
-            });
-            
-            // Actualizar estadísticas
-            document.getElementById('totalProducts').textContent = activeProducts;
-            document.getElementById('totalOrders').textContent = orders.length;
-            document.getElementById('totalSales').textContent = `₡${totalSales.toLocaleString()}`;
-            document.getElementById('totalBlocked').textContent = blockedProducts;
-            
-            // Actualizar estadísticas recientes
-            const recentStats = document.getElementById('recentStats');
-            const today = new Date();
-            const todayOrders = orders.filter(order => {
-                const orderDate = new Date(order.timestamp || order.date || today);
-                return orderDate.toDateString() === today.toDateString();
-            });
-            
-            const todaySales = todayOrders.reduce((total, order) => total + (order.total || 0), 0);
-            
-            recentStats.innerHTML = `
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                    <div>
-                        <div style="font-size: 1.2rem; font-weight: 700; color: var(--primary);">${todayOrders.length}</div>
-                        <div style="font-size: 0.9rem; color: var(--gray);">Pedidos hoy</div>
-                    </div>
-                    <div>
-                        <div style="font-size: 1.2rem; font-weight: 700; color: var(--success);">₡${todaySales.toLocaleString()}</div>
-                        <div style="font-size: 0.9rem; color: var(--gray);">Ventas hoy</div>
-                    </div>
-                    <div>
-                        <div style="font-size: 1.2rem; font-weight: 700; color: var(--info);">${orders.filter(o => o.status === 'pending' || !o.status).length}</div>
-                        <div style="font-size: 0.9rem; color: var(--gray);">Pedidos pendientes</div>
-                    </div>
-                    <div>
-                        <div style="font-size: 1.2rem; font-weight: 700; color: var(--warning);">${products.filter(p => (p.stock || 0) <= 3).length}</div>
-                        <div style="font-size: 0.9rem; color: var(--gray);">Productos con stock bajo</div>
-                    </div>
-                </div>
-            `;
-        }
-
-        // ============================================
-        // GESTIÓN DE PRODUCTOS - SISTEMA SEGURO
-        // ============================================
-
-        function handleImageUpload(event) {
-            const files = event.target.files;
-            const previewContainer = document.getElementById('imagePreviewContainer');
-            const progressBar = document.getElementById('uploadProgressBar');
-            
-            // Limpiar imágenes previas si no estamos editando
-            if (!editingProductId) {
-                currentImages = [];
-                previewContainer.innerHTML = '';
-            }
-            
-            // Mostrar barra de progreso
-            progressBar.style.width = '0%';
-            
-            // Procesar cada imagen
-            let processed = 0;
-            const totalFiles = files.length;
-            
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                
-                // Validar tamaño (3MB máximo original)
-                if (file.size > 3 * 1024 * 1024) {
-                    showAlert(`La imagen "${file.name}" es muy grande (${(file.size / 1024 / 1024).toFixed(2)}MB). El sistema la optimizará.`, 'warning');
-                }
-                
-                // Validar tipo
-                if (!file.type.match('image/jpeg') && !file.type.match('image/png') && !file.type.match('image/gif')) {
-                    showAlert(`La imagen "${file.name}" no es JPG, PNG o GIF`, 'error');
-                    continue;
-                }
-                
-                // Crear preview inmediato
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    processed++;
-                    progressBar.style.width = `${(processed / totalFiles) * 100}%`;
-                    
-                    // Guardar imagen
-                    currentImages.push({
-                        url: e.target.result,
-                        name: file.name,
-                        file: file,
-                        type: 'base64'
-                    });
-                    
-                    // Mostrar previsualización
-                    const imageItem = document.createElement('div');
-                    imageItem.className = 'image-item';
-                    imageItem.innerHTML = `
-                        <img src="${e.target.result}" class="image-preview">
-                        <button type="button" class="image-remove" onclick="removeImage(${currentImages.length - 1})">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    `;
-                    previewContainer.appendChild(imageItem);
-                    
-                    if (processed === totalFiles) {
-                        // Resetear barra de progreso
-                        setTimeout(() => {
-                            progressBar.style.width = '0%';
-                        }, 500);
-                        
-                        showAlert('✅ Imágenes listas para usar', 'success');
-                    }
-                };
-                
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function removeImage(index) {
-            currentImages.splice(index, 1);
-            updateImagePreviews();
-        }
-
-        function updateImagePreviews() {
-            const previewContainer = document.getElementById('imagePreviewContainer');
-            previewContainer.innerHTML = '';
-            
-            currentImages.forEach((image, index) => {
-                const imageItem = document.createElement('div');
-                imageItem.className = 'image-item';
-                imageItem.innerHTML = `
-                    <img src="${image.url}" class="image-preview">
-                    <button type="button" class="image-remove" onclick="removeImage(${index})">
-                        <i class="fas fa-times"></i>
-                    </button>
-                `;
-                previewContainer.appendChild(imageItem);
-            });
-        }
-
-        function saveProduct() {
-            // Obtener datos del formulario
-            const name = document.getElementById('productName').value.trim();
-            const category = document.getElementById('productCategory').value;
-            const price = parseFloat(document.getElementById('productPrice').value);
-            const stock = parseInt(document.getElementById('productStock').value) || 10;
-            const description = document.getElementById('productDescription').value.trim();
-            const imageUrl = document.getElementById('productImageUrl').value.trim();
-            const isActive = document.getElementById('productStatus').checked;
-            
-            // Validaciones
-            if (!name || !category || !price || !description) {
-                showAlert('Por favor complete todos los campos requeridos', 'error');
-                return;
-            }
-            
-            // Preparar imagen
-            let imageData = '';
-            if (currentImages.length > 0) {
-                imageData = currentImages[0].url;
-            } else if (imageUrl) {
-                if (!imageUrl.startsWith('http')) {
-                    showAlert('La URL debe comenzar con http:// o https://', 'error');
-                    return;
-                }
-                imageData = imageUrl;
-            } else {
-                imageData = 'https://images.unsplash.com/photo-1560749003-f4b1e17e2dff?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
-            }
-            
-            // Obtener productos existentes
-            let products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
-            
-            const now = Date.now();
-            
-            if (editingProductId !== null) {
-                // Editar producto existente
-                const index = products.findIndex(p => p.id == editingProductId);
-                if (index !== -1) {
-                    products[index] = {
-                        ...products[index],
-                        nombre: name,
-                        name: name,
-                        category: category,
-                        categoria: category,
-                        precio: price,
-                        price: price,
-                        stock: stock,
-                        description: description,
-                        descripcion: description,
-                        image: imageData,
-                        imagen: imageData,
-                        blocked: !isActive,
-                        lastModified: now
-                    };
-                    
-                    showAlert('✅ Producto actualizado correctamente', 'success');
-                }
-            } else {
-                // Crear nuevo producto
-                const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
-                
-                const newProduct = {
-                    id: newId,
-                    nombre: name,
-                    name: name,
-                    category: category,
-                    categoria: category,
-                    precio: price,
-                    price: price,
-                    stock: stock,
-                    description: description,
-                    descripcion: description,
-                    image: imageData,
-                    imagen: imageData,
-                    blocked: !isActive,
-                    created: now,
-                    lastModified: now
-                };
-                
-                products.push(newProduct);
-                showAlert('✅ Producto agregado correctamente', 'success');
-            }
-            
-            // Guardar en localStorage
-            localStorage.setItem('floristeria_products', JSON.stringify(products));
-            
-            // Limpiar formulario
-            clearProductForm();
-            
-            // Recargar lista
-            loadProductsList();
-            
-            // Actualizar dashboard
-            loadDashboardStats();
-        }
-
-        function clearProductForm() {
-            document.getElementById('productName').value = '';
-            document.getElementById('productCategory').value = '';
-            document.getElementById('productPrice').value = '';
-            document.getElementById('productStock').value = '10';
-            document.getElementById('productDescription').value = '';
-            document.getElementById('productImageUrl').value = '';
-            document.getElementById('productStatus').checked = true;
-            document.getElementById('statusLabel').textContent = 'Producto ACTIVO (disponible para venta)';
-            document.getElementById('statusLabel').className = 'toggle-label active';
-            
-            // Limpiar imágenes
-            currentImages = [];
-            document.getElementById('imagePreviewContainer').innerHTML = '';
-            document.getElementById('imageUpload').value = '';
-            
-            // Resetear modo edición
-            editingProductId = null;
-            
-            // Cambiar texto del botón
-            document.querySelector('#productForm button[type="submit"]').innerHTML = '<i class="fas fa-save"></i> Guardar Producto';
-        }
-
-        function loadProductsList() {
-            const products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
-            renderProductsList(products);
-        }
-
-        // ============================================
-        // FUNCIÓN RENDER PRODUCTS LIST - CORREGIDA Y SEGURA
-        // ============================================
-        
-        function renderProductsList(productsToRender) {
-            const container = document.getElementById('productsList');
-            const emptyState = document.getElementById('productsEmpty');
-            
-            if (productsToRender.length === 0) {
-                container.innerHTML = '';
-                emptyState.classList.remove('hidden');
-                return;
-            }
-            
-            emptyState.classList.add('hidden');
-            
-            // Ordenar por ID (más nuevos primero)
-            productsToRender.sort((a, b) => b.id - a.id);
-            
-            let html = '';
-            productsToRender.forEach(product => {
-                // Usar compatibilidad con ambos formatos
-                const name = product.nombre || product.name || 'Producto sin nombre';
-                const category = product.categoria || product.category || 'General';
-                const price = product.precio || product.price || 0;
-                const stock = product.stock || 0;
-                const image = product.image || product.imagen || 'https://images.unsplash.com/photo-1560749003-f4b1e17e2dff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80';
-                const description = product.descripcion || product.description || '';
-                const isBlocked = product.blocked || false;
-                
-                // Determinar clase para fila bloqueada - IMPORTANTE: Solo si está bloqueado
-                const rowClass = isBlocked ? 'product-blocked' : '';
-                const imgClass = isBlocked ? 'product-img-small blocked' : 'product-img-small';
-                const statusText = isBlocked ? '🔒 Bloqueado' : '✅ Activo';
-                const statusColor = isBlocked ? 'var(--danger)' : 'var(--success)';
-                const toggleText = isBlocked ? 'Desbloquear' : 'Bloquear';
-                const toggleIcon = isBlocked ? 'fa-lock-open' : 'fa-lock';
-                const toggleClass = isBlocked ? 'btn-warning' : 'btn-danger';
-                
-                html += `
-                    <tr class="${rowClass}">
-                        <td>
-                            <span style="color: ${statusColor}; font-weight: 600;">${statusText}</span>
-                        </td>
-                        <td>
-                            <img src="${image}" alt="${name}" class="${imgClass}">
-                        </td>
-                        <td>
-                            <div style="font-weight: 600;">${name}</div>
-                            <div style="font-size: 0.85rem; color: var(--gray); margin-top: 0.25rem;">
-                                ${description.substring(0, 60)}${description.length > 60 ? '...' : ''}
-                            </div>
-                        </td>
-                        <td>${category}</td>
-                        <td>₡${price.toLocaleString()}</td>
-                        <td>
-                            <span style="display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; background: ${stock > 5 ? '#d4edda' : '#f8d7da'}; color: ${stock > 5 ? '#155724' : '#721c24'};">${stock} unidades</span>
-                        </td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="btn btn-small btn-primary" onclick="editProduct(${product.id})">
-                                    <i class="fas fa-edit"></i> Editar
-                                </button>
-                                <button class="btn btn-small ${toggleClass}" onclick="safeToggleProductStatus(${product.id})">
-                                    <i class="fas ${toggleIcon}"></i> ${toggleText}
-                                </button>
-                                <button class="btn btn-small btn-danger" onclick="safeDeleteProduct(${product.id})">
-                                    <i class="fas fa-trash"></i> Eliminar
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            });
-            
-            container.innerHTML = html;
-        }
-
-        function editProduct(id) {
-            const products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
-            const product = products.find(p => p.id == id);
-            
-            if (!product) return;
-            
-            // Rellenar formulario
-            document.getElementById('productName').value = product.nombre || product.name || '';
-            document.getElementById('productCategory').value = product.categoria || product.category || '';
-            document.getElementById('productPrice').value = product.precio || product.price || '';
-            document.getElementById('productStock').value = product.stock || 10;
-            document.getElementById('productDescription').value = product.descripcion || product.description || '';
-            
-            // Configurar estado (bloqueado/inactivo)
-            const isBlocked = product.blocked || false;
-            document.getElementById('productStatus').checked = !isBlocked;
-            const statusLabel = document.getElementById('statusLabel');
-            if (!isBlocked) {
-                statusLabel.textContent = 'Producto ACTIVO (disponible para venta)';
-                statusLabel.className = 'toggle-label active';
-            } else {
-                statusLabel.textContent = 'Producto BLOQUEADO (no disponible temporalmente)';
-                statusLabel.className = 'toggle-label inactive';
-            }
-            
-            // Manejar imagen
-            const image = product.image || product.imagen || '';
-            if (image && image.startsWith('data:image')) {
-                // Es una imagen Base64 (subida desde PC)
-                document.getElementById('productImageUrl').value = '';
-                currentImages = [{
-                    url: image,
-                    name: 'Imagen existente',
-                    type: 'base64'
-                }];
-                updateImagePreviews();
-            } else if (image) {
-                // Es una URL externa
-                document.getElementById('productImageUrl').value = image;
-                currentImages = [];
-                updateImagePreviews();
-            } else {
-                currentImages = [];
-                updateImagePreviews();
-            }
-            
-            // Establecer modo edición
-            editingProductId = id;
-            
-            // Cambiar texto del botón
-            document.querySelector('#productForm button[type="submit"]').innerHTML = '<i class="fas fa-save"></i> Actualizar Producto';
-            
-            // Cambiar a pestaña de productos
-            switchTab('products');
-            
-            // Scroll al formulario
-            document.getElementById('productForm').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        // ============================================
-        // ELIMINACIÓN SEGURA DE PRODUCTOS - PROTEGIDA
-        // ============================================
-        
-        function safeDeleteProduct(id) {
-            const products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
-            const product = products.find(p => p.id == id);
-            
-            if (!product) return;
-            
-            const productName = product.nombre || product.name || 'este producto';
-            const isBlocked = product.blocked || false;
-            
-            // Crear mensaje de confirmación MUY CLARO
-            let message = `¿Estás seguro de que deseas ELIMINAR PERMANENTEMENTE "${productName}"?\n\n`;
-            
-            if (isBlocked) {
-                message += `⚠️  ATENCIÓN: Este producto está BLOQUEADO.\n`;
-                message += `✅ Si solo quieres que no aparezca en el catálogo, está BIEN así.\n`;
-                message += `✅ Para que vuelva a aparecer, solo haz clic en "DESBLOQUEAR".\n\n`;
-            } else {
-                message += `⚠️  ATENCIÓN: Este producto está ACTIVO y visible para clientes.\n`;
-                message += `✅ Si quieres que no aparezca TEMPORALMENTE, usa "BLOQUEAR".\n`;
-                message += `✅ La eliminación es PERMANENTE y no se puede deshacer.\n\n`;
-            }
-            
-            message += `¿Realmente quieres ELIMINAR permanentemente este producto?`;
-            
-            if (confirm(message)) {
-                // Primero, hacer backup del producto eliminado
-                const productBackup = {
-                    ...product,
-                    deletedAt: new Date().toISOString(),
-                    deletedBy: 'admin',
-                    reason: 'manual deletion'
-                };
-                
-                // Guardar en un array de productos eliminados (para recuperación)
-                let deletedProducts = JSON.parse(localStorage.getItem('floristeria_deleted_products')) || [];
-                deletedProducts.push(productBackup);
-                localStorage.setItem('floristeria_deleted_products', JSON.stringify(deletedProducts.slice(-100)));
-                
-                // Ahora sí eliminar del array principal
-                let updatedProducts = products.filter(p => p.id != id);
-                localStorage.setItem('floristeria_products', JSON.stringify(updatedProducts));
-                
-                // Mostrar alerta específica
-                if (isBlocked) {
-                    showAlert(`❌ Producto BLOQUEADO "${productName}" eliminado permanentemente. Ya no podrás recuperarlo.`, 'error');
-                } else {
-                    showAlert(`❌ Producto ACTIVO "${productName}" eliminado permanentemente. Los clientes ya no lo verán.`, 'error');
-                }
-                
-                // Recargar lista
-                loadProductsList();
-                loadDashboardStats();
-            }
-        }
-
-        // ============================================
-        // BLOQUEO/DESBLOQUEO SEGURO - CONFIRMACIÓN CLARA
-        // ============================================
-        
-        function safeToggleProductStatus(productId) {
-            let products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
-            const productIndex = products.findIndex(p => p.id == productId);
-            
-            if (productIndex === -1) {
-                showAlert('Producto no encontrado', 'error');
-                return;
-            }
-            
-            const product = products[productIndex];
-            const productName = product.nombre || product.name || 'Producto';
-            const willBlock = !product.blocked; // Va a cambiar al estado opuesto
-            
-            // Mensaje claro sobre lo que va a pasar
-            let message = '';
-            if (willBlock) {
-                message = `¿BLOQUEAR "${productName}"?\n\n`;
-                message += `✅ El producto dejará de aparecer en el catálogo principal\n`;
-                message += `✅ Los clientes NO podrán agregarlo al carrito\n`;
-                message += `✅ Se mantendrá en el admin para editarlo cuando quieras\n`;
-                message += `✅ Para que vuelva a aparecer, solo haz clic en "DESBLOQUEAR"\n\n`;
-                message += `¿Bloquear este producto?`;
-            } else {
-                message = `¿DESBLOQUEAR "${productName}"?\n\n`;
-                message += `✅ El producto volverá a aparecer en el catálogo principal\n`;
-                message += `✅ Los clientes PODRÁN agregarlo al carrito\n`;
-                message += `✅ Recuerda SINCRONIZAR para que los cambios se vean\n\n`;
-                message += `¿Desbloquear este producto?`;
-            }
-            
-            if (!confirm(message)) return;
-            
-            // Cambiar estado
-            products[productIndex].blocked = willBlock;
-            products[productIndex].lastModified = Date.now();
-            
-            // Guardar cambios
-            localStorage.setItem('floristeria_products', JSON.stringify(products));
-            
-            // Mostrar notificación detallada
-            if (willBlock) {
-                showAlert(`🔒 Producto "${productName}" BLOQUEADO.\n\nAhora ve a la pestaña "Sincronizar" y actualiza el catálogo para que los cambios se apliquen.`, 'warning');
-            } else {
-                showAlert(`✅ Producto "${productName}" DESBLOQUEADO.\n\nAhora ve a la pestaña "Sincronizar" y actualiza el catálogo para que vuelva a aparecer.`, 'success');
-            }
-            
-            // Recargar lista
-            loadProductsList();
-            loadDashboardStats();
-        }
-        
-        function toggleAllProducts(action) {
-            let products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
-            
-            if (products.length === 0) {
-                showAlert('No hay productos para modificar', 'warning');
-                return;
-            }
-            
-            const confirmMessage = action === 'block' 
-                ? `¿BLOQUEAR TODOS los productos (${products.length})?\n\n✅ Todos dejarán de aparecer en el catálogo\n✅ Los clientes NO podrán comprar nada\n✅ Perfecto para vacaciones o mantenimiento\n\n¿Continuar?`
-                : `¿DESBLOQUEAR TODOS los productos (${products.length})?\n\n✅ Todos volverán a aparecer en el catálogo\n✅ Los clientes PODRÁN comprar normalmente\n✅ Recuerda SINCRONIZAR después\n\n¿Continuar?`;
-            
-            if (!confirm(confirmMessage)) return;
-            
-            // Cambiar estado de todos los productos
-            products.forEach(product => {
-                product.blocked = (action === 'block');
-                product.lastModified = Date.now();
-            });
-            
-            // Guardar cambios
-            localStorage.setItem('floristeria_products', JSON.stringify(products));
-            
-            // Mostrar notificación
-            if (action === 'block') {
-                showAlert(`🔒 ${products.length} productos BLOQUEADOS.\n\nIMPORTANTE: Ve a "Sincronizar" y actualiza el catálogo.`, 'warning');
-            } else {
-                showAlert(`✅ ${products.length} productos DESBLOQUEADOS.\n\nIMPORTANTE: Ve a "Sincronizar" y actualiza el catálogo.`, 'success');
-            }
-            
-            // Recargar lista
-            loadProductsList();
-            loadDashboardStats();
-        }
-        
-        function filterProductsList() {
-            const filter = document.getElementById('productFilter').value;
-            const products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
-            
-            if (products.length === 0) {
-                renderProductsList([]);
-                return;
-            }
-            
-            let filteredProducts = products;
-            
-            switch(filter) {
-                case 'active':
-                    filteredProducts = products.filter(p => !p.blocked);
-                    break;
-                case 'blocked':
-                    filteredProducts = products.filter(p => p.blocked);
-                    break;
-                // 'all' - muestra todos
-            }
-            
-            // Mostrar productos filtrados
-            renderProductsList(filteredProducts);
-        }
-        
-        function testProductBlocking() {
-            showAlert(`
-                <h4>🔒 SISTEMA DE BLOQUEO - GUÍA RÁPIDA</h4>
-                <p><strong>Para ocultar un producto temporalmente:</strong></p>
-                <ol style="text-align: left; margin: 10px 0;">
-                    <li>1. Haz clic en <strong>"🔒 Bloquear"</strong> (botón rojo)</li>
-                    <li>2. Ve a pestaña <strong>"Sincronizar"</strong></li>
-                    <li>3. Haz clic en <strong>"Generar Código"</strong></li>
-                    <li>4. Copia y pega en <strong>data.json</strong></li>
-                </ol>
-                <p><strong>Resultado:</strong></p>
-                <ul style="text-align: left; margin: 10px 0;">
-                    <li>✅ En ADMIN: Se ve bloqueado (gris)</li>
-                    <li>❌ En CATÁLOGO: NO aparece para clientes</li>
-                    <li>📱 En MÓVILES: NO aparece para nadie</li>
-                </ul>
-                <p><em>Para recuperarlo: "Desbloquear" + Sincronizar</em></p>
-            `, 'info');
-        }
-
-        // ============================================
-        // GESTIÓN DE CATEGORÍAS
-        // ============================================
-
-        function loadCategoriesForSelect() {
-            const categories = JSON.parse(localStorage.getItem('floristeria_categories')) || [];
-            const select = document.getElementById('productCategory');
-            
-            // Limpiar opciones (excepto la primera)
-            while (select.options.length > 1) {
-                select.remove(1);
-            }
-            
-            // Agregar categorías
-            categories.forEach(category => {
-                const option = document.createElement('option');
-                option.value = category;
-                option.textContent = category;
-                select.appendChild(option);
-            });
-        }
-
-        function saveCategory() {
-            const name = document.getElementById('categoryName').value.trim();
-            const description = document.getElementById('categoryDescription').value.trim();
-            
-            if (!name) {
-                showAlert('El nombre de la categoría es requerido', 'error');
-                return;
-            }
-            
-            let categories = JSON.parse(localStorage.getItem('floristeria_categories')) || [];
-            
-            if (editingCategoryIndex !== null) {
-                // Editar categoría existente
-                categories[editingCategoryIndex] = name;
-                showAlert('Categoría actualizada correctamente', 'success');
-            } else {
-                // Agregar nueva categoría
-                if (categories.includes(name)) {
-                    showAlert('Esta categoría ya existe', 'error');
-                    return;
-                }
-                
-                categories.push(name);
-                showAlert('Categoría agregada correctamente', 'success');
-            }
-            
-            // Guardar en localStorage
-            localStorage.setItem('floristeria_categories', JSON.stringify(categories));
-            
-            // Limpiar formulario
-            clearCategoryForm();
-            
-            // Recargar listas
-            loadCategoriesForSelect();
-            loadCategoriesList();
-            
-            // Actualizar dashboard
-            loadDashboardStats();
-        }
-
-        function clearCategoryForm() {
-            document.getElementById('categoryName').value = '';
-            document.getElementById('categoryDescription').value = '';
-            editingCategoryIndex = null;
-            
-            // Cambiar texto del botón
-            document.querySelector('#categoryForm button[type="submit"]').innerHTML = '<i class="fas fa-save"></i> Guardar Categoría';
-        }
-
-        function loadCategoriesList() {
-            const categories = JSON.parse(localStorage.getItem('floristeria_categories')) || [];
-            const container = document.getElementById('categoriesList');
-            const emptyState = document.getElementById('categoriesEmpty');
-            
-            if (categories.length === 0) {
-                container.innerHTML = '';
-                emptyState.classList.remove('hidden');
-                return;
-            }
-            
-            emptyState.classList.add('hidden');
-            
-            // Obtener productos para contar
-            const products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
-            
-            let html = '';
-            categories.forEach((category, index) => {
-                // Contar productos en esta categoría
-                const productCount = products.filter(p => 
-                    (p.categoria === category || p.category === category) && !p.blocked
-                ).length;
-                
-                const totalProductsInCategory = products.filter(p => 
-                    (p.categoria === category || p.category === category)
-                ).length;
-                
-                html += `
-                    <tr>
-                        <td>
-                            <div style="font-weight: 600;">${category}</div>
-                        </td>
-                        <td>
-                            <div style="color: var(--gray);">${document.getElementById('categoryDescription').value || 'Sin descripción'}</div>
-                        </td>
-                        <td>
-                            <span style="display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; background: var(--light);">
-                                ${productCount} activos / ${totalProductsInCategory} total
-                            </span>
-                        </td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="btn btn-small btn-primary" onclick="editCategory(${index})">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-small btn-danger" onclick="deleteCategory(${index})">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            });
-            
-            container.innerHTML = html;
-        }
-
-        function editCategory(index) {
-            const categories = JSON.parse(localStorage.getItem('floristeria_categories')) || [];
-            
-            if (index >= 0 && index < categories.length) {
-                document.getElementById('categoryName').value = categories[index];
-                editingCategoryIndex = index;
-                
-                // Cambiar texto del botón
-                document.querySelector('#categoryForm button[type="submit"]').innerHTML = '<i class="fas fa-save"></i> Actualizar Categoría';
-                
-                // Scroll al formulario
-                document.getElementById('categoryForm').scrollIntoView({ behavior: 'smooth' });
-            }
-        }
-
-        function deleteCategory(index) {
-            const categories = JSON.parse(localStorage.getItem('floristeria_categories')) || [];
-            const categoryToDelete = categories[index];
-            
-            // Verificar si hay productos en esta categoría
-            const products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
-            const productsInCategory = products.filter(p => 
-                (p.categoria === categoryToDelete || p.category === categoryToDelete)
-            );
-            
-            if (productsInCategory.length > 0) {
-                showAlert(`No puedes eliminar esta categoría porque tiene ${productsInCategory.length} productos asignados. Primero cambia la categoría de esos productos.`, 'error');
-                return;
-            }
-            
-            if (confirm(`¿Estás seguro de que deseas eliminar la categoría "${categoryToDelete}"?`)) {
-                categories.splice(index, 1);
-                localStorage.setItem('floristeria_categories', JSON.stringify(categories));
-                
-                showAlert('Categoría eliminada correctamente', 'success');
-                loadCategoriesList();
-                loadCategoriesForSelect();
-                loadDashboardStats();
-            }
-        }
-
-        // ============================================
-        // GESTIÓN DE PEDIDOS
-        // ============================================
-
-        function loadOrders() {
-            const orders = JSON.parse(localStorage.getItem('floristeria_orders')) || [];
-            const container = document.getElementById('ordersList');
-            const emptyState = document.getElementById('ordersEmpty');
-            const filter = document.getElementById('orderFilter').value;
-            
-            // Filtrar pedidos
-            let filteredOrders = [...orders];
-            if (filter !== 'all') {
-                const now = new Date();
-                filteredOrders = orders.filter(order => {
-                    const orderDate = new Date(order.timestamp || order.date || now);
-                    
-                    switch(filter) {
-                        case 'today':
-                            return orderDate.toDateString() === now.toDateString();
-                        case 'week':
-                            const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-                            return orderDate >= weekAgo;
-                        case 'month':
-                            const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-                            return orderDate >= monthAgo;
-                        case 'pending':
-                            return order.status === 'pending' || !order.status;
-                        case 'confirmed':
-                            return order.status === 'confirmed';
-                        default:
-                            return true;
-                    }
-                });
-            }
-            
-            if (filteredOrders.length === 0) {
-                container.innerHTML = '';
-                emptyState.classList.remove('hidden');
-                return;
-            }
-            
-            emptyState.classList.add('hidden');
-            
-            // Ordenar por fecha (más reciente primero)
-            filteredOrders.sort((a, b) => {
-                const dateA = new Date(a.timestamp || a.date || 0);
-                const dateB = new Date(b.timestamp || b.date || 0);
-                return dateB - dateA;
-            });
-            
-            let html = '';
-            filteredOrders.forEach(order => {
-                const orderDate = new Date(order.timestamp || order.date || new Date());
-                const formattedDate = orderDate.toLocaleDateString('es-ES', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric'
-                });
-                const formattedTime = orderDate.toLocaleTimeString('es-ES', {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-                
-                // Determinar estado
-                let status = order.status || 'pending';
-                let statusText = '';
-                let statusClass = '';
-                
-                switch(status) {
-                    case 'pending':
-                        statusText = 'Pendiente';
-                        statusClass = 'status-pending';
-                        break;
-                    case 'confirmed':
-                        statusText = 'Confirmado';
-                        statusClass = 'status-confirmed';
-                        break;
-                    case 'completed':
-                        statusText = 'Completado';
-                        statusClass = 'status-completed';
-                        break;
-                    default:
-                        statusText = 'Pendiente';
-                        statusClass = 'status-pending';
-                }
-                
-                html += `
-                    <tr>
-                        <td>
-                            <strong>${order.number || 'PED-' + orderDate.getTime().toString().slice(-8)}</strong>
-                        </td>
-                        <td>
-                            <div style="font-weight: 600;">${order.customerName || 'Cliente'}</div>
-                            <div style="font-size: 0.85rem; color: var(--gray); margin-top: 0.25rem;">
-                                ${order.customerPhone || 'Sin teléfono'}
-                            </div>
-                            <div style="font-size: 0.8rem; color: var(--info); margin-top: 0.25rem;">
-                                ${order.deliveryType === 'delivery' ? '🚚 Envío' : '🏪 Recoger'}
-                            </div>
-                        </td>
-                        <td>
-                            <div style="font-weight: 600;">${formattedDate}</div>
-                            <div style="font-size: 0.85rem; color: var(--gray);">${formattedTime}</div>
-                        </td>
-                        <td>
-                            <strong style="color: var(--success);">₡${(order.total || 0).toLocaleString()}</strong>
-                        </td>
-                        <td>
-                            <span class="order-status ${statusClass}">${statusText}</span>
-                        </td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="btn btn-small btn-primary" onclick="viewOrderDetails('${order.number || orderDate.getTime()}')">
-                                    <i class="fas fa-eye"></i> Ver
-                                </button>
-                                <button class="btn btn-small btn-success" onclick="updateOrderStatus('${order.number || orderDate.getTime()}', 'confirmed')">
-                                    <i class="fas fa-check"></i> Confirmar
-                                </button>
-                                <button class="btn btn-small btn-danger" onclick="deleteOrder('${order.number || orderDate.getTime()}')">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            });
-            
-            container.innerHTML = html;
-        }
-
-        function filterOrders() {
-            loadOrders();
-        }
-        
-        function markAllOrdersAsRead() {
-            showAlert('Todos los pedidos marcados como revisados', 'info');
-        }
-
-        function viewOrderDetails(orderId) {
-            const orders = JSON.parse(localStorage.getItem('floristeria_orders')) || [];
-            const order = orders.find(o => o.number === orderId || o.number === 'PED-' + orderId);
-            
-            if (!order) {
-                showAlert('Pedido no encontrado', 'error');
-                return;
-            }
-            
-            // Crear HTML para mostrar detalles
-            const orderDate = new Date(order.timestamp || order.date || new Date());
-            
-            let detailsHTML = `
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <h3 style="color: var(--primary); margin: 0;">📦 Pedido ${order.number || 'Sin número'}</h3>
-                    <button onclick="this.parentElement.parentElement.remove()" style="background: var(--danger); color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer;">×</button>
-                </div>
-            `;
-            
-            // Mostrar detalles básicos
-            detailsHTML += `
-                <div style="margin-bottom: 15px;">
-                    <div><strong>Cliente:</strong> ${order.customerName || 'No especificado'}</div>
-                    <div><strong>Teléfono:</strong> ${order.customerPhone || 'No especificado'}</div>
-                    <div><strong>Fecha:</strong> ${orderDate.toLocaleDateString('es-ES')} ${orderDate.toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit'})}</div>
-                    <div><strong>Total:</strong> ₡${(order.total || 0).toLocaleString()}</div>
-                </div>
-            `;
-            
-            // Mostrar items si existen
-            if (order.items && order.items.length > 0) {
-                detailsHTML += `<div><strong>Productos:</strong></div><ul>`;
-                order.items.forEach(item => {
-                    detailsHTML += `<li>${item.name} x${item.quantity} - ₡${(item.price || 0).toLocaleString()} c/u</li>`;
-                });
-                detailsHTML += `</ul>`;
-            }
-            
-            // Crear modal para mostrar
-            const modalDiv = document.createElement('div');
-            modalDiv.style.position = 'fixed';
-            modalDiv.style.top = '50%';
-            modalDiv.style.left = '50%';
-            modalDiv.style.transform = 'translate(-50%, -50%)';
-            modalDiv.style.width = '90%';
-            modalDiv.style.maxWidth = '500px';
-            modalDiv.style.maxHeight = '80vh';
-            modalDiv.style.overflow = 'auto';
-            modalDiv.style.background = 'white';
-            modalDiv.style.padding = '25px';
-            modalDiv.style.borderRadius = 'var(--radius)';
-            modalDiv.style.boxShadow = '0 10px 40px rgba(0,0,0,0.3)';
-            modalDiv.style.zIndex = '3000';
-            
-            modalDiv.innerHTML = `
-                ${detailsHTML}
-                <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;">
-                    <button onclick="this.parentElement.parentElement.remove()" 
-                            style="padding: 10px 20px; background: var(--gray); color: white; border: none; border-radius: var(--radius-sm); cursor: pointer;">
-                        Cerrar
-                    </button>
-                </div>
-            `;
-            
-            document.body.appendChild(modalDiv);
-        }
-        
-        function updateOrderStatus(orderId, status) {
-            let orders = JSON.parse(localStorage.getItem('floristeria_orders')) || [];
-            const orderIndex = orders.findIndex(o => o.number === orderId || o.number === 'PED-' + orderId);
-            
-            if (orderIndex === -1) {
-                showAlert('Pedido no encontrado', 'error');
-                return;
-            }
-            
-            const statusText = status === 'confirmed' ? 'confirmado' : 
-                             status === 'completed' ? 'completado' : 'pendiente';
-            
-            if (confirm(`¿Cambiar el estado del pedido a "${statusText}"?`)) {
-                orders[orderIndex].status = status;
-                localStorage.setItem('floristeria_orders', JSON.stringify(orders));
-                
-                showAlert(`Estado del pedido actualizado a "${statusText}"`, 'success');
-                loadOrders();
-                loadDashboardStats();
-            }
-        }
-
-        function deleteOrder(orderId) {
-            if (confirm('¿Estás seguro de que deseas eliminar este pedido? Esta acción no se puede deshacer.')) {
-                let orders = JSON.parse(localStorage.getItem('floristeria_orders')) || [];
-                orders = orders.filter(o => !(o.number === orderId || o.number === 'PED-' + orderId));
-                localStorage.setItem('floristeria_orders', JSON.stringify(orders));
-                
-                showAlert('Pedido eliminado correctamente', 'success');
-                loadOrders();
-                loadDashboardStats();
-            }
-        }
-
-        function exportOrders() {
-            const orders = JSON.parse(localStorage.getItem('floristeria_orders')) || [];
-            
-            if (orders.length === 0) {
-                showAlert('No hay pedidos para exportar', 'warning');
-                return;
-            }
-            
-            // Crear contenido CSV
-            let csv = 'N° Pedido,Cliente,Teléfono,Fecha,Hora,Total,Estado,Método de Pago,Tipo Entrega\n';
-            
-            orders.forEach(order => {
-                const date = new Date(order.timestamp || order.date || new Date());
-                const formattedDate = date.toLocaleDateString('es-ES');
-                const formattedTime = date.toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit'});
-                const status = order.status || 'pending';
-                const statusText = status === 'confirmed' ? 'Confirmado' : 
-                                 status === 'completed' ? 'Completado' : 'Pendiente';
-                
-                csv += `"${order.number || 'Sin número'}","${order.customerName || 'Sin nombre'}","${order.customerPhone || 'Sin teléfono'}","${formattedDate}","${formattedTime}","₡${order.total || 0}","${statusText}","${order.paymentMethod || 'No especificado'}","${order.deliveryType === 'delivery' ? 'Envío' : 'Recoger'}"\n`;
-            });
-            
-            // Crear y descargar archivo
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            
-            link.setAttribute('href', url);
-            link.setAttribute('download', `pedidos_floristeria_${new Date().toISOString().slice(0,10)}.csv`);
-            link.style.visibility = 'hidden';
-            
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            showAlert('Pedidos exportados a CSV correctamente', 'success');
-        }
-
-        // ============================================
-        // CONFIGURACIÓN DE TIENDA
-        // ============================================
-
-        function loadStoreSettings() {
-            // Cargar configuración existente
-            const config = JSON.parse(localStorage.getItem('floristeria_config')) || {
-                storeName: "Floristería Santa Bárbara",
-                phoneNumber: "50686053613",
-                shippingCostPerKm: 650,
-                currency: "₡",
-                whatsappMessage: "¡Hola! 😊\n\nGracias por comunicarte con nosotros.\n\nQuiero hacer un pedido:"
-            };
-            
-            // Rellenar formularios
-            document.getElementById('storeName').value = config.storeName || "Floristería Santa Bárbara";
-            document.getElementById('storePhone').value = config.phoneNumber || "50686053613";
-            document.getElementById('storeAddress').value = config.address || "Santa Bárbara, Heredia, Costa Rica";
-            document.getElementById('storeEmail').value = config.email || "ventas@floristeriasantabarbara.com";
-            document.getElementById('storeShippingPerKm').value = config.shippingCostPerKm || 650;
-            document.getElementById('storeCurrency').value = config.currency || "₡";
-            document.getElementById('storeWhatsapp').value = config.whatsappMessage || "¡Hola! 😊\n\nGracias por comunicarte con nosotros.\n\nQuiero hacer un pedido:";
-        }
-
-        function saveStoreConfig() {
-            const config = {
-                storeName: document.getElementById('storeName').value.trim(),
-                phoneNumber: document.getElementById('storePhone').value.trim(),
-                address: document.getElementById('storeAddress').value.trim(),
-                email: document.getElementById('storeEmail').value.trim(),
-                shippingCostPerKm: parseInt(document.getElementById('storeShippingPerKm').value) || 650,
-                currency: document.getElementById('storeCurrency').value.trim() || "₡",
-                whatsappMessage: document.getElementById('storeWhatsapp').value.trim()
-            };
-            
-            // Validaciones
-            if (!config.storeName || !config.phoneNumber || !config.address) {
-                showAlert('Por favor complete los campos requeridos', 'error');
-                return;
-            }
-            
-            // Guardar en localStorage
-            localStorage.setItem('floristeria_config', JSON.stringify(config));
-            
-            showAlert('Configuración de tienda guardada correctamente', 'success');
-        }
-
-        function saveSchedule() {
-            const schedule = {
-                morning: document.getElementById('scheduleMorning').value.trim(),
-                afternoon: document.getElementById('scheduleAfternoon').value.trim(),
-                days: document.getElementById('scheduleDays').value.trim()
-            };
-            
-            localStorage.setItem('floristeria_schedule', JSON.stringify(schedule));
-            showAlert('Horarios actualizados correctamente', 'success');
-        }
-
-        // ============================================
-        // SINCRONIZACIÓN CON DATA.JSON
-        // ============================================
-        
-        function generateDataJson() {
-            // Recopilar todos los datos
-            const allData = {
-                version: "1.0",
-                lastUpdated: new Date().toISOString(),
-                storeConfig: JSON.parse(localStorage.getItem('floristeria_config')) || {},
-                categories: JSON.parse(localStorage.getItem('floristeria_categories')) || [],
-                products: JSON.parse(localStorage.getItem('floristeria_products')) || []
-            };
-            
-            // Filtrar productos bloqueados (no enviarlos al data.json)
-            allData.products = allData.products.filter(product => !product.blocked);
-            
-            const jsonContent = JSON.stringify(allData, null, 2);
-            
-            // Mostrar en textarea
-            document.getElementById('jsonTextArea').value = jsonContent;
-            document.getElementById('jsonOutput').style.display = 'block';
-            document.getElementById('syncInstructions').classList.remove('hidden');
-            
-            // Scroll al textarea
-            document.getElementById('jsonTextArea').scrollIntoView({ behavior: 'smooth' });
-            
-            showAlert('✅ Código generado. Copia y pega en data.json', 'success');
-        }
-        
-        function copyJsonToClipboard() {
-            const textarea = document.getElementById('jsonTextArea');
-            textarea.select();
-            document.execCommand('copy');
-            showAlert('✅ Código copiado al portapapeles. Ahora pégalo en data.json en GitHub.', 'success');
-        }
-        
-        function showSyncInstructions() {
-            const instructions = document.getElementById('syncInstructions');
-            instructions.classList.toggle('hidden');
-        }
-        
-        function loadSyncStatus() {
-            const products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
-            const blockedProducts = products.filter(p => p.blocked).length;
-            const activeProducts = products.filter(p => !p.blocked).length;
-            
-            const statusDiv = document.getElementById('syncStatus');
-            statusDiv.innerHTML = `
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                    <div>
-                        <div style="font-size: 0.9rem; color: var(--gray);">Productos Activos</div>
-                        <div style="font-size: 1.2rem; font-weight: 600; color: var(--success);">${activeProducts}</div>
-                    </div>
-                    <div>
-                        <div style="font-size: 0.9rem; color: var(--gray);">Productos Bloqueados</div>
-                        <div style="font-size: 1.2rem; font-weight: 600; color: var(--danger);">${blockedProducts}</div>
-                    </div>
-                    <div>
-                        <div style="font-size: 0.9rem; color: var(--gray);">En data.json se enviarán</div>
-                        <div style="font-size: 1.2rem; font-weight: 600; color: var(--primary);">${activeProducts} productos</div>
-                    </div>
-                    <div>
-                        <div style="font-size: 0.9rem; color: var(--gray);">Última sincronización</div>
-                        <div style="font-size: 1.2rem; font-weight: 600; color: var(--info);">${new Date().toLocaleDateString('es-ES')}</div>
-                    </div>
-                </div>
-                <div style="margin-top: 1rem; padding: 0.75rem; background: #f0f8ff; border-radius: var(--radius-sm); font-size: 0.9rem; color: var(--info);">
-                    <i class="fas fa-info-circle"></i> Los productos bloqueados NO se envían a data.json. Solo los clientes verán productos activos.
-                </div>
-            `;
-        }
-
-        // ============================================
-        // CONFIGURACIÓN Y GESTIÓN DE DATOS
-        // ============================================
-
-        function loadDataSummary() {
-            const products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
-            const orders = JSON.parse(localStorage.getItem('floristeria_orders')) || [];
-            const categories = JSON.parse(localStorage.getItem('floristeria_categories')) || [];
-            const config = JSON.parse(localStorage.getItem('floristeria_config')) || {};
-            
-            const container = document.getElementById('dataSummary');
-            
-            // Calcular tamaños
-            const productsSize = JSON.stringify(products).length;
-            const ordersSize = JSON.stringify(orders).length;
-            const categoriesSize = JSON.stringify(categories).length;
-            const configSize = JSON.stringify(config).length;
-            const totalSize = productsSize + ordersSize + categoriesSize + configSize;
-            
-            // Contar productos bloqueados
-            const blockedProducts = products.filter(p => p.blocked).length;
-            const activeProducts = products.length - blockedProducts;
-            
-            // Calcular porcentaje de uso
-            const maxStorage = 5 * 1024 * 1024; // 5MB
-            const usagePercent = Math.min(100, Math.round((totalSize / maxStorage) * 100));
-            
-            // Determinar color según uso
-            let usageColor = 'var(--success)';
-            let usageMessage = 'Normal';
-            
-            if (usagePercent > 80) {
-                usageColor = 'var(--danger)';
-                usageMessage = '⚠️ ALTO - Considera limpiar';
-            } else if (usagePercent > 60) {
-                usageColor = 'var(--warning)';
-                usageMessage = '⚠️ Moderado';
-            }
-            
-            container.innerHTML = `
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                    <div>
-                        <div style="font-size: 0.9rem; color: var(--gray);">Productos Totales</div>
-                        <div style="font-size: 1.1rem; font-weight: 600;">${products.length} (${activeProducts} activos)</div>
-                    </div>
-                    <div>
-                        <div style="font-size: 0.9rem; color: var(--gray);">Productos Bloqueados</div>
-                        <div style="font-size: 1.1rem; font-weight: 600; color: ${blockedProducts > 0 ? 'var(--danger)' : 'var(--success)'};">${blockedProducts}</div>
-                    </div>
-                    <div>
-                        <div style="font-size: 0.9rem; color: var(--gray);">Pedidos</div>
-                        <div style="font-size: 1.1rem; font-weight: 600;">${orders.length}</div>
-                    </div>
-                    <div>
-                        <div style="font-size: 0.9rem; color: var(--gray);">Categorías</div>
-                        <div style="font-size: 1.1rem; font-weight: 600;">${categories.length}</div>
-                    </div>
-                </div>
-                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                        <div style="font-size: 0.9rem; color: var(--gray);">Uso de almacenamiento</div>
-                        <div style="font-size: 0.9rem; color: ${usageColor}; font-weight: 600;">${usageMessage}</div>
-                    </div>
-                    
-                    <!-- Barra de progreso -->
-                    <div style="height: 10px; background: var(--light); border-radius: 5px; overflow: hidden; margin-bottom: 0.5rem;">
-                        <div style="height: 100%; width: ${usagePercent}%; background: ${usageColor}; border-radius: 5px; transition: width 0.3s ease;"></div>
-                    </div>
-                    
-                    <div style="display: flex; justify-content: space-between;">
-                        <div style="font-size: 0.85rem; color: var(--gray);">${formatBytes(totalSize)} / 5MB</div>
-                        <div style="font-size: 0.85rem; color: var(--gray);">${usagePercent}% utilizado</div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function formatBytes(bytes, decimals = 2) {
-            if (bytes === 0) return '0 Bytes';
-            
-            const k = 1024;
-            const dm = decimals < 0 ? 0 : decimals;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-        }
-
-        function exportData() {
-            const data = {
-                products: JSON.parse(localStorage.getItem('floristeria_products')) || [],
-                orders: JSON.parse(localStorage.getItem('floristeria_orders')) || [],
-                categories: JSON.parse(localStorage.getItem('floristeria_categories')) || [],
-                config: JSON.parse(localStorage.getItem('floristeria_config')) || {},
-                schedule: JSON.parse(localStorage.getItem('floristeria_schedule')) || {},
-                exportDate: new Date().toISOString()
-            };
-            
-            // Crear JSON
-            const json = JSON.stringify(data, null, 2);
-            
-            // Crear y descargar archivo
-            const blob = new Blob([json], { type: 'application/json' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            
-            link.setAttribute('href', url);
-            link.setAttribute('download', `backup_floristeria_${new Date().toISOString().slice(0,10)}.json`);
-            link.style.visibility = 'hidden';
-            
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            showAlert('Datos exportados correctamente', 'success');
-        }
-
-        function importData() {
-            // Crear input de archivo
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.json';
-            input.style.display = 'none';
-            
-            input.onchange = function(e) {
-                const file = e.target.files[0];
-                if (!file) return;
-                
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    try {
-                        const data = JSON.parse(event.target.result);
-                        
-                        if (confirm('¿Estás seguro de que deseas importar estos datos? Esto sobrescribirá los datos actuales.')) {
-                            // Importar datos
-                            if (data.products) localStorage.setItem('floristeria_products', JSON.stringify(data.products));
-                            if (data.orders) localStorage.setItem('floristeria_orders', JSON.stringify(data.orders));
-                            if (data.categories) localStorage.setItem('floristeria_categories', JSON.stringify(data.categories));
-                            if (data.config) localStorage.setItem('floristeria_config', JSON.stringify(data.config));
-                            if (data.schedule) localStorage.setItem('floristeria_schedule', JSON.stringify(data.schedule));
-                            
-                            showAlert('Datos importados correctamente', 'success');
-                            
-                            // Recargar todas las vistas
-                            loadDashboardStats();
-                            loadProductsList();
-                            loadCategoriesList();
-                            loadOrders();
-                            loadCategoriesForSelect();
-                            loadDataSummary();
-                            loadSyncStatus();
-                        }
-                    } catch (error) {
-                        showAlert('Error al importar datos: Archivo JSON inválido', 'error');
-                    }
-                };
-                
-                reader.readAsText(file);
-            };
-            
-            document.body.appendChild(input);
-            input.click();
-            document.body.removeChild(input);
-        }
-
-        function updateAdminCredentials() {
-            const newEmail = document.getElementById('newEmail').value.trim();
-            const newPassword = document.getElementById('newPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            const newCode = document.getElementById('newCode').value.trim();
-            
-            // Validar contraseñas
-            if (newPassword && newPassword !== confirmPassword) {
-                showAlert('Las contraseñas no coinciden', 'error');
-                return;
-            }
-            
-            // Cargar datos actuales del localStorage
-            let savedAdminData = JSON.parse(localStorage.getItem('floristeria_admin_data')) || adminData;
-            
-            // Actualizar credenciales (solo si se proporcionaron nuevos valores)
-            if (newEmail) savedAdminData.email = newEmail;
-            if (newPassword) savedAdminData.password = newPassword;
-            if (newCode) savedAdminData.code = newCode;
-            
-            // Guardar en localStorage
-            localStorage.setItem('floristeria_admin_data', JSON.stringify(savedAdminData));
-            
-            // Actualizar también la variable global
-            adminData = savedAdminData;
-            
-            // Limpiar formulario
-            document.getElementById('newEmail').value = '';
-            document.getElementById('newPassword').value = '';
-            document.getElementById('confirmPassword').value = '';
-            document.getElementById('newCode').value = '';
-            
-            showAlert('✅ Credenciales actualizadas correctamente. Usa las nuevas credenciales para iniciar sesión.', 'success');
-        }
-
-        // ============================================
-        // ZONA DE PELIGRO
-        // ============================================
-
-        function clearAllData() {
-            if (confirm('⚠️ ¿ESTÁS ABSOLUTAMENTE SEGURO?\n\nEsta acción eliminará TODOS los datos:\n• Todos los productos\n• Todos los pedidos\n• Todas las categorías\n• Toda la configuración\n\nEsta acción NO se puede deshacer.')) {
-                // Eliminar todos los datos
-                localStorage.removeItem('floristeria_products');
-                localStorage.removeItem('floristeria_orders');
-                localStorage.removeItem('floristeria_categories');
-                localStorage.removeItem('floristeria_config');
-                localStorage.removeItem('floristeria_schedule');
-                localStorage.removeItem('floristeria_cart');
-                
-                showAlert('Todos los datos han sido eliminados', 'warning');
-                
-                // Recargar vistas
-                setTimeout(() => {
-                    loadDashboardStats();
-                    loadProductsList();
-                    loadCategoriesList();
-                    loadOrders();
-                    loadCategoriesForSelect();
-                    loadDataSummary();
-                    loadSyncStatus();
-                }, 1000);
-            }
-        }
-
-        function clearOrders() {
-            if (confirm('¿Eliminar todos los pedidos?\n\nEsta acción no se puede deshacer.')) {
-                localStorage.removeItem('floristeria_orders');
-                showAlert('Todos los pedidos han sido eliminados', 'warning');
-                loadOrders();
-                loadDashboardStats();
-            }
-        }
-
-        function resetData() {
-            if (confirm('¿Reiniciar el sistema a valores por defecto?\n\nEsto eliminará todos los datos actuales y creará datos de ejemplo.')) {
-                // Eliminar todos los datos
-                localStorage.clear();
-                
-                // Crear datos de ejemplo
-                const defaultProducts = [
-                    {
-                        id: 1,
-                        nombre: "Ramos de Rosas Rojas Premium",
-                        name: "Ramos de Rosas Rojas Premium",
-                        category: "Rosas",
-                        categoria: "Rosas",
-                        description: "Elegante ramo con 24 rosas rojas frescas, perfecto para aniversarios.",
-                        descripcion: "Elegante ramo con 24 rosas rojas frescas, perfecto para aniversarios.",
-                        price: 25000,
-                        precio: 25000,
-                        image: "https://images.unsplash.com/photo-1519378058457-4c29a0a2efac?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                        imagen: "https://images.unsplash.com/photo-1519378058457-4c29a0a2efac?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                        stock: 10,
-                        blocked: false
-                    },
-                    {
-                        id: 2,
-                        nombre: "Centro de Mesa Mixto Grande",
-                        name: "Centro de Mesa Mixto Grande",
-                        category: "Arreglos",
-                        categoria: "Arreglos",
-                        description: "Colorido centro de mesa para eventos con flores de temporada.",
-                        descripcion: "Colorido centro de mesa para eventos con flores de temporada.",
-                        price: 35000,
-                        precio: 35000,
-                        image: "https://images.unsplash.com/photo-1457089328109-e5d9bd499191?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                        imagen: "https://images.unsplash.com/photo-1457089328109-e5d9bd499191?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                        stock: 5,
-                        blocked: false
-                    }
-                ];
-                
-                const defaultCategories = ['Rosas', 'Arreglos', 'Tulipanes', 'Orquídeas', 'Girasoles', 'Lirios'];
-                
-                const defaultConfig = {
-                    storeName: "Floristería Santa Bárbara",
-                    phoneNumber: "50686053613",
-                    address: "Santa Bárbara, Heredia, Costa Rica",
-                    email: "ventas@floristeriasantabarbara.com",
-                    shippingCostPerKm: 650,
-                    currency: "₡",
-                    whatsappMessage: "¡Hola! 😊\n\nGracias por comunicarte con nosotros.\n\nQuiero hacer un pedido:"
-                };
-                
-                // Guardar datos
-                localStorage.setItem('floristeria_products', JSON.stringify(defaultProducts));
-                localStorage.setItem('floristeria_categories', JSON.stringify(defaultCategories));
-                localStorage.setItem('floristeria_config', JSON.stringify(defaultConfig));
-                
-                // Guardar credenciales admin
-                localStorage.setItem('floristeria_admin_data', JSON.stringify(adminData));
-                localStorage.setItem('floristeria_admin_logged', 'true');
-                
-                showAlert('Sistema reiniciado con datos de ejemplo', 'success');
-                
-                // Recargar vistas
-                setTimeout(() => {
-                    loadDashboardStats();
-                    loadProductsList();
-                    loadCategoriesList();
-                    loadCategoriesForSelect();
-                    loadDataSummary();
-                    loadSyncStatus();
-                }, 1000);
-            }
-        }
-
-        // ============================================
-        // UTILIDADES
-        // ============================================
-
-        function showAlert(message, type = 'info') {
-            const container = document.getElementById('alertContainer');
-            
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type}`;
-            alert.innerHTML = `
-                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
-                <span>${message}</span>
-            `;
-            
-            container.appendChild(alert);
-            
-            // Remover después de 5 segundos
             setTimeout(() => {
-                alert.style.opacity = '0';
-                alert.style.transition = 'opacity 0.3s ease';
-                setTimeout(() => {
-                    if (alert.parentNode) {
-                        alert.parentNode.removeChild(alert);
-                    }
-                }, 300);
-            }, 5000);
+                notification.classList.remove('show');
+            }, 3000);
         }
 
         // ============================================
-        // ANIMACIÓN SHAKE PARA LOGIN
+        // FUNCIONES GLOBALES
         // ============================================
-
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes shake {
-                0%, 100% {transform: translateX(0);}
-                10%, 30%, 50%, 70%, 90% {transform: translateX(-5px);}
-                20%, 40%, 60%, 80% {transform: translateX(5px);}
-            }
-        `;
-        document.head.appendChild(style);
-
-        // ============================================
-        // EXPORTAR FUNCIONES GLOBALES
-        // ============================================
-
-        window.switchTab = switchTab;
-        window.logout = logout;
-        window.handleImageUpload = handleImageUpload;
-        window.removeImage = removeImage;
-        window.clearProductForm = clearProductForm;
+        window.loadProducts = loadProducts;
         window.editProduct = editProduct;
-        window.safeDeleteProduct = safeDeleteProduct;
-        window.saveProduct = saveProduct;
-        window.saveCategory = saveCategory;
-        window.editCategory = editCategory;
-        window.deleteCategory = deleteCategory;
-        window.loadOrders = loadOrders;
-        window.filterOrders = filterOrders;
-        window.viewOrderDetails = viewOrderDetails;
-        window.updateOrderStatus = updateOrderStatus;
-        window.deleteOrder = deleteOrder;
-        window.exportOrders = exportOrders;
-        window.saveStoreConfig = saveStoreConfig;
-        window.saveSchedule = saveSchedule;
-        window.updateAdminCredentials = updateAdminCredentials;
-        window.exportData = exportData;
-        window.importData = importData;
-        window.resetData = resetData;
+        window.deleteProduct = deleteProduct;
+        window.toggleBlockProduct = toggleBlockProduct;
+        window.resetForm = resetForm;
+        window.generateSyncCode = generateSyncCode;
+        window.copySyncCode = copySyncCode;
+        window.testSync = testSync;
+        window.updateStats = updateStats;
         window.clearAllData = clearAllData;
-        window.clearOrders = clearOrders;
-        window.reinstallSystem = resetData;
-        window.safeToggleProductStatus = safeToggleProductStatus;
-        window.toggleAllProducts = toggleAllProducts;
-        window.filterProductsList = filterProductsList;
-        window.testProductBlocking = testProductBlocking;
-        window.generateDataJson = generateDataJson;
-        window.copyJsonToClipboard = copyJsonToClipboard;
-        window.showSyncInstructions = showSyncInstructions;
-        window.markAllOrdersAsRead = markAllOrdersAsRead;
-        window.loadProductsList = loadProductsList;
+        window.showTab = showTab;
     </script>
 </body>
 </html>
