@@ -159,63 +159,174 @@
         </div>
     </footer>
 
-    <!-- Modal del Carrito -->
+    <!-- Modal del Carrito - VERSIÓN MEJORADA -->
     <div class="modal" id="cartModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3><i class="fas fa-shopping-cart"></i> Tu Carrito</h3>
+                <h3><i class="fas fa-shopping-cart"></i> Completar Tu Pedido</h3>
                 <button class="close-btn" onclick="closeCart()">×</button>
             </div>
+            
             <div class="modal-body">
                 <div id="cartItemsContainer">
                     <!-- Los items del carrito se cargan aquí -->
                 </div>
                 
+                <div class="order-form">
+                    <h4><i class="fas fa-user"></i> Información del Cliente</h4>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">👤 Nombre de QUIEN RECIBE *</label>
+                            <input type="text" id="receiverName" class="form-control" placeholder="Nombre y apellidos de quien recibe" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">📞 Teléfono de QUIEN RECIBE *</label>
+                            <input type="tel" id="receiverPhone" class="form-control" placeholder="8888-8888" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">👤 Nombre de QUIEN ENVÍA *</label>
+                            <input type="text" id="senderName" class="form-control" placeholder="Tu nombre y apellidos" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">📞 Teléfono de QUIEN ENVÍA *</label>
+                            <input type="tel" id="senderPhone" class="form-control" placeholder="8888-8888" required>
+                        </div>
+                    </div>
+    
+                    <div class="form-group">
+                        <label class="form-label">¿Cómo prefieres recibir tu pedido? *</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="deliveryType" value="delivery" checked>
+                                <span>Envío a domicilio</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="deliveryType" value="pickup">
+                                <span>Recoger en tienda</span>
+                            </label>
+                        </div>
+                    </div>
+    
+                    <div class="form-group" id="addressField">
+                        <label class="form-label">Dirección exacta para envío *</label>
+                        <textarea id="deliveryAddress" class="form-control" rows="2" 
+                                  placeholder="Dirección completa, puntos de referencia..." required
+                                  oninput="calculateShippingFromAddress()"></textarea>
+                        
+                        <div class="map-instructions">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>📍 Importante:</strong> Escribe la dirección completa. El sistema generará automáticamente un enlace de Google Maps.
+                            <br>
+                            <small>El costo de envío se calcula automáticamente: ₡650 por kilómetro desde nuestra ubicación.</small>
+                        </div>
+                    
+                        <div style="margin-top: 10px;">
+                            <label class="form-label">Señas específicas (detalles adicionales)</label>
+                            <textarea id="addressDetails" class="form-control" rows="2" 
+                                      placeholder="Ejemplo: Casa color azul con portón negro, junto a la pulpería"></textarea>
+                        </div>
+                    </div>
+    
+                    <div class="form-group">
+                        <label class="form-label">💌 Mensaje en tarjeta (opcional - máximo 4 líneas)</label>
+                        <textarea id="cardMessage" class="form-control" rows="4" 
+                                  placeholder="Ejemplo: Feliz cumpleaños querida amiga. Que tengas un día maravilloso. Te queremos mucho. Con cariño, tu familia."
+                                  maxlength="200"></textarea>
+                        <small style="color: var(--gray); display: block; margin-top: 0.25rem;">
+                            <i class="fas fa-info-circle"></i> Máximo 4 líneas. Se incluirá en la tarjeta que acompaña el arreglo.
+                        </small>
+                    </div>
+    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Fecha de entrega *</label>
+                            <input type="date" id="deliveryDate" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Horario de entrega *</label>
+                            <select id="deliveryTime" class="form-control" required>
+                                <option value="">Seleccionar horario</option>
+                                <option value="Mañana (8:00 AM - 12:00 PM)">Mañana (8:00 AM - 12:00 PM)</option>
+                                <option value="Tarde (1:00 PM - 6:00 PM)">Tarde (1:00 PM - 6:00 PM)</option>
+                            </select>
+                        </div>
+                    </div>
+    
+                    <div class="form-group">
+                        <label class="form-label">Método de Pago *</label>
+                        <div class="payment-methods">
+                            <div class="payment-method" onclick="selectPayment('sinpe')">
+                                <i class="fas fa-mobile-alt payment-icon"></i>
+                                <span>SINPE Móvil</span>
+                            </div>
+                            <div class="payment-method" onclick="selectPayment('efectivo')">
+                                <i class="fas fa-money-bill-wave payment-icon"></i>
+                                <span>Efectivo</span>
+                            </div>
+                            <div class="payment-method" onclick="selectPayment('tarjeta')">
+                                <i class="fas fa-credit-card payment-icon"></i>
+                                <span>Tarjeta</span>
+                            </div>
+                            <div class="payment-method" onclick="selectPayment('transferencia')">
+                                <i class="fas fa-university payment-icon"></i>
+                                <span>Transferencia</span>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <div class="form-group">
+                        <label class="form-label">Notas adicionales (opcional)</label>
+                        <textarea id="orderNotes" class="form-control" rows="3" 
+                                  placeholder="Instrucciones especiales, detalles del regalo, etc."></textarea>
+                    </div>
+    
+                    <div style="background: #f0f8ff; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 4px solid var(--info);">
+                        <p style="color: #666; font-size: 0.9rem; margin-bottom: 8px;">
+                            <strong>📱 SINPE Móvil:</strong> 8605-3613
+                        </p>
+                        <p style="color: #666; font-size: 0.9rem; margin-bottom: 8px;">
+                            <strong>🏦 Transferencia:</strong> BAC | 123456789
+                        </p>
+                        <p style="color: #666; font-size: 0.9rem;">
+                            <strong>⏰ Confirmación:</strong> Nos comunicaremos lo más pronto posible.
+                        </p>
+                    </div>
+                </div>
+    
                 <div class="order-summary">
                     <div class="summary-row">
                         <span>Subtotal:</span>
                         <span id="cartSubtotal">₡0</span>
                     </div>
                     <div class="summary-row">
-                        <span>Envío:</span>
+                        <span>Costo de envío:</span>
                         <span id="cartShipping">₡0</span>
+                        <small id="shippingDistance" style="font-size: 0.8rem; color: var(--gray);"></small>
                     </div>
                     <div class="summary-row summary-total">
-                        <span>Total:</span>
+                        <span>Total a pagar:</span>
                         <span id="cartTotal">₡0</span>
                     </div>
                 </div>
-                
-                <div class="order-form">
-                    <div class="form-group">
-                        <label class="form-label">Nombre completo *</label>
-                        <input type="text" id="customerName" class="form-control" placeholder="Tu nombre" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Teléfono *</label>
-                        <input type="tel" id="customerPhone" class="form-control" placeholder="8888-8888" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Dirección (opcional)</label>
-                        <input type="text" id="customerAddress" class="form-control" placeholder="Para envíos a domicilio">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Notas adicionales</label>
-                        <textarea id="orderNotes" class="form-control" rows="3" placeholder="Instrucciones especiales..."></textarea>
-                    </div>
-                </div>
             </div>
+            
             <div class="cart-footer">
                 <button class="btn btn-secondary" onclick="closeCart()">
-                    <i class="fas fa-times"></i> Cancelar
+                    <i class="fas fa-arrow-left"></i> Seguir comprando
+                </button>
+                <button class="btn btn-danger" onclick="clearCart()">
+                    <i class="fas fa-trash"></i> Vaciar Carrito
                 </button>
                 <button class="btn btn-success" onclick="sendWhatsAppOrder()">
-                    <i class="fab fa-whatsapp"></i> Enviar por WhatsApp
+                    <i class="fab fa-whatsapp"></i> Enviar pedido por WhatsApp
                 </button>
             </div>
         </div>
     </div>
-
     <!-- Modal de Imagen Ampliada -->
     <div class="modal" id="imageModal">
         <div class="modal-content" style="max-width: 90%; max-height: 90%;">
