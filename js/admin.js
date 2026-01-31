@@ -1,10 +1,14 @@
 // ============================================
-// PANEL DE ADMINISTRACIÓN
+// PANEL DE ADMINISTRACIÓN COMPLETO
 // ============================================
 
 // Variables del admin
 let editingProductId = null;
 let editingCarouselId = null;
+let products = [];
+let carouselImages = [];
+let storeConfig = {};
+let cart = [];
 
 // ============================================
 // INICIALIZACIÓN DEL ADMIN
@@ -12,36 +16,299 @@ let editingCarouselId = null;
 
 document.addEventListener('DOMContentLoaded', function() {
     loadAdminData();
+    setupImageUploads();
     renderAdminProducts();
     renderAdminCarousel();
     renderAdminConfig();
     updateSystemStatus();
     
     console.log('✅ Panel de administración inicializado');
+    
+    // Configurar arrastrar y soltar
+    setupDragAndDrop();
 });
 
 function loadAdminData() {
-    // Los datos se cargan desde localStorage en main.js
-    // Esta función asegura que estamos sincronizados
+    // Cargar productos
     const savedProducts = localStorage.getItem('floristeria_products');
     if (savedProducts) {
         products = JSON.parse(savedProducts);
+    } else {
+        products = getDefaultProducts();
+        localStorage.setItem('floristeria_products', JSON.stringify(products));
     }
     
+    // Cargar carrusel
     const savedCarousel = localStorage.getItem('floristeria_carousel');
     if (savedCarousel) {
         carouselImages = JSON.parse(savedCarousel);
+    } else {
+        carouselImages = getDefaultCarousel();
+        localStorage.setItem('floristeria_carousel', JSON.stringify(carouselImages));
     }
     
+    // Cargar configuración
     const savedConfig = localStorage.getItem('floristeria_config');
     if (savedConfig) {
         storeConfig = JSON.parse(savedConfig);
+    } else {
+        storeConfig = getDefaultConfig();
+        localStorage.setItem('floristeria_config', JSON.stringify(storeConfig));
     }
     
+    // Cargar carrito
     const savedCart = localStorage.getItem('floristeria_cart');
     if (savedCart) {
         cart = JSON.parse(savedCart);
     }
+}
+
+function getDefaultProducts() {
+    return [
+        {
+            id: 1,
+            name: "Ramos de Rosas Rojas",
+            description: "Elegante ramo con 24 rosas rojas frescas, perfecto para aniversarios y declaraciones de amor.",
+            price: 25000,
+            seasonPrice: 22000,
+            category: "Rosas",
+            image: "https://images.unsplash.com/photo-1519378058457-4c29a0a2efac?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+            seasonActive: true,
+            blocked: false
+        },
+        {
+            id: 2,
+            name: "Arreglo de Girasoles",
+            description: "Colorido arreglo con girasoles frescos que iluminarán cualquier espacio.",
+            price: 18000,
+            seasonPrice: 15000,
+            category: "Girasoles",
+            image: "https://images.unsplash.com/photo-1497534446932-c925b458314e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+            seasonActive: true,
+            blocked: false
+        },
+        {
+            id: 3,
+            name: "Centro de Mesa Premium",
+            description: "Elegante centro de mesa para eventos especiales con flores de temporada.",
+            price: 35000,
+            seasonPrice: 0,
+            category: "Arreglos",
+            image: "https://images.unsplash.com/photo-1459156212016-c812468e2115?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+            seasonActive: false,
+            blocked: false
+        }
+    ];
+}
+
+function getDefaultCarousel() {
+    return [
+        {
+            id: 1,
+            image: "https://images.unsplash.com/photo-1464207687429-7505649dae38?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+            title: "Flores Frescas para Cada Ocasión",
+            description: "Encuentra el arreglo perfecto para celebrar la vida"
+        },
+        {
+            id: 2,
+            image: "https://images.unsplash.com/photo-1563178406-4cdc2923acbc?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+            title: "Envío a Domicilio Gratis",
+            description: "Llevamos felicidad hasta tu puerta en Santa Bárbara y alrededores"
+        }
+    ];
+}
+
+function getDefaultConfig() {
+    return {
+        phone: "(506) 8605-3613",
+        email: "ventas@floristeriasantabarbara.com",
+        address: "Santa Bárbara, Heredia, Costa Rica",
+        description: "Flores frescas y arreglos florales para toda ocasión. Calidad y elegancia en cada detalle.",
+        showDelivery: true,
+        hours: [
+            "Lunes a Viernes: 9:00 AM - 7:00 PM",
+            "Sábados: 9:30 AM - 7:00 PM",
+            "Almuerzo: 12:30 PM - 1:30 PM",
+            "Domingos: CERRADO"
+        ],
+        paymentMethods: [
+            "SINPE Móvil",
+            "Efectivo",
+            "Tarjetas",
+            "Transferencia"
+        ]
+    };
+}
+
+// ============================================
+// SISTEMA DE SUBIDA DE IMÁGENES
+// ============================================
+
+function setupImageUploads() {
+    // Configurar arrastrar y soltar para productos
+    const productUploadArea = document.getElementById('productUploadArea');
+    const productFileInput = document.getElementById('productImageFile');
+    
+    productUploadArea.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        productUploadArea.classList.add('dragover');
+    });
+    
+    productUploadArea.addEventListener('dragleave', function(e) {
+        productUploadArea.classList.remove('dragover');
+    });
+    
+    productUploadArea.addEventListener('drop', function(e) {
+        e.preventDefault();
+        productUploadArea.classList.remove('dragover');
+        
+        if (e.dataTransfer.files.length) {
+            productFileInput.files = e.dataTransfer.files;
+            handleProductImageUpload({ target: productFileInput });
+        }
+    });
+    
+    // Configurar arrastrar y soltar para carrusel
+    const carouselUploadArea = document.getElementById('carouselUploadArea');
+    const carouselFileInput = document.getElementById('carouselImageFile');
+    
+    carouselUploadArea.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        carouselUploadArea.classList.add('dragover');
+    });
+    
+    carouselUploadArea.addEventListener('dragleave', function(e) {
+        carouselUploadArea.classList.remove('dragover');
+    });
+    
+    carouselUploadArea.addEventListener('drop', function(e) {
+        e.preventDefault();
+        carouselUploadArea.classList.remove('dragover');
+        
+        if (e.dataTransfer.files.length) {
+            carouselFileInput.files = e.dataTransfer.files;
+            handleCarouselImageUpload({ target: carouselFileInput });
+        }
+    });
+}
+
+function setupDragAndDrop() {
+    // Configurar para todas las áreas de upload
+    const uploadAreas = document.querySelectorAll('.upload-area');
+    
+    uploadAreas.forEach(area => {
+        area.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('dragover');
+        });
+        
+        area.addEventListener('dragleave', function(e) {
+            this.classList.remove('dragover');
+        });
+        
+        area.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length) {
+                // Determinar si es para producto o carrusel
+                if (this.id === 'productUploadArea') {
+                    const input = document.getElementById('productImageFile');
+                    input.files = files;
+                    handleProductImageUpload({ target: input });
+                } else if (this.id === 'carouselUploadArea') {
+                    const input = document.getElementById('carouselImageFile');
+                    input.files = files;
+                    handleCarouselImageUpload({ target: input });
+                }
+            }
+        });
+    });
+}
+
+function handleProductImageUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    // Validaciones
+    if (file.size > 2 * 1024 * 1024) {
+        showSaveStatus('La imagen es demasiado grande. Máximo 2MB.', true);
+        return;
+    }
+    
+    if (!file.type.match('image/jpeg') && !file.type.match('image/png') && !file.type.match('image/jpg')) {
+        showSaveStatus('Solo se permiten imágenes JPG, JPEG o PNG.', true);
+        return;
+    }
+    
+    // Convertir a Base64
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const base64Image = e.target.result;
+        
+        // Guardar en campo oculto
+        document.getElementById('productImageData').value = base64Image;
+        
+        // Mostrar vista previa
+        const previewImg = document.getElementById('productPreviewImg');
+        previewImg.src = base64Image;
+        document.getElementById('productImagePreview').style.display = 'block';
+        document.getElementById('productUploadArea').style.display = 'none';
+        
+        showSaveStatus('Imagen del producto cargada correctamente');
+    };
+    
+    reader.readAsDataURL(file);
+}
+
+function handleCarouselImageUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    // Validaciones
+    if (file.size > 2 * 1024 * 1024) {
+        showSaveStatus('La imagen es demasiado grande. Máximo 2MB.', true);
+        return;
+    }
+    
+    if (!file.type.match('image/jpeg') && !file.type.match('image/png') && !file.type.match('image/jpg')) {
+        showSaveStatus('Solo se permiten imágenes JPG, JPEG o PNG.', true);
+        return;
+    }
+    
+    // Convertir a Base64
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const base64Image = e.target.result;
+        
+        // Guardar en campo oculto
+        document.getElementById('carouselImageData').value = base64Image;
+        
+        // Mostrar vista previa
+        const previewImg = document.getElementById('carouselPreviewImg');
+        previewImg.src = base64Image;
+        document.getElementById('carouselImagePreview').style.display = 'block';
+        document.getElementById('carouselUploadArea').style.display = 'none';
+        
+        showSaveStatus('Imagen del carrusel cargada correctamente');
+    };
+    
+    reader.readAsDataURL(file);
+}
+
+function removeProductImage() {
+    document.getElementById('productImageData').value = '';
+    document.getElementById('productImageFile').value = '';
+    document.getElementById('productImagePreview').style.display = 'none';
+    document.getElementById('productUploadArea').style.display = 'block';
+}
+
+function removeCarouselImage() {
+    document.getElementById('carouselImageData').value = '';
+    document.getElementById('carouselImageFile').value = '';
+    document.getElementById('carouselImagePreview').style.display = 'none';
+    document.getElementById('carouselUploadArea').style.display = 'block';
 }
 
 // ============================================
@@ -86,12 +353,12 @@ function saveProduct(event) {
     const price = parseFloat(document.getElementById('productPrice').value);
     const seasonPrice = document.getElementById('productSeasonPrice').value ? 
         parseFloat(document.getElementById('productSeasonPrice').value) : 0;
-    const image = document.getElementById('productImage').value.trim();
+    const imageData = document.getElementById('productImageData').value;
     const seasonActive = document.getElementById('productSeasonActive').checked;
     const blocked = document.getElementById('productBlocked').checked;
     
     // Validaciones
-    if (!name || !category || !price || !image) {
+    if (!name || !category || !price) {
         showSaveStatus('Por favor completa todos los campos requeridos', true);
         return;
     }
@@ -106,12 +373,20 @@ function saveProduct(event) {
         return;
     }
     
+    if (!imageData && !productId) {
+        showSaveStatus('Debes subir una imagen para el producto', true);
+        return;
+    }
+    
     let product;
     
     if (productId) {
         // Editar producto existente
         const index = products.findIndex(p => p.id === parseInt(productId));
         if (index !== -1) {
+            // Mantener la imagen existente si no se subió una nueva
+            const existingImage = imageData || products[index].image;
+            
             products[index] = {
                 ...products[index],
                 name,
@@ -119,7 +394,7 @@ function saveProduct(event) {
                 description,
                 price,
                 seasonPrice: seasonActive ? seasonPrice : 0,
-                image,
+                image: existingImage,
                 seasonActive,
                 blocked
             };
@@ -134,7 +409,7 @@ function saveProduct(event) {
             description,
             price,
             seasonPrice: seasonActive ? seasonPrice : 0,
-            image,
+            image: imageData,
             seasonActive,
             blocked,
             createdAt: new Date().toISOString()
@@ -173,9 +448,23 @@ function editProduct(id) {
     document.getElementById('productDescription').value = product.description || '';
     document.getElementById('productPrice').value = product.price;
     document.getElementById('productSeasonPrice').value = product.seasonPrice || '';
-    document.getElementById('productImage').value = product.image;
     document.getElementById('productSeasonActive').checked = product.seasonActive || false;
     document.getElementById('productBlocked').checked = product.blocked || false;
+    
+    // Configurar imagen existente
+    if (product.image && product.image.startsWith('data:image')) {
+        // Es una imagen Base64
+        document.getElementById('productImageData').value = product.image;
+        document.getElementById('productPreviewImg').src = product.image;
+        document.getElementById('productImagePreview').style.display = 'block';
+        document.getElementById('productUploadArea').style.display = 'none';
+    } else {
+        // Es una URL
+        document.getElementById('productImageData').value = product.image;
+        document.getElementById('productPreviewImg').src = product.image;
+        document.getElementById('productImagePreview').style.display = 'block';
+        document.getElementById('productUploadArea').style.display = 'none';
+    }
     
     // Scroll al formulario
     document.getElementById('productForm').scrollIntoView({ behavior: 'smooth' });
@@ -223,6 +512,10 @@ function clearProductForm() {
     document.getElementById('productForm').reset();
     document.getElementById('productId').value = '';
     document.getElementById('productSeasonPrice').value = '';
+    document.getElementById('productImageData').value = '';
+    document.getElementById('productImageFile').value = '';
+    document.getElementById('productImagePreview').style.display = 'none';
+    document.getElementById('productUploadArea').style.display = 'block';
 }
 
 function renderAdminProducts() {
@@ -241,12 +534,18 @@ function renderAdminProducts() {
         return;
     }
     
-    productsList.innerHTML = products.map(product => `
+    productsList.innerHTML = products.map(product => {
+        // Verificar si la imagen es Base64 o URL
+        const imageSrc = product.image && product.image.startsWith('data:image') ? 
+            product.image : 
+            (product.image || 'https://via.placeholder.com/60x60?text=Sin+imagen');
+        
+        return `
         <tr>
             <td>
-                <img src="${product.image}" alt="${product.name}" 
-                     class="product-image-preview" 
-                     onerror="this.src='https://via.placeholder.com/60x60?text=Imagen+No+Disponible'">
+                <img src="${imageSrc}" alt="${product.name}" 
+                     class="product-image-preview"
+                     onerror="this.src='https://via.placeholder.com/60x60?text=Error'">
             </td>
             <td>
                 <strong>${product.name}</strong>
@@ -254,7 +553,7 @@ function renderAdminProducts() {
             </td>
             <td>${product.category}</td>
             <td>
-                ${product.seasonActive && product.seasonPrice ? `
+                ${product.seasonActive && product.seasonPrice > 0 ? `
                     <div><strong style="color: var(--warning);">₡${product.seasonPrice.toLocaleString()}</strong></div>
                     <div style="text-decoration: line-through; color: var(--gray); font-size: 0.9rem;">
                         ₡${product.price.toLocaleString()}
@@ -268,23 +567,28 @@ function renderAdminProducts() {
                     '<span class="badge badge-inactive">No visible</span>' : 
                     '<span class="badge badge-active">Activo</span>'
                 }
+                ${product.image && product.image.startsWith('data:image') ? 
+                    '<br><span class="badge badge-warning" style="margin-top: 3px;">Imagen local</span>' : 
+                    ''
+                }
             </td>
             <td>
                 <div class="actions-cell">
-                    <button class="btn-edit" onclick="editProduct(${product.id})">
+                    <button class="btn btn-warning" onclick="editProduct(${product.id})">
                         <i class="fas fa-edit"></i> Editar
                     </button>
-                    <button class="btn-block" onclick="toggleProductBlock(${product.id})">
+                    <button class="btn btn-secondary" onclick="toggleProductBlock(${product.id})">
                         <i class="fas ${product.blocked ? 'fa-unlock' : 'fa-lock'}"></i>
                         ${product.blocked ? 'Desbloquear' : 'Bloquear'}
                     </button>
-                    <button class="btn-danger" onclick="deleteProduct(${product.id})">
+                    <button class="btn btn-danger" onclick="deleteProduct(${product.id})">
                         <i class="fas fa-trash"></i> Eliminar
                     </button>
                 </div>
             </td>
         </tr>
-    `).join('');
+        `;
+    }).join('');
 }
 
 // ============================================
@@ -294,12 +598,12 @@ function renderAdminProducts() {
 function saveCarouselSlide(event) {
     event.preventDefault();
     
-    const image = document.getElementById('carouselImage').value.trim();
+    const imageData = document.getElementById('carouselImageData').value;
     const title = document.getElementById('carouselTitle').value.trim();
     const description = document.getElementById('carouselDescription').value.trim();
     
-    if (!image) {
-        showSaveStatus('La URL de la imagen es requerida', true);
+    if (!imageData) {
+        showSaveStatus('Debes subir una imagen para el carrusel', true);
         return;
     }
     
@@ -309,7 +613,7 @@ function saveCarouselSlide(event) {
         if (index !== -1) {
             carouselImages[index] = {
                 ...carouselImages[index],
-                image,
+                image: imageData,
                 title,
                 description
             };
@@ -320,7 +624,7 @@ function saveCarouselSlide(event) {
         const newId = carouselImages.length > 0 ? Math.max(...carouselImages.map(s => s.id)) + 1 : 1;
         carouselImages.push({
             id: newId,
-            image,
+            image: imageData,
             title,
             description
         });
@@ -328,7 +632,13 @@ function saveCarouselSlide(event) {
     
     localStorage.setItem('floristeria_carousel', JSON.stringify(carouselImages));
     renderAdminCarousel();
+    
+    // Limpiar formulario
     document.getElementById('carouselForm').reset();
+    document.getElementById('carouselImageData').value = '';
+    document.getElementById('carouselImageFile').value = '';
+    document.getElementById('carouselImagePreview').style.display = 'none';
+    document.getElementById('carouselUploadArea').style.display = 'block';
     
     showSaveStatus(editingCarouselId ? 'Slide actualizado' : 'Slide agregado');
     
@@ -373,24 +683,31 @@ function renderAdminCarousel() {
         return;
     }
     
-    carouselList.innerHTML = carouselImages.map(slide => `
+    carouselList.innerHTML = carouselImages.map(slide => {
+        // Verificar si la imagen es Base64 o URL
+        const imageSrc = slide.image && slide.image.startsWith('data:image') ? 
+            slide.image : 
+            (slide.image || 'https://via.placeholder.com/100x60?text=Sin+imagen');
+        
+        return `
         <tr>
             <td>
-                <img src="${slide.image}" alt="${slide.title || 'Slide'}" 
+                <img src="${imageSrc}" alt="${slide.title || 'Slide'}" 
                      class="carousel-image-preview"
-                     onerror="this.src='https://via.placeholder.com/100x60?text=Imagen+No+Disponible'">
+                     onerror="this.src='https://via.placeholder.com/100x60?text=Error'">
             </td>
             <td>${slide.title || 'Sin título'}</td>
             <td>${slide.description || 'Sin descripción'}</td>
             <td>
                 <div class="actions-cell">
-                    <button class="btn-danger" onclick="deleteCarouselSlide(${slide.id})">
+                    <button class="btn btn-danger" onclick="deleteCarouselSlide(${slide.id})">
                         <i class="fas fa-trash"></i> Eliminar
                     </button>
                 </div>
             </td>
         </tr>
-    `).join('');
+        `;
+    }).join('');
 }
 
 // ============================================
@@ -422,6 +739,16 @@ function saveConfig(event) {
     // Validaciones básicas
     if (!storeConfig.phone || !storeConfig.email || !storeConfig.address) {
         showSaveStatus('Por favor completa todos los campos requeridos', true);
+        return;
+    }
+    
+    if (storeConfig.hours.length === 0) {
+        showSaveStatus('Debes agregar al menos un horario', true);
+        return;
+    }
+    
+    if (storeConfig.paymentMethods.length === 0) {
+        showSaveStatus('Debes agregar al menos un método de pago', true);
         return;
     }
     
@@ -520,19 +847,22 @@ function removePaymentMethod(index) {
 function updateSystemStatus() {
     // Productos
     const activeProducts = products.filter(p => !p.blocked).length;
+    const localImages = products.filter(p => p.image && p.image.startsWith('data:image')).length;
     document.getElementById('status-products').innerHTML = `
         <strong>${products.length}</strong> productos totales<br>
         <span class="status-good">${activeProducts} activos</span> | 
-        <span class="status-error">${products.length - activeProducts} bloqueados</span>
+        <span class="status-error">${products.length - activeProducts} bloqueados</span><br>
+        <span class="status-warning">${localImages} imágenes locales</span>
     `;
     
     // Carrusel
+    const localCarousel = carouselImages.filter(s => s.image && s.image.startsWith('data:image')).length;
     document.getElementById('status-carousel').innerHTML = `
         <strong>${carouselImages.length}</strong> slides<br>
-        ${carouselImages.length >= 3 ? 
-            '<span class="status-good">✓ Carrusel completo</span>' : 
-            '<span class="status-warning">¡Agrega más slides!</span>'
-        }
+        <span class="${carouselImages.length >= 3 ? 'status-good' : 'status-warning'}">
+            ${carouselImages.length >= 3 ? '✓ Carrusel completo' : '¡Agrega más slides!'}
+        </span><br>
+        <span class="status-warning">${localCarousel} imágenes locales</span>
     `;
     
     // Carrito
@@ -545,10 +875,11 @@ function updateSystemStatus() {
     // Almacenamiento
     const totalSize = JSON.stringify(localStorage).length;
     const sizeKB = (totalSize / 1024).toFixed(2);
+    const usedPercentage = (sizeKB / 5000) * 100; // 5MB máximo aproximado
     document.getElementById('status-storage').innerHTML = `
         <strong>${sizeKB} KB</strong> usados<br>
-        <span class="${sizeKB > 500 ? 'status-warning' : 'status-good'}">
-            ${sizeKB > 500 ? '✓ Buen rendimiento' : '✓ Excelente rendimiento'}
+        <span class="${usedPercentage > 80 ? 'status-error' : usedPercentage > 50 ? 'status-warning' : 'status-good'}">
+            ${usedPercentage > 80 ? '⚠️ Espacio casi lleno' : usedPercentage > 50 ? '✓ Bueno' : '✓ Excelente'}
         </span>
     `;
 }
@@ -559,7 +890,8 @@ function exportData() {
         carousel: carouselImages,
         config: storeConfig,
         exportDate: new Date().toISOString(),
-        version: '1.0'
+        version: '2.0',
+        note: 'Este archivo contiene imágenes en formato Base64'
     };
     
     const dataStr = JSON.stringify(data, null, 2);
@@ -669,6 +1001,41 @@ function createSampleData() {
     updateSystemStatus();
 }
 
+function clearImageCache() {
+    if (!confirm('¿Limpiar cache de imágenes? Esto convertirá las imágenes locales a URLs de placeholder.')) {
+        return;
+    }
+    
+    let convertedCount = 0;
+    
+    // Convertir imágenes de productos
+    products.forEach(product => {
+        if (product.image && product.image.startsWith('data:image')) {
+            product.image = 'https://via.placeholder.com/600x400?text=Floristería+Santa+Bárbara';
+            convertedCount++;
+        }
+    });
+    
+    // Convertir imágenes del carrusel
+    carouselImages.forEach(slide => {
+        if (slide.image && slide.image.startsWith('data:image')) {
+            slide.image = 'https://via.placeholder.com/1200x400?text=Floristería+Santa+Bárbara';
+            convertedCount++;
+        }
+    });
+    
+    // Guardar cambios
+    localStorage.setItem('floristeria_products', JSON.stringify(products));
+    localStorage.setItem('floristeria_carousel', JSON.stringify(carouselImages));
+    
+    // Recargar
+    renderAdminProducts();
+    renderAdminCarousel();
+    updateSystemStatus();
+    
+    showSaveStatus(`${convertedCount} imágenes convertidas a placeholders`);
+}
+
 // ============================================
 // UTILIDADES
 // ============================================
@@ -676,17 +1043,17 @@ function createSampleData() {
 function showSaveStatus(message, isError = false) {
     const status = document.getElementById('saveStatus');
     const icon = status.querySelector('i');
-    const text = status.querySelector('span');
+    const text = document.getElementById('saveStatusText');
     
     text.textContent = message;
     status.className = 'save-status';
     
     if (isError) {
         icon.className = 'fas fa-exclamation-circle';
-        status.style.background = 'var(--danger)';
+        status.classList.add('error');
     } else {
         icon.className = 'fas fa-check-circle';
-        status.style.background = 'var(--success)';
+        status.classList.remove('error');
     }
     
     status.classList.add('show');
@@ -707,7 +1074,11 @@ window.editProduct = editProduct;
 window.deleteProduct = deleteProduct;
 window.toggleProductBlock = toggleProductBlock;
 window.clearProductForm = clearProductForm;
+window.handleProductImageUpload = handleProductImageUpload;
+window.removeProductImage = removeProductImage;
 window.saveCarouselSlide = saveCarouselSlide;
+window.handleCarouselImageUpload = handleCarouselImageUpload;
+window.removeCarouselImage = removeCarouselImage;
 window.deleteCarouselSlide = deleteCarouselSlide;
 window.saveConfig = saveConfig;
 window.addHourItem = addHourItem;
@@ -718,3 +1089,4 @@ window.exportData = exportData;
 window.importData = importData;
 window.resetData = resetData;
 window.createSampleData = createSampleData;
+window.clearImageCache = clearImageCache;
