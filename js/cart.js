@@ -1,21 +1,5 @@
 // ============================================
-// SISTEMA DE CARRITO DE COMPRAS
-// ============================================
-
-function saveCart() {
-    localStorage.setItem('floristeria_cart', JSON.stringify(cart));
-}
-
-function updateCartCount() {
-    const cartCount = document.querySelector('.cart-count');
-    if (cartCount) {
-        const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
-        cartCount.textContent = totalItems;
-    }
-}
-
-// ============================================
-// CARRITO DE COMPRAS - SIN ENVÍO AUTOMÁTICO
+// CARRITO DE COMPRAS COMPLETO - ENVÍO ₡0
 // ============================================
 
 function renderCartItems() {
@@ -38,11 +22,9 @@ function renderCartItems() {
         return;
     }
     
-    // Calcular solo subtotal (NO envío)
+    // ✅ CALCULAR SOLO SUBTOTAL - ENVÍO ₡0
     const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
-    
-    // ENVÍO INICIAL: ₡0
-    const shipping = 0;
+    const shipping = 0; // ✅ ENVÍO SIEMPRE ₡0 HASTA CONFIRMACIÓN
     const total = subtotal + shipping;
     
     // Renderizar items
@@ -74,17 +56,29 @@ function renderCartItems() {
         `;
     }).join('');
     
-    // Actualizar totales - ENVÍO SIEMPRE ₡0 HASTA DIRECCIÓN
+    // Actualizar totales - IMPORTANTE: verificar dirección
     cartSubtotal.textContent = `₡${subtotal.toLocaleString()}`;
-    cartShipping.textContent = '₡0';
-    cartTotal.textContent = `₡${total.toLocaleString()}`;
-}
-
-function calculateShippingCost() {
+    
+    // Verificar si hay dirección para mostrar "POR CONFIRMAR"
+    const addressField = document.getElementById('deliveryAddress');
     const deliveryType = document.querySelector('input[name="deliveryType"]:checked');
     
-    // SIEMPRE ₡0 HASTA QUE SE INGRESE DIRECCIÓN Y USTEDES CONFIRMEN
-    return 0;
+    if (deliveryType && deliveryType.value === 'pickup') {
+        cartShipping.textContent = 'Gratis';
+        cartShipping.style.color = 'var(--success)';
+        cartTotal.textContent = `₡${total.toLocaleString()}`;
+    } else if (addressField && addressField.value.trim()) {
+        // Si hay dirección, mostrar "POR CONFIRMAR"
+        cartShipping.textContent = 'POR CONFIRMAR';
+        cartShipping.style.color = 'var(--warning)';
+        cartShipping.style.fontWeight = '600';
+        cartTotal.textContent = `₡${subtotal.toLocaleString()} + ENVÍO`;
+    } else {
+        // Sin dirección, mostrar ₡0
+        cartShipping.textContent = '₡0';
+        cartShipping.style.color = 'inherit';
+        cartTotal.textContent = `₡${total.toLocaleString()}`;
+    }
 }
 
 function updateCartQuantity(productId, newQuantity) {
@@ -112,78 +106,53 @@ function removeFromCart(productId) {
 }
 
 function clearCart() {
-    cart = [];
-    saveCart();
-    updateCartCount();
-    renderCartItems();
-    showNotification('Carrito vaciado');
+    if (cart.length === 0) return;
+    
+    if (confirm('¿Estás seguro de que quieres vaciar el carrito?')) {
+        cart = [];
+        saveCart();
+        updateCartCount();
+        renderCartItems();
+        showNotification('Carrito vaciado');
+    }
 }
 
-function sendWhatsAppOrder() {
-    const name = document.getElementById('customerName').value.trim();
-    const phone = document.getElementById('customerPhone').value.trim();
-    const address = document.getElementById('customerAddress').value.trim();
-    const notes = document.getElementById('orderNotes').value.trim();
+// ============================================
+// FUNCIONES DE CARRITO (definidas en main.js pero usadas aquí)
+// ============================================
+
+// Estas funciones están definidas en main.js, pero las referenciamos aquí
+window.saveCart = function() {
+    localStorage.setItem('floristeria_cart', JSON.stringify(cart));
+};
+
+window.updateCartCount = function() {
+    const cartCount = document.querySelector('.cart-count');
+    if (cartCount) {
+        const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+        cartCount.textContent = totalItems;
+    }
+};
+
+window.showNotification = function(message, isError = false) {
+    const notification = document.getElementById('notification');
+    const notificationText = document.getElementById('notificationText');
     
-    // Validaciones básicas
-    if (!name) {
-        showNotification('Por favor ingresa tu nombre', true);
-        document.getElementById('customerName').focus();
-        return;
+    if (!notification || !notificationText) return;
+    
+    notificationText.textContent = message;
+    notification.classList.remove('error');
+    
+    if (isError) {
+        notification.classList.add('error');
     }
     
-    if (!phone) {
-        showNotification('Por favor ingresa tu teléfono', true);
-        document.getElementById('customerPhone').focus();
-        return;
-    }
+    notification.classList.add('show');
     
-    if (cart.length === 0) {
-        showNotification('Tu carrito está vacío', true);
-        return;
-    }
-    
-    // Calcular totales
-    const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
-    const shipping = subtotal >= 30000 ? 0 : 2000;
-    const total = subtotal + shipping;
-    
-    // Formatear mensaje
-    let message = `¡Hola! Quiero hacer un pedido:\n\n`;
-    message += `*Cliente:* ${name}\n`;
-    message += `*Teléfono:* ${phone}\n`;
-    if (address) message += `*Dirección:* ${address}\n`;
-    if (notes) message += `*Notas:* ${notes}\n\n`;
-    message += `*Pedido:*\n`;
-    
-    cart.forEach((item, index) => {
-        message += `${index + 1}. ${item.name} x${item.quantity} - ₡${(item.price * item.quantity).toLocaleString()}\n`;
-    });
-    
-    message += `\n*Subtotal:* ₡${subtotal.toLocaleString()}\n`;
-    message += `*Envío:* ${shipping === 0 ? 'Gratis' : `₡${shipping.toLocaleString()}`}\n`;
-    message += `*Total:* ₡${total.toLocaleString()}\n\n`;
-    message += `¿Podrían confirmarme la disponibilidad y el tiempo de entrega? ¡Gracias!`;
-    
-    // Codificar mensaje para URL
-    const encodedMessage = encodeURIComponent(message);
-    const phoneNumber = storeConfig.phone ? storeConfig.phone.replace(/\D/g, '') : '50686053613';
-    
-    // Abrir WhatsApp
-    window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
-    
-    // Limpiar carrito después de enviar
-    clearCart();
-    closeCart();
-    
-    // Limpiar formulario
-    document.getElementById('customerName').value = '';
-    document.getElementById('customerPhone').value = '';
-    document.getElementById('customerAddress').value = '';
-    document.getElementById('orderNotes').value = '';
-    
-    showNotification('Pedido enviado por WhatsApp');
-}
+    setTimeout(() => {
+        notification.classList.remove('show');
+    }, 3000);
+};
 
 // ============================================
 // FUNCIONES PÚBLICAS PARA HTML
@@ -193,5 +162,3 @@ function sendWhatsAppOrder() {
 window.updateCartQuantity = updateCartQuantity;
 window.removeFromCart = removeFromCart;
 window.clearCart = clearCart;
-window.sendWhatsAppOrder = sendWhatsAppOrder;
-window.closeCart = closeCart;
