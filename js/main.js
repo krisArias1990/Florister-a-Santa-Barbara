@@ -251,51 +251,86 @@ function updateContactInfo() {
 }
 
 function updateFooterInfo() {
-    // Descripción
+    console.log('Actualizando footer con configuración:', storeConfig);
+    
+    // 1. INFORMACIÓN - Descripción
     const footerDesc = document.getElementById('footer-description');
-    if (footerDesc && storeConfig.description) {
-        footerDesc.textContent = storeConfig.description;
+    if (footerDesc) {
+        footerDesc.textContent = storeConfig.description || 
+            "Flores frescas y arreglos florales para toda ocasión. Calidad y elegancia en cada detalle.";
     }
     
-    // Dirección
+    // 2. UBICACIÓN - Dirección
     const footerAddress = document.getElementById('footer-address');
     if (footerAddress) {
-        footerAddress.textContent = storeConfig.address || 'Santa Bárbara, Heredia, Costa Rica';
+        footerAddress.textContent = storeConfig.address || 
+            "Santa Bárbara, Heredia, Costa Rica";
     }
     
-    // Teléfono
+    // 3. CONTACTO - Teléfono
     const footerPhone = document.getElementById('footer-phone');
     if (footerPhone) {
-        footerPhone.textContent = storeConfig.phone ? `Tel: ${storeConfig.phone}` : 'Tel: (506) 8605-3613';
+        footerPhone.textContent = storeConfig.phone ? 
+            `Tel: ${storeConfig.phone}` : 'Tel: (506) 8605-3613';
     }
     
-    // Email
+    // 4. CONTACTO - Email
     const footerEmail = document.getElementById('footer-email');
     if (footerEmail) {
-        footerEmail.textContent = storeConfig.email || 'ventas@floristeriasantabarbara.com';
+        footerEmail.textContent = storeConfig.email || 
+            "ventas@floristeriasantabarbara.com";
     }
     
-    // Horarios
+    // 5. HORARIOS - Esta es la parte IMPORTANTE
     const hoursList = document.getElementById('hours-list');
-    if (hoursList && storeConfig.hours && storeConfig.hours.length > 0) {
-        hoursList.innerHTML = storeConfig.hours.map(hour => `
-            <li>${hour}</li>
-        `).join('');
+    if (hoursList) {
+        if (storeConfig.hours && storeConfig.hours.length > 0) {
+            // Usar horarios de la configuración
+            hoursList.innerHTML = storeConfig.hours.map(hour => `
+                <li>${hour}</li>
+            `).join('');
+        } else {
+            // Horarios por defecto
+            hoursList.innerHTML = `
+                <li><strong>Lunes a Viernes:</strong> 9:00 AM - 7:00 PM</li>
+                <li><strong>Sábados:</strong> 9:30 AM - 7:00 PM</li>
+                <li><strong>Almuerzo:</strong> 12:30 PM - 1:30 PM</li>
+                <li><strong>Domingos:</strong> <span style="color: var(--danger);">CERRADO</span></li>
+            `;
+        }
     }
     
-    // Información de delivery
+    // 6. DELIVERY - Información
     const deliveryInfo = document.getElementById('delivery-info');
     if (deliveryInfo) {
         deliveryInfo.style.display = storeConfig.showDelivery ? 'block' : 'none';
+        if (storeConfig.showDelivery) {
+            deliveryInfo.innerHTML = `
+                <i class="fas fa-truck"></i> Servicio a Domicilio Disponible
+            `;
+        }
     }
     
-    // Métodos de pago
+    // 7. MÉTODOS DE PAGO - Esta es la otra parte IMPORTANTE
     const paymentList = document.getElementById('payment-list');
-    if (paymentList && storeConfig.paymentMethods && storeConfig.paymentMethods.length > 0) {
-        paymentList.innerHTML = storeConfig.paymentMethods.map(method => `
-            <li><i class="fas fa-check"></i> ${method}</li>
-        `).join('');
+    if (paymentList) {
+        if (storeConfig.paymentMethods && storeConfig.paymentMethods.length > 0) {
+            // Usar métodos de pago de la configuración
+            paymentList.innerHTML = storeConfig.paymentMethods.map(method => `
+                <li><i class="fas fa-check"></i> ${method}</li>
+            `).join('');
+        } else {
+            // Métodos de pago por defecto
+            paymentList.innerHTML = `
+                <li><i class="fas fa-mobile-alt"></i> SINPE Móvil</li>
+                <li><i class="fas fa-money-bill-wave"></i> Efectivo</li>
+                <li><i class="fas fa-credit-card"></i> Tarjetas</li>
+                <li><i class="fas fa-university"></i> Transferencia</li>
+            `;
+        }
     }
+    
+    console.log('Footer actualizado correctamente');
 }
 
 function updateFooterYear() {
