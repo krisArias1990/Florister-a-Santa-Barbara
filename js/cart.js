@@ -14,6 +14,10 @@ function updateCartCount() {
     }
 }
 
+// ============================================
+// CARRITO DE COMPRAS - SIN ENVÍO AUTOMÁTICO
+// ============================================
+
 function renderCartItems() {
     const cartItemsContainer = document.getElementById('cartItemsContainer');
     const cartSubtotal = document.getElementById('cartSubtotal');
@@ -34,19 +38,22 @@ function renderCartItems() {
         return;
     }
     
-    // Calcular subtotal
+    // Calcular solo subtotal (NO envío)
     const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
     
-    // Calcular envío (gratis para compras mayores a ₡30,000)
-    const shipping = subtotal >= 30000 ? 0 : 2000;
-    
-    // Calcular total
+    // ENVÍO INICIAL: ₡0
+    const shipping = 0;
     const total = subtotal + shipping;
     
     // Renderizar items
-    cartItemsContainer.innerHTML = cart.map(item => `
+    cartItemsContainer.innerHTML = cart.map(item => {
+        const imageSrc = item.image && item.image.startsWith('data:image') ? 
+            item.image : 
+            (item.image || 'https://via.placeholder.com/60x60?text=Imagen');
+        
+        return `
         <div class="cart-item">
-            <img src="${item.image}" alt="${item.name}" class="cart-item-image">
+            <img src="${imageSrc}" alt="${item.name}" class="cart-item-image">
             <div class="cart-item-details">
                 <div class="cart-item-title">${item.name}</div>
                 <div class="cart-item-price">₡${item.price.toLocaleString()}</div>
@@ -64,12 +71,20 @@ function renderCartItems() {
                 </button>
             </div>
         </div>
-    `).join('');
+        `;
+    }).join('');
     
-    // Actualizar totales
+    // Actualizar totales - ENVÍO SIEMPRE ₡0 HASTA DIRECCIÓN
     cartSubtotal.textContent = `₡${subtotal.toLocaleString()}`;
-    cartShipping.textContent = shipping === 0 ? 'Gratis' : `₡${shipping.toLocaleString()}`;
+    cartShipping.textContent = '₡0';
     cartTotal.textContent = `₡${total.toLocaleString()}`;
+}
+
+function calculateShippingCost() {
+    const deliveryType = document.querySelector('input[name="deliveryType"]:checked');
+    
+    // SIEMPRE ₡0 HASTA QUE SE INGRESE DIRECCIÓN Y USTEDES CONFIRMEN
+    return 0;
 }
 
 function updateCartQuantity(productId, newQuantity) {
