@@ -780,13 +780,23 @@
             cursor: pointer;
         }
         
-        /* Mapa de Ubicación */
+        /* Mapa de Ubicación (SIMPLIFICADO) */
         #map {
-            height: 300px;
+            height: 200px;
             width: 100%;
             border-radius: var(--radius-sm);
             margin-top: 10px;
             border: 2px solid var(--border);
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+        }
+        
+        .map-placeholder {
+            text-align: center;
+            padding: 20px;
         }
         
         .map-instructions {
@@ -902,6 +912,246 @@
         
         .btn-success:hover {
             background: #1da851;
+            transform: translateY(-2px);
+        }
+        
+        /* ===== MODAL DE MENSAJES WHATSAPP ===== */
+        .modal-mensajes-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .modal-mensajes-content {
+            background: white;
+            width: 100%;
+            max-width: 900px;
+            max-height: 90vh;
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        
+        .modal-mensajes-header {
+            background: linear-gradient(135deg, #e91e63, #9c27b0);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-mensajes-header h3 {
+            margin: 0;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn-cerrar {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+        
+        .btn-cerrar:hover {
+            background: rgba(255,255,255,0.3);
+            transform: rotate(90deg);
+        }
+        
+        .modal-mensajes-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+        
+        .mensaje-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .mensaje-section h4 {
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .mensaje-box, .instrucciones-box, .plantilla-box {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .btn-copiar {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-right: 10px;
+            transition: 0.3s;
+        }
+        
+        .btn-copiar:hover {
+            background: #0b7dda;
+            transform: translateY(-2px);
+        }
+        
+        .btn-whatsapp {
+            background: #25D366;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        
+        .btn-whatsapp:hover {
+            background: #1da851;
+            transform: translateY(-2px);
+        }
+        
+        .calculadora-rapida {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+        }
+        
+        .calculadora-rapida h5 {
+            margin-top: 0;
+            color: #856404;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .input-group input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        
+        .input-group button {
+            background: #ff9800;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .input-group button:hover {
+            background: #e68900;
+        }
+        
+        .info-pedido {
+            background: #e8f5e9;
+            border-left: 4px solid #4CAF50;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+        }
+        
+        .estado-pendiente {
+            background: #ff9800;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .modal-mensajes-footer {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        
+        .btn-secundario, .btn-guardar, .btn-imprimir {
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+        }
+        
+        .btn-secundario {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-guardar {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .btn-imprimir {
+            background: #9C27B0;
+            color: white;
+        }
+        
+        .btn-secundario:hover, .btn-guardar:hover, .btn-imprimir:hover {
+            opacity: 0.9;
             transform: translateY(-2px);
         }
         
@@ -1081,6 +1331,10 @@
             .carousel-img {
                 height: 350px;
             }
+            
+            .modal-mensajes-content {
+                max-width: 95%;
+            }
         }
         
         @media (max-width: 768px) {
@@ -1131,6 +1385,22 @@
                 height: 55px;
                 font-size: 1.8rem;
             }
+            
+            .cart-footer {
+                flex-direction: column;
+            }
+            
+            .modal-mensajes-body {
+                padding: 15px;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+            
+            .modal-mensajes-footer {
+                flex-direction: column;
+            }
         }
         
         @media (max-width: 576px) {
@@ -1149,10 +1419,6 @@
             
             .payment-methods {
                 grid-template-columns: 1fr;
-            }
-            
-            .cart-footer {
-                flex-direction: column;
             }
             
             .footer-content {
@@ -1197,41 +1463,6 @@
         .mb-3 { margin-bottom: 1.5rem; }
         .mt-3 { margin-top: 1.5rem; }
         .hidden { display: none; }
-
-        /* ===== BOTÓN OPENSTREETMAP ===== */
-        .osm-button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 1000;
-        }
-        
-        .osm-button a {
-            background: #7cbb00;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 4px;
-            text-decoration: none;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 2px 8px rgba(124, 187, 0, 0.3);
-            transition: var(--transition);
-        }
-        
-        .osm-button a:hover {
-            background: #6aa300;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(124, 187, 0, 0.4);
-        }
-        
-        /* Marcador estimado en el mapa */
-        .estimated-marker {
-            background: none !important;
-            border: none !important;
-        }
-        
     </style>
 </head>
 <body>
@@ -1383,27 +1614,35 @@
                     </div>
 
                     <div class="form-group" id="addressField">
-                        <label class="form-label">Dirección exacta para envío *</label>
-                        <textarea id="deliveryAddress" class="form-control" rows="2" 
-                                  placeholder="Ejemplo: 200 metros norte del Banco Nacional, Barrio Los Ángeles, Heredia Centro" required
-                                  oninput="calculateShippingFromAddress()"></textarea>
+                        <label class="form-label">📝 Dirección aproximada *</label>
+                        <textarea id="deliveryAddress" class="form-control" rows="3" 
+                                  placeholder="Ejemplo: Barrio Los Ángeles, Heredia
+O: Rosales Desamparados, Alajuela
+O: San Pedro, San José" 
+                                  required></textarea>
                         
-                       <div class="map-instructions" id="mapInstructions">
-                            <i class="fas fa-info-circle"></i>
-                            <strong>📍 Importante:</strong> Ingresa dirección completa con puntos de referencia. El sistema calculará automáticamente la distancia exacta.
-                            <br>
-                            <small>El costo de envío se calcula automáticamente: ₡650 por kilómetro desde Santa Bárbara.</small>
+                        <div class="map-instructions">
+                            <i class="fas fa-info-circle" style="color: #e91e63;"></i>
+                            <strong>📍 IMPORTANTE:</strong> Esta dirección es preliminar. 
+                            <span style="color: #e91e63; font-weight: bold;">Al enviar el pedido, te solicitaremos que nos envíes tu ubicación EXACTA por WhatsApp</span> 
+                            para calcular el envío preciso (₡650 por kilómetro).
                         </div>
                     
                         <!-- Campo para señas específicas -->
                         <div style="margin-top: 10px;">
                             <label class="form-label">Señas específicas (detalles adicionales)</label>
                             <textarea id="addressDetails" class="form-control" rows="2" 
-                                      placeholder="Ejemplo: Casa color azul con portón negro, junto a la pulpería, timbre verde"></textarea>
+                                      placeholder="Ejemplo: Casa color azul con portón negro, timbre verde, segunda casa a mano izquierda"></textarea>
                         </div>
                         
-                        <!-- Mapa para mostrar ubicación -->
-                        <div id="map"></div>
+                        <!-- Mapa simplificado -->
+                        <div id="map">
+                            <div class="map-placeholder">
+                                <i class="fas fa-map-marked-alt" style="font-size: 2rem; margin-bottom: 10px; color: var(--gray-light);"></i>
+                                <p>📍 La ubicación exacta se solicitará por WhatsApp</p>
+                                <small style="color: var(--gray);">Para calcular envío preciso (₡650/km)</small>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -1611,75 +1850,38 @@
 
         let selectedPayment = 'sinpe';
         let currentCarouselSlide = 0;
-        let map = null;
-        let storeLocation = null;
-        let customerLocation = null;
-        let distanceKm = 0;
-        let storeMarker = null;
-        let distanceCache = {};
-
-        // Coordenadas exactas de Santa Bárbara de Heredia
-        const STORE_COORDINATES = [10.0833, -84.1333];
-
-        // ============================================
-        // SISTEMA DE DISTANCIAS MEJORADO (100% GRATIS)
-        // ============================================
-
-        // Zonas de Costa Rica con distancias desde Santa Bárbara
-        const CR_ZONES = {
-            // SANTA BÁRBARA (0-3km)
-            'santa barbara': { distance: 1, lat: 10.0833, lng: -84.1333 },
-            'santa bárbara': { distance: 1, lat: 10.0833, lng: -84.1333 },
-            'barbara': { distance: 1, lat: 10.0833, lng: -84.1333 },
-            'bárbara': { distance: 1, lat: 10.0833, lng: -84.1333 },
-            
-            // HEREDIA (5-10km)
-            'heredia': { distance: 6, lat: 9.9984, lng: -84.1165 },
-            'heredia centro': { distance: 6, lat: 9.9984, lng: -84.1165 },
-            'la aurora': { distance: 7, lat: 9.9884, lng: -84.1065 },
-            'san francisco': { distance: 5, lat: 10.0034, lng: -84.1265 },
-            
-            // SAN JOSÉ (15-25km)
-            'san josé': { distance: 18, lat: 9.9281, lng: -84.0907 },
-            'san jose': { distance: 18, lat: 9.9281, lng: -84.0907 },
-            'san pedro': { distance: 19, lat: 9.9281, lng: -84.0907 },
-            'curridabat': { distance: 16, lat: 9.9181, lng: -84.0407 },
-            
-            // ALAJUELA (10-20km)
-            'alajuela': { distance: 12, lat: 10.0163, lng: -84.2116 },
-            'alajuelita': { distance: 11, lat: 9.9163, lng: -84.1016 },
-            
-            // CARTAGO (25-35km)
-            'cartago': { distance: 28, lat: 9.8644, lng: -83.9194 },
-            'la unión': { distance: 25, lat: 9.9144, lng: -83.9994 }
-        };
 
         // ============================================
         // INICIALIZACIÓN
         // ============================================
 
         document.addEventListener('DOMContentLoaded', function() {
+            // Cargar datos
             loadStoreData();
+            
+            // Inicializar componentes
             initCarousel();
             loadCategories();
             loadProducts();
             updateCartCount();
             setupEventListeners();
             
+            // Configurar fecha mínima (mañana)
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
             document.getElementById('deliveryDate').min = tomorrow.toISOString().split('T')[0];
             document.getElementById('deliveryDate').value = tomorrow.toISOString().split('T')[0];
             
-            initMap();
+            // Seleccionar SINPE por defecto
             selectPayment('sinpe');
             
-            setInterval(checkForUpdates, 5 * 60 * 1000);
+            console.log('✅ Sistema inicializado correctamente');
         });
 
         function loadStoreData() {
-            console.log("📥 Cargando datos centralizados...");
+            console.log("📥 Cargando datos...");
             
+            // Cargar datos locales
             const localProducts = JSON.parse(localStorage.getItem('floristeria_products')) || [];
             const localCategories = JSON.parse(localStorage.getItem('floristeria_categories')) || [];
             const localConfig = JSON.parse(localStorage.getItem('floristeria_config')) || {};
@@ -1689,50 +1891,10 @@
                 categories = localCategories;
                 storeConfig = { ...storeConfig, ...localConfig };
                 console.log("📱 Datos locales cargados:", products.length, "productos");
+            } else {
+                // Datos por defecto si no hay nada
+                createDefaultData();
             }
-            
-            loadCentralizedData();
-        }
-
-        function loadCentralizedData() {
-            const dataUrl = 'https://krisarias1990.github.io/Florister-a-Santa-Barbara/data.json';
-            
-            console.log("🌐 Cargando datos centralizados desde:", dataUrl);
-            
-            fetch(dataUrl + '?v=' + Date.now())
-                .then(response => {
-                    if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
-                    return response.json();
-                })
-                .then(centralData => {
-                    console.log("✅ Datos centralizados recibidos");
-                    
-                    if (centralData.products && Array.isArray(centralData.products)) {
-                        products = centralData.products;
-                        localStorage.setItem('floristeria_products', JSON.stringify(products));
-                    }
-                    
-                    if (centralData.categories && Array.isArray(centralData.categories)) {
-                        categories = centralData.categories;
-                        localStorage.setItem('floristeria_categories', JSON.stringify(categories));
-                    }
-                    
-                    if (centralData.storeConfig) {
-                        storeConfig = { ...storeConfig, ...centralData.storeConfig };
-                        localStorage.setItem('floristeria_config', JSON.stringify(storeConfig));
-                    }
-                    
-                    if (document.getElementById('productsGrid')) {
-                        renderProducts(products);
-                        updateCategoryFilters();
-                    }
-                    
-                    console.log("🔄 Datos sincronizados correctamente");
-                })
-                .catch(error => {
-                    console.warn("⚠️ No se pudieron cargar datos centralizados:", error.message);
-                    if (products.length === 0) createDefaultData();
-                });
         }
 
         function createDefaultData() {
@@ -1762,6 +1924,18 @@
                     image: "https://images.unsplash.com/photo-1457089328109-e5d9bd499191?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
                     stock: 5,
                     blocked: false
+                },
+                {
+                    id: 3,
+                    name: "Tulipanes Holandeses Frescos",
+                    nombre: "Tulipanes Holandeses Frescos",
+                    category: "Tulipanes",
+                    categoria: "Tulipanes",
+                    description: "Hermoso ramo de tulipanes importados de Holanda.",
+                    price: 18000,
+                    image: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    stock: 8,
+                    blocked: false
                 }
             ];
             
@@ -1773,36 +1947,13 @@
             console.log("✅ Datos por defecto creados");
         }
 
-        function checkForUpdates() {
-            if (!document.getElementById('productsGrid')) return;
-            
-            console.log("🔄 Verificando actualizaciones...");
-            
-            const lastUpdate = localStorage.getItem('floristeria_last_update');
-            
-            fetch('https://krisarias1990.github.io/Florister-a-Santa-Barbara/data.json?' + Date.now())
-                .then(response => response.json())
-                .then(data => {
-                    const centralUpdate = data.lastUpdated;
-                    
-                    if (!lastUpdate || new Date(centralUpdate) > new Date(lastUpdate)) {
-                        console.log("🆕 Actualización disponible!");
-                        showNotification('🔄 Actualizando catálogo...', 'info');
-                        
-                        loadCentralizedData();
-                        localStorage.setItem('floristeria_last_update', centralUpdate);
-                    }
-                })
-                .catch(error => {
-                    console.log("⚠️ No se pudo verificar actualizaciones:", error.message);
-                });
-        }
-
         function setupEventListeners() {
+            // Cambio en tipo de entrega
             document.querySelectorAll('input[name="deliveryType"]').forEach(radio => {
                 radio.addEventListener('change', toggleAddressField);
             });
             
+            // Cerrar modales al hacer clic fuera
             document.getElementById('cartModal').addEventListener('click', function(e) {
                 if (e.target === this) closeCart();
             });
@@ -1810,334 +1961,6 @@
             document.getElementById('imageModal').addEventListener('click', function(e) {
                 if (e.target === this) closeImageModal();
             });
-        }
-
-        // ============================================
-        // MAPA Y CÁLCULO DE DISTANCIA (100% GRATIS)
-        // ============================================
-
-        function initMap() {
-            storeLocation = STORE_COORDINATES;
-            
-            map = L.map('map').setView(storeLocation, 13);
-            
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors'
-            }).addTo(map);
-            
-            storeMarker = L.marker(storeLocation)
-                .addTo(map)
-                .bindPopup('🌺 Floristería Santa Bárbara<br>📍 Santa Bárbara, Heredia, Costa Rica')
-                .openPopup();
-            
-            console.log("🗺️ Mapa inicializado correctamente - Santa Bárbara, Heredia");
-        }
-
-        // FUNCIÓN PRINCIPAL MEJORADA PARA CALCULAR DISTANCIAS
-        async function calculateShippingFromAddress() {
-            const address = document.getElementById('deliveryAddress').value.trim();
-            const deliveryType = document.querySelector('input[name="deliveryType"]:checked');
-            
-            // Si es recoger en tienda
-            if (deliveryType && deliveryType.value === 'pickup') {
-                distanceKm = 0;
-                updateShippingCost();
-                return;
-            }
-            
-            if (!address) {
-                distanceKm = 0;
-                updateShippingCost();
-                return;
-            }
-            
-            // Validar dirección
-            if (!validateCostaRicaAddress(address)) {
-                showNotification('Por favor ingresa una dirección más específica en Costa Rica', 'warning');
-                estimateDistanceByZones(address);
-                updateShippingCost();
-                return;
-            }
-            
-            // Verificar caché
-            const cacheKey = address.toLowerCase().trim();
-            const cachedData = distanceCache[cacheKey];
-            
-            if (cachedData && (Date.now() - cachedData.timestamp < 7 * 24 * 60 * 60 * 1000)) {
-                distanceKm = cachedData.distance;
-                updateMapWithLocation(cachedData.lat, cachedData.lng, address, true);
-                showNotification(`📍 Distancia desde caché: ${distanceKm} km`, 'info');
-                updateShippingCost();
-                return;
-            }
-            
-            // Intentar geocodificación con OpenStreetMap (GRATIS)
-            showNotification('Calculando distancia exacta...', 'info');
-            
-            try {
-                const geocodeUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address + ', Costa Rica')}&limit=1&accept-language=es`;
-                
-                const response = await fetch(geocodeUrl, {
-                    headers: {
-                        'User-Agent': 'FloristeriaSantaBarbara/1.0',
-                        'Accept': 'application/json'
-                    }
-                });
-                
-                if (!response.ok) {
-                    throw new Error('Error en la conexión');
-                }
-                
-                const data = await response.json();
-                
-                if (!data || data.length === 0) {
-                    throw new Error('Dirección no encontrada');
-                }
-                
-                const result = data[0];
-                const customerLat = parseFloat(result.lat);
-                const customerLng = parseFloat(result.lon);
-                
-                // Calcular distancia usando fórmula Haversine
-                distanceKm = calculateHaversineDistance(
-                    STORE_COORDINATES[0], STORE_COORDINATES[1],
-                    customerLat, customerLng
-                );
-                
-                // Ajustar por rutas (aproximadamente 1.3x la distancia en línea recta)
-                distanceKm = Math.round(distanceKm * 1.3 * 100) / 100;
-                
-                // Guardar en caché
-                distanceCache[cacheKey] = {
-                    distance: distanceKm,
-                    lat: customerLat,
-                    lng: customerLng,
-                    address: result.display_name,
-                    timestamp: Date.now()
-                };
-                
-                // Actualizar mapa
-                updateMapWithLocation(customerLat, customerLng, result.display_name, false);
-                
-                showNotification(`📍 Distancia calculada: ${distanceKm} km`, 'success');
-                
-            } catch (error) {
-                console.warn('⚠️ Error en geocodificación:', error.message);
-                // Fallback a método por zonas
-                estimateDistanceByZones(address);
-            }
-            
-            updateShippingCost();
-        }
-
-        // Fórmula Haversine para calcular distancia entre coordenadas
-        function calculateHaversineDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371; // Radio de la Tierra en km
-            const dLat = toRad(lat2 - lat1);
-            const dLon = toRad(lon2 - lon1);
-            
-            const a = 
-                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * 
-                Math.sin(dLon / 2) * Math.sin(dLon / 2);
-            
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            const distance = R * c;
-            
-            return Math.round(distance * 100) / 100;
-        }
-
-        function toRad(degrees) {
-            return degrees * (Math.PI / 180);
-        }
-
-        // Método alternativo por zonas
-        function estimateDistanceByZones(address) {
-            const addressLower = address.toLowerCase()
-                .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-            
-            let estimatedDistance = 10; // Distancia por defecto
-            let foundZone = null;
-            
-            // Buscar zona exacta
-            for (const [zone, data] of Object.entries(CR_ZONES)) {
-                if (addressLower.includes(zone)) {
-                    estimatedDistance = data.distance;
-                    foundZone = zone;
-                    break;
-                }
-            }
-            
-            // Reglas específicas para Costa Rica
-            if (addressLower.includes('desamparados')) {
-                estimatedDistance = addressLower.includes('alajuela') ? 5 : 20;
-            }
-            
-            // Detectar por códigos postales aproximados
-            if (/\b(40[0-9]{3})\b/.test(address)) { // Heredia: 40101, 40201, etc.
-                estimatedDistance = 5 + Math.random() * 5;
-            } else if (/\b(1[0-9]{4})\b/.test(address)) { // San José: 10101, 10201, etc.
-                estimatedDistance = 15 + Math.random() * 10;
-            } else if (/\b(2[0-9]{4})\b/.test(address)) { // Alajuela: 20101, 20201, etc.
-                estimatedDistance = 10 + Math.random() * 10;
-            } else if (/\b(3[0-9]{4})\b/.test(address)) { // Cartago: 30101, 30201, etc.
-                estimatedDistance = 25 + Math.random() * 10;
-            }
-            
-            distanceKm = Math.round(estimatedDistance * 100) / 100;
-            
-            console.log(`📍 Distancia estimada por ${foundZone ? 'zona "' + foundZone + '"' : 'patrones'}: ${distanceKm} km`);
-            
-            // Actualizar mapa con ubicación estimada
-            updateMapWithEstimatedLocation(addressLower, distanceKm);
-        }
-
-        // Validar dirección costarricense
-        function validateCostaRicaAddress(address) {
-            if (!address || address.length < 15) {
-                return false;
-            }
-            
-            // Debe contener elementos típicos de direcciones en Costa Rica
-            const crAddressPatterns = [
-                /\d+/, // Debe tener números
-                /(metros|mts|m\.)/i, // Distancias
-                /(norte|sur|este|oeste|n|s|e|o)/i, // Direcciones
-                /(calle|av\.|avenida|ruta|carretera|diagonal)/i, // Vías
-                /(frente|detrás|contiguo|esquina|lado)/i, // Posiciones relativas
-                /(barrio|pueblo|ciudad|cantón|distrito|provincia)/i // Divisiones
-            ];
-            
-            const matches = crAddressPatterns.filter(pattern => pattern.test(address)).length;
-            
-            // Al menos 3 de los patrones deben coincidir
-            return matches >= 3;
-        }
-
-        // Actualizar mapa con ubicación real
-        function updateMapWithLocation(lat, lng, address, fromCache = false) {
-            if (!map) return;
-            
-            // Limpiar marcadores anteriores
-            map.eachLayer(function(layer) {
-                if (layer instanceof L.Marker && layer !== storeMarker) {
-                    map.removeLayer(layer);
-                }
-                if (layer instanceof L.Polyline) {
-                    map.removeLayer(layer);
-                }
-            });
-            
-            // Agregar marcador del cliente
-            L.marker([lat, lng])
-                .addTo(map)
-                .bindPopup(`<b>📍 ${fromCache ? 'Ubicación estimada' : 'Dirección encontrada'}</b><br>${address.substring(0, 50)}...<br><b>Distancia: ${distanceKm} km</b>`)
-                .openPopup();
-            
-            // Dibujar línea de ruta
-            L.polyline([STORE_COORDINATES, [lat, lng]], {
-                color: '#e91e63',
-                weight: 3,
-                opacity: 0.7,
-                dashArray: '10, 10'
-            }).addTo(map);
-            
-            // Ajustar vista
-            map.fitBounds([STORE_COORDINATES, [lat, lng]], { padding: [50, 50] });
-        }
-
-        // Actualizar mapa con ubicación estimada
-        function updateMapWithEstimatedLocation(address, distance) {
-            if (!map || distance <= 0) return;
-            
-            map.eachLayer(function(layer) {
-                if (layer instanceof L.Marker && layer !== storeMarker) {
-                    map.removeLayer(layer);
-                }
-            });
-            
-            // Determinar dirección aproximada
-            let angle = Math.random() * Math.PI * 2;
-            
-            if (address.includes('san josé') || address.includes('san jose')) {
-                angle = Math.PI * 0.8; // Sureste
-            } else if (address.includes('alajuela')) {
-                angle = Math.PI * 0.4; // Noroeste
-            } else if (address.includes('cartago')) {
-                angle = Math.PI * 1.2; // Este
-            } else if (address.includes('heredia')) {
-                angle = Math.PI * 0.1; // Cerca
-            }
-            
-            const distanceInDegrees = distance * 0.01;
-            const estimatedLat = STORE_COORDINATES[0] + Math.cos(angle) * distanceInDegrees;
-            const estimatedLng = STORE_COORDINATES[1] + Math.sin(angle) * distanceInDegrees;
-            
-            L.marker([estimatedLat, estimatedLng], {
-                icon: L.divIcon({
-                    className: 'estimated-marker',
-                    html: `<div style="background: #ff9800; color: white; padding: 5px 10px; border-radius: 15px; font-weight: bold; font-size: 0.8rem;">📍 ~${distance}km</div>`,
-                    iconSize: [100, 40]
-                })
-            }).addTo(map).bindPopup(`📍 Ubicación estimada<br>Distancia aproximada: ${distance} km`);
-            
-            map.fitBounds([STORE_COORDINATES, [estimatedLat, estimatedLng]], { padding: [50, 50] });
-        }
-
-        function updateShippingCost() {
-            const shippingCostPerKm = storeConfig.shippingCostPerKm || 650;
-            let shippingCost = 0;
-            
-            if (distanceKm > 0) {
-                shippingCost = Math.round(distanceKm * shippingCostPerKm);
-                shippingCost = Math.ceil(shippingCost / 100) * 100;
-                
-                // Mínimo de envío
-                const minShipping = 2000;
-                if (shippingCost < minShipping && shippingCost > 0) {
-                    shippingCost = minShipping;
-                }
-            }
-            
-            // Mostrar botón de OpenStreetMap
-            const address = document.getElementById('deliveryAddress').value.trim();
-            if (address && map) {
-                const existingButton = document.querySelector('.osm-button');
-                if (existingButton) {
-                    existingButton.remove();
-                }
-                
-                const osmButton = document.createElement('div');
-                osmButton.className = 'osm-button';
-                osmButton.innerHTML = `
-                    <a href="https://www.openstreetmap.org/search?query=${encodeURIComponent(address + ', Costa Rica')}" 
-                       target="_blank" 
-                       title="Ver en OpenStreetMap">
-                        <i class="fas fa-map-marked-alt"></i>
-                        <span>Ver en Mapa</span>
-                    </a>
-                `;
-                
-                document.getElementById('map').appendChild(osmButton);
-            }
-            
-            // Actualizar interfaz
-            const shippingElement = document.getElementById('cartShipping');
-            const distanceElement = document.getElementById('shippingDistance');
-            
-            if (shippingElement) {
-                shippingElement.textContent = `${storeConfig.currency || '₡'}${shippingCost.toLocaleString('es-CR')}`;
-            }
-            
-            if (distanceElement) {
-                if (distanceKm > 0) {
-                    distanceElement.textContent = `(${distanceKm} km × ₡${shippingCostPerKm}/km)`;
-                } else {
-                    distanceElement.textContent = '';
-                }
-            }
-            
-            updateOrderSummary();
         }
 
         // ============================================
@@ -2170,6 +1993,7 @@
             carouselIndicators.innerHTML = '';
 
             carouselImages.forEach((item, index) => {
+                // Slide
                 const slide = document.createElement('div');
                 slide.className = 'carousel-item';
                 slide.innerHTML = `
@@ -2181,6 +2005,7 @@
                 `;
                 carouselInner.appendChild(slide);
 
+                // Indicador
                 const indicator = document.createElement('button');
                 indicator.className = `carousel-indicator ${index === 0 ? 'active' : ''}`;
                 indicator.onclick = () => goToSlide(index);
@@ -2218,6 +2043,7 @@
             updateCarousel();
         }
 
+        // Auto-avance cada 5 segundos
         setInterval(nextSlide, 5000);
 
         // ============================================
@@ -2230,12 +2056,14 @@
             
             categoryFilters.innerHTML = '';
             
+            // Botón "Todos"
             const allButton = document.createElement('button');
             allButton.className = 'category-btn active';
             allButton.textContent = 'Todos';
             allButton.onclick = () => filterProducts('all');
             categoryFilters.appendChild(allButton);
             
+            // Botones por categoría
             categories.forEach(category => {
                 const button = document.createElement('button');
                 button.className = 'category-btn';
@@ -2246,39 +2074,21 @@
         }
 
         function filterProducts(category) {
+            // Actualizar botones activos
             document.querySelectorAll('.category-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
             event.target.classList.add('active');
             
+            // Filtrar y mostrar productos (EXCLUYENDO productos bloqueados)
             let filteredProducts = category === 'all' 
                 ? products 
                 : products.filter(p => p.category === category || p.categoria === category);
             
+            // Filtrar productos bloqueados
             filteredProducts = filteredProducts.filter(product => !product.blocked);
             
             renderProducts(filteredProducts);
-        }
-
-        function updateCategoryFilters() {
-            const categoryFilters = document.getElementById('categoryFilters');
-            if (!categoryFilters) return;
-            
-            categoryFilters.innerHTML = '';
-            
-            const allButton = document.createElement('button');
-            allButton.className = 'category-btn active';
-            allButton.textContent = 'Todos';
-            allButton.onclick = () => filterProducts('all');
-            categoryFilters.appendChild(allButton);
-            
-            categories.forEach(category => {
-                const button = document.createElement('button');
-                button.className = 'category-btn';
-                button.textContent = category;
-                button.onclick = () => filterProducts(category);
-                categoryFilters.appendChild(button);
-            });
         }
 
         // ============================================
@@ -2289,6 +2099,7 @@
             const productsGrid = document.getElementById('productsGrid');
             if (!productsGrid) return;
             
+            // Filtrar productos bloqueados
             const activeProducts = productsToRender.filter(product => !product.blocked);
             
             if (!activeProducts || activeProducts.length === 0) {
@@ -2308,6 +2119,7 @@
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
                 
+                // Usar nombre correcto
                 const productName = product.nombre || product.name || 'Producto';
                 const productCategory = product.categoria || product.category || 'General';
                 const productDescription = product.descripcion || product.description || 'Producto de calidad';
@@ -2315,6 +2127,7 @@
                 const productImage = product.imagen || product.image || 'https://images.unsplash.com/photo-1560749003-f4b1e17e2dff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80';
                 const productStock = product.stock || 0;
                 
+                // Determinar si mostrar badge de "Últimas unidades"
                 const showStockBadge = productStock < 5;
                 
                 productCard.innerHTML = `
@@ -2337,6 +2150,7 @@
                     </div>
                 `;
                 
+                // Deshabilitar botón si no hay stock
                 if (productStock <= 0) {
                     const button = productCard.querySelector('.add-to-cart-btn');
                     button.innerHTML = '<i class="fas fa-ban"></i> Sin Stock';
@@ -2351,12 +2165,14 @@
         }
 
         function loadProducts() {
+            // Obtener productos desde localStorage
             products = JSON.parse(localStorage.getItem('floristeria_products')) || [];
             
             if (products.length === 0) {
                 createDefaultData();
             }
             
+            // Mostrar solo productos NO bloqueados
             const activeProducts = products.filter(product => !product.blocked);
             renderProducts(activeProducts);
         }
@@ -2392,11 +2208,13 @@
                 return;
             }
 
+            // Verificar si el producto está bloqueado
             if (product.blocked) {
                 showNotification('Este producto no está disponible temporalmente', 'warning');
                 return;
             }
 
+            // Verificar stock
             if ((product.stock || 0) <= 0) {
                 showNotification('No hay stock disponible de este producto', 'warning');
                 return;
@@ -2424,6 +2242,7 @@
             updateCartCount();
             showNotification(`${product.nombre || product.name} agregado al carrito`);
             
+            // Animación en el botón
             const button = event.target.closest('.add-to-cart-btn');
             button.classList.add('added');
             button.innerHTML = '<i class="fas fa-check"></i> Agregado';
@@ -2452,24 +2271,17 @@
         function toggleAddressField() {
             const deliveryType = document.querySelector('input[name="deliveryType"]:checked');
             const addressField = document.getElementById('addressField');
-            const mapElement = document.getElementById('map');
-            const mapInstructions = document.getElementById('mapInstructions');
             
             if (deliveryType.value === 'pickup') {
                 addressField.style.display = 'none';
                 document.getElementById('deliveryAddress').required = false;
-                if (mapElement) mapElement.style.display = 'none';
-                if (mapInstructions) mapInstructions.style.display = 'none';
-                distanceKm = 0;
+                document.getElementById('cartShipping').textContent = '₡0';
+                updateOrderSummary();
             } else {
                 addressField.style.display = 'block';
                 document.getElementById('deliveryAddress').required = true;
-                if (mapElement) mapElement.style.display = 'block';
-                if (mapInstructions) mapInstructions.style.display = 'block';
-                calculateShippingFromAddress();
+                updateShippingCost();
             }
-            
-            updateShippingCost();
         }
 
         function loadCartItems() {
@@ -2529,35 +2341,73 @@
             html += '</div>';
             container.innerHTML = html;
             
+            // Actualizar subtotal
             cartSubtotal.textContent = `${storeConfig.currency || '₡'}${subtotal.toLocaleString('es-CR')}`;
-            calculateShippingFromAddress();
+            
+            // Calcular envío
+            updateShippingCost();
+        }
+
+        function updateShippingCost() {
+            const address = document.getElementById('deliveryAddress').value.trim();
+            const deliveryType = document.querySelector('input[name="deliveryType"]:checked');
+            
+            let shippingCost = 0;
+            let shippingText = "₡0";
+            
+            if (deliveryType && deliveryType.value === 'delivery' && address) {
+                // Estimación básica según zona mencionada
+                const dir = address.toLowerCase();
+                
+                if (dir.includes('santa barbara') || dir.includes('santa bárbara')) {
+                    shippingCost = 0;
+                    shippingText = "₡0 (aprox. - zona Santa Bárbara)";
+                } 
+                else if (dir.includes('heredia') && !dir.includes('san jose')) {
+                    shippingCost = 3000;
+                    shippingText = "₡3,000 (aprox. - zona Heredia)";
+                }
+                else if (dir.includes('alajuela') || dir.includes('desamparados') || dir.includes('rosales')) {
+                    shippingCost = 3500;
+                    shippingText = "₡3,500 (aprox. - zona Alajuela)";
+                }
+                else if (dir.includes('san jose') || dir.includes('san josé')) {
+                    shippingCost = 5500;
+                    shippingText = "₡5,500 (aprox. - zona San José)";
+                }
+                else {
+                    shippingCost = 4000;
+                    shippingText = "₡4,000 (aprox. - zona general)";
+                }
+            }
+            
+            // Actualizar en la interfaz
+            document.getElementById('cartShipping').textContent = shippingText;
+            
+            const distanceElement = document.getElementById('shippingDistance');
+            if (distanceElement) {
+                distanceElement.innerHTML = `<small style="color: #666;"><i>*Precio estimado. Se ajustará con ubicación exacta</i></small>`;
+            }
+            
+            // Recalcular total
+            updateOrderSummary();
         }
 
         function updateOrderSummary() {
             const subtotal = cart.reduce((sum, item) => sum + (parseFloat(item.price) * (item.quantity || 1)), 0);
-            const shippingCostPerKm = storeConfig.shippingCostPerKm || 650;
-            let shippingCost = 0;
+            const shippingText = document.getElementById('cartShipping').textContent;
             
-            const deliveryType = document.querySelector('input[name="deliveryType"]:checked');
-            if (deliveryType && deliveryType.value === 'delivery' && distanceKm > 0) {
-                shippingCost = Math.round(distanceKm * shippingCostPerKm);
-                shippingCost = Math.ceil(shippingCost / 100) * 100;
+            // Extraer número del texto del envío
+            let shippingCost = 0;
+            const match = shippingText.match(/₡([0-9,]+)/);
+            if (match) {
+                shippingCost = parseInt(match[1].replace(/,/g, '')) || 0;
             }
             
             const total = subtotal + shippingCost;
             
             document.getElementById('cartSubtotal').textContent = `${storeConfig.currency || '₡'}${subtotal.toLocaleString('es-CR')}`;
-            document.getElementById('cartShipping').textContent = `${storeConfig.currency || '₡'}${shippingCost.toLocaleString('es-CR')}`;
             document.getElementById('cartTotal').textContent = `${storeConfig.currency || '₡'}${total.toLocaleString('es-CR')}`;
-            
-            const distanceElement = document.getElementById('shippingDistance');
-            if (distanceElement) {
-                if (distanceKm > 0 && deliveryType && deliveryType.value === 'delivery') {
-                    distanceElement.textContent = `(${distanceKm} km × ₡${shippingCostPerKm}/km)`;
-                } else {
-                    distanceElement.textContent = '';
-                }
-            }
         }
 
         function updateQuantity(productId, change) {
@@ -2613,21 +2463,24 @@
         }
 
         // ============================================
-        // ENVÍO DE PEDIDO POR WHATSAPP (OPTIMIZADO)
+        // ENVÍO DE PEDIDO POR WHATSAPP (SISTEMA MEJORADO)
         // ============================================
 
         function sendWhatsAppOrder() {
+            // Validar formulario
             const receiverName = document.getElementById('receiverName').value.trim();
             const receiverPhone = document.getElementById('receiverPhone').value.trim();
             const senderName = document.getElementById('senderName').value.trim();
             const senderPhone = document.getElementById('senderPhone').value.trim();
             const deliveryType = document.querySelector('input[name="deliveryType"]:checked').value;
             const address = document.getElementById('deliveryAddress').value.trim();
+            const addressDetails = document.getElementById('addressDetails').value.trim();
             const date = document.getElementById('deliveryDate').value;
             const time = document.getElementById('deliveryTime').value;
             const cardMessage = document.getElementById('cardMessage').value.trim();
             const notes = document.getElementById('orderNotes').value.trim();
             
+            // Validaciones
             if (!receiverName || !receiverPhone || !senderName || !senderPhone || 
                 (deliveryType === 'delivery' && !address) || !date || !time) {
                 showNotification('Por favor complete todos los campos requeridos (*)', 'error');
@@ -2644,165 +2497,377 @@
                 return;
             }
             
-            const cartCopy = [...cart];
+            // Calcular subtotal
             const subtotal = cart.reduce((sum, item) => sum + ((parseFloat(item.price) || 0) * item.quantity), 0);
-            const shippingCostPerKm = storeConfig.shippingCostPerKm || 650;
-            let shipping = 0;
             
-            if (deliveryType === 'delivery' && distanceKm > 0) {
-                shipping = Math.round(distanceKm * shippingCostPerKm);
-                shipping = Math.ceil(shipping / 100) * 100;
-            }
+            // Generar número de pedido
+            const orderNumber = 'PED-' + Date.now().toString().slice(-6);
             
-            const total = subtotal + shipping;
-            
-            const orderNumber = 'PED-' + new Date().getTime().toString().slice(-8);
-            const orderDate = new Date().toLocaleDateString('es-ES');
-            const orderTime = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-            
-            let message = `${storeConfig.whatsappMessage}\n\n`;
-            message += `🛍️ *DETALLE DEL PEDIDO*\n`;
-            message += `━━━━━━━━━━━━━━━━━━━━\n`;
-            message += `📦 Número: ${orderNumber}\n`;
-            message += `🗓️ Fecha: ${orderDate}\n`;
-            message += `🕐 Hora: ${orderTime}\n\n`;
-            
-            message += `👤 *INFORMACIÓN DE QUIEN RECIBE*\n`;
-            message += `━━━━━━━━━━━━━━━━━━━━\n`;
-            message += `• Nombre: ${receiverName}\n`;
-            message += `• Teléfono: ${receiverPhone}\n`;
-            message += `• Entrega: ${deliveryType === 'delivery' ? 'A domicilio' : 'Recoger en tienda'}\n`;
-            
-            if (deliveryType === 'delivery') {
-                const addressDetails = document.getElementById('addressDetails').value.trim();
-                
-                message += `• Dirección: ${address}\n`;
-                
-                if (addressDetails) {
-                    message += `• Señas: ${addressDetails}\n`;
-                }
-                
-                message += `• Distancia: ${distanceKm} km\n`;
-            }
-            
-            message += `• Fecha entrega: ${new Date(date).toLocaleDateString('es-ES')}\n`;
-            message += `• Horario: ${time}\n\n`;
-            
-            message += `👤 *INFORMACIÓN DE QUIEN ENVÍA*\n`;
-            message += `━━━━━━━━━━━━━━━━━━━━\n`;
-            message += `• Nombre: ${senderName}\n`;
-            message += `• Teléfono: ${senderPhone}\n\n`;
-            
-            if (cardMessage && cardMessage.trim() !== '') {
-                message += `💌 *MENSAJE EN TARJETA*\n`;
-                message += `━━━━━━━━━━━━━━━━━━━━\n`;
-                message += `${cardMessage}\n\n`;
-            }
-
-            message += `📝 *PRODUCTOS SOLICITADOS* (${cartCopy.length} items)\n`;
-            message += `━━━━━━━━━━━━━━━━━━━━\n`;
-            
-            cartCopy.forEach((item, index) => {
-                message += `${index + 1}. *${item.name}*\n`;
-                message += `   Cantidad: ${item.quantity} x ${storeConfig.currency || '₡'}${(parseFloat(item.price) || 0).toLocaleString('es-CR')}\n`;
-                message += `   Subtotal: ${storeConfig.currency || '₡'}${((parseFloat(item.price) || 0) * item.quantity).toLocaleString('es-CR')}\n\n`;
-            });
-            
-            message += `💰 *RESUMEN DE PAGO*\n`;
-            message += `━━━━━━━━━━━━━━━━━━━━\n`;
-            message += `• Subtotal: ${storeConfig.currency || '₡'}${subtotal.toLocaleString('es-CR')}\n`;
-            if (shipping > 0) {
-                message += `• Envío: ${storeConfig.currency || '₡'}${shipping.toLocaleString('es-CR')} (${distanceKm} km)\n`;
-            } else {
-                message += `• Envío: ${storeConfig.currency || '₡'}0 (Recoger en tienda)\n`;
-            }
-            message += `• *TOTAL: ${storeConfig.currency || '₡'}${total.toLocaleString('es-CR')}*\n\n`;
-            
-            message += `💳 *MÉTODO DE PAGO*\n`;
-            message += `━━━━━━━━━━━━━━━━━━━━\n`;
-            message += `• ${getPaymentMethodName(selectedPayment)}\n\n`;
-            
-            if (selectedPayment === 'sinpe') {
-                message += `📱 *DATOS SINPE MÓVIL*\n`;
-                message += `• Teléfono: 8605-3613\n`;
-                message += `• Nombre: Floristería Santa Bárbara\n\n`;
-            }
-            
-            if (notes) {
-                message += `📋 *NOTAS ADICIONALES*\n`;
-                message += `━━━━━━━━━━━━━━━━━━━━\n`;
-                message += `${notes}\n\n`;
-            }
-            
-            message += `✅ *CONFIRMACIÓN*\n`;
-            message += `━━━━━━━━━━━━━━━━━━━━\n`;
-            message += `Por favor confirme este pedido para proceder.\n\n`;
-            message += `¡Gracias por elegirnos! 💐`;
-            
-            const encodedMessage = encodeURIComponent(message);
-            const whatsappUrl = `https://wa.me/${storeConfig.phoneNumber}?text=${encodedMessage}`;
-            
-            saveOrderToHistory({
-                number: orderNumber,
-                receiverName: receiverName,
-                receiverPhone: receiverPhone,
-                senderName: senderName,
-                senderPhone: senderPhone,
-                deliveryType: deliveryType,
-                address: address,
-                distanceKm: distanceKm,
-                date: date,
-                time: time,
-                cardMessage: cardMessage,
-                paymentMethod: selectedPayment,
-                items: cartCopy.map(item => ({
-                    name: item.name,
-                    quantity: item.quantity,
-                    price: parseFloat(item.price) || 0,
-                    image: item.image
+            // Crear objeto del pedido
+            const pedido = {
+                id: orderNumber,
+                fecha: new Date().toISOString(),
+                cliente: {
+                    recibe: { nombre: receiverName, telefono: receiverPhone },
+                    envia: { nombre: senderName, telefono: senderPhone }
+                },
+                entrega: {
+                    tipo: deliveryType,
+                    direccion: address,
+                    detalles: addressDetails,
+                    fecha: date,
+                    horario: time
+                },
+                productos: cart.map(item => ({
+                    nombre: item.name,
+                    cantidad: item.quantity,
+                    precio: parseFloat(item.price) || 0,
+                    subtotal: (parseFloat(item.price) || 0) * item.quantity
                 })),
+                mensaje_tarjeta: cardMessage,
+                notas: notes,
+                metodo_pago: selectedPayment,
                 subtotal: subtotal,
-                shipping: shipping,
-                total: total,
-                notes: notes,
-                timestamp: new Date().toISOString()
+                envio_estimado: 0,
+                total_estimado: subtotal,
+                estado: 'pendiente_ubicacion'
+            };
+            
+            // Guardar pedido en localStorage
+            guardarPedido(pedido);
+            
+            // Generar mensajes automáticos
+            const mensajeInicial = generarMensajeInicial(pedido);
+            const instruccionesUbicacion = generarInstruccionesUbicacion();
+            const plantillaCalculo = generarPlantillaCalculo();
+            
+            // Mostrar panel de mensajes
+            mostrarPanelMensajes({
+                pedido: pedido,
+                mensajeInicial: mensajeInicial,
+                instrucciones: instruccionesUbicacion,
+                plantillaCalculo: plantillaCalculo
             });
             
+            // Limpiar carrito
             clearCart();
             
-            const tomorrow = new Date();
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            setTimeout(() => {
-                document.getElementById('receiverName').value = '';
-                document.getElementById('receiverPhone').value = '';
-                document.getElementById('senderName').value = '';
-                document.getElementById('senderPhone').value = '';
-                document.getElementById('deliveryAddress').value = '';
-                document.getElementById('addressDetails').value = '';
-                document.getElementById('cardMessage').value = '';
-                document.getElementById('deliveryDate').value = tomorrow.toISOString().split('T')[0];
-                document.getElementById('deliveryTime').value = '';
-                document.getElementById('orderNotes').value = '';
-            }, 100);
+            // Cerrar modal del carrito
+            closeCart();
+        }
+
+        // ============================================
+        // FUNCIONES PARA MENSAJES WHATSAPP
+        // ============================================
+
+        function generarMensajeInicial(pedido) {
+            let mensaje = `*¡HOLA ${pedido.cliente.recibe.nombre.split(' ')[0].toUpperCase()}!* 👋🌹\n\n`;
+            mensaje += `*TE SALUDAMOS DE FLORISTERÍA SANTA BÁRBARA*\n\n`;
             
-            window.open(whatsappUrl, '_blank');
-            showNotification('¡Pedido enviado por WhatsApp! Revisa tu chat para confirmar.', 'success');
+            mensaje += `*📋 TU PEDIDO #${pedido.id}*\n`;
+            mensaje += `━━━━━━━━━━━━━━━━━━━━\n`;
+            mensaje += `👤 *Quién recibe:* ${pedido.cliente.recibe.nombre}\n`;
+            mensaje += `📞 *Teléfono:* ${pedido.cliente.recibe.telefono}\n`;
+            mensaje += `👤 *Quién envía:* ${pedido.cliente.envia.nombre}\n`;
+            mensaje += `📞 *Teléfono:* ${pedido.cliente.envia.telefono}\n\n`;
+            
+            if (pedido.entrega.tipo === 'delivery') {
+                mensaje += `🚚 *Entrega a domicilio*\n`;
+                mensaje += `📍 *Dirección:* ${pedido.entrega.direccion}\n`;
+                if (pedido.entrega.detalles) {
+                    mensaje += `🔍 *Detalles:* ${pedido.entrega.detalles}\n`;
+                }
+            } else {
+                mensaje += `🏪 *Recoger en tienda*\n`;
+                mensaje += `📍 *Dirección tienda:* Santa Bárbara, Heredia\n`;
+            }
+            
+            mensaje += `📅 *Fecha entrega:* ${new Date(pedido.entrega.fecha).toLocaleDateString('es-ES')}\n`;
+            mensaje += `⏰ *Horario:* ${pedido.entrega.horario}\n\n`;
+            
+            mensaje += `*🛍️ PRODUCTOS SOLICITADOS:*\n`;
+            pedido.productos.forEach((item, index) => {
+                mensaje += `${index + 1}. *${item.nombre}*\n`;
+                mensaje += `   Cantidad: ${item.cantidad} x ₡${item.precio.toLocaleString('es-CR')}\n`;
+                mensaje += `   Subtotal: ₡${item.subtotal.toLocaleString('es-CR')}\n\n`;
+            });
+            
+            mensaje += `*💰 SUBTOTAL PRODUCTOS:* ₡${pedido.subtotal.toLocaleString('es-CR')}\n\n`;
+            
+            // SOLICITUD DE UBICACIÓN
+            mensaje += `*📍📍 *PARA CALCULAR ENVÍO EXACTO (₡650/km):*📍📍*\n`;
+            mensaje += `Por favor *ENVÍANOS TU UBICACIÓN EXACTA*:\n\n`;
+            mensaje += `📱 *EN ANDROID:*\n`;
+            mensaje += `1. Abre Google Maps\n`;
+            mensaje += `2. Presiona y mantén tu ubicación\n`;
+            mensaje += `3. Toca "Compartir"\n`;
+            mensaje += `4. Selecciona WhatsApp → *Floristería Santa Bárbara*\n\n`;
+            
+            mensaje += `🍎 *EN iPhone:*\n`;
+            mensaje += `1. Abre WhatsApp\n`;
+            mensaje += `2. Toca el clip 📎\n`;
+            mensaje += `3. Selecciona "Ubicación"\n`;
+            mensaje += `4. Toca "Compartir ubicación en vivo" (15 min)\n\n`;
+            
+            mensaje += `*📊 Calcularemos:* distancia × ₡650/km\n`;
+            mensaje += `*Mínimo de envío:* ₡2,000\n\n`;
+            
+            mensaje += `¡Te esperamos! 🌹\n`;
+            mensaje += `*Floristería Santa Bárbara*\n`;
+            mensaje += `📞 8605-3613`;
+            
+            return mensaje;
         }
 
-        function getPaymentMethodName(method) {
-            const methods = {
-                'sinpe': 'SINPE Móvil',
-                'efectivo': 'Efectivo',
-                'tarjeta': 'Tarjeta de crédito/débito',
-                'transferencia': 'Transferencia bancaria'
-            };
-            return methods[method] || method;
+        function generarInstruccionesUbicacion() {
+            return `📱 *PASOS PARA QUE EL CLIENTE ENVÍE UBICACIÓN:*
+
+1. *EN ANDROID:*
+   • Abrir Google Maps
+   • Tocar y mantener el punto azul (tu ubicación)
+   • Tocar "Compartir"
+   • Seleccionar WhatsApp
+   • Enviar a este chat
+
+2. *EN iPhone:*
+   • Abrir WhatsApp
+   • Tocar el clip 📎
+   • Tocar "Ubicación"
+   • "Compartir ubicación en vivo" (15 minutos)
+
+3. *SI NO SABE:*
+   Pedirle que te llame y guiarlo por teléfono.`;
         }
 
-        function saveOrderToHistory(order) {
-            let orders = JSON.parse(localStorage.getItem('floristeria_orders')) || [];
-            orders.push(order);
-            localStorage.setItem('floristeria_orders', JSON.stringify(orders));
+        function generarPlantillaCalculo() {
+            return `✅ *UBICACIÓN RECIBIDA - CÁLCULO DE ENVÍO*
+
+📍 *DISTANCIA CALCULADA:*
+• Desde: Floristería Santa Bárbara, Heredia
+• Hasta: [LUGAR DEL CLIENTE]
+• Distancia: [XX] km
+
+🧮 *CÁLCULO:*
+• [XX] km × ₡650/km = ₡[XXXX]
+• Precio redondeado: *₡[XXXX]*
+
+📦 *RESUMEN FINAL:*
+• Subtotal productos: ₡[XXXXX]
+• Envío exacto: ₡[XXXX]
+• *TOTAL A PAGAR: ₡[XXXXX]*
+
+¿Confirmas el pedido con este precio exacto? 😊
+
+*OPCIONES DE PAGO:*
+• SINPE Móvil: 8605-3613
+• Efectivo al recibir
+• Tarjeta en tienda`;
+        }
+
+        // ============================================
+        // PANEL DE MENSAJES WHATSAPP
+        // ============================================
+
+        function mostrarPanelMensajes(datos) {
+            const modalHTML = `
+                <div class="modal-mensajes-overlay" id="mensajesOverlay">
+                    <div class="modal-mensajes-content">
+                        <div class="modal-mensajes-header">
+                            <h3><i class="fas fa-comments"></i> Mensajes para WhatsApp</h3>
+                            <button onclick="cerrarPanelMensajes()" class="btn-cerrar">×</button>
+                        </div>
+                        
+                        <div class="modal-mensajes-body">
+                            <!-- Sección 1: Mensaje para enviar al cliente -->
+                            <div class="mensaje-section">
+                                <h4><i class="fas fa-paper-plane"></i> 1. COPIAR Y ENVIAR AL CLIENTE:</h4>
+                                <div class="mensaje-box" id="mensajeInicialBox">
+                                    <pre>${datos.mensajeInicial}</pre>
+                                </div>
+                                <button class="btn-copiar" onclick="copiarMensaje('mensajeInicialBox')">
+                                    <i class="fas fa-copy"></i> Copiar mensaje completo
+                                </button>
+                                <a href="https://wa.me/${datos.pedido.cliente.recibe.telefono.replace(/\D/g, '')}?text=${encodeURIComponent(datos.mensajeInicial)}" 
+                                   target="_blank" class="btn-whatsapp">
+                                    <i class="fab fa-whatsapp"></i> Abrir en WhatsApp
+                                </a>
+                            </div>
+                            
+                            <!-- Sección 2: Instrucciones para ti -->
+                            <div class="mensaje-section">
+                                <h4><i class="fas fa-graduation-cap"></i> 2. INSTRUCCIONES (GUARDAR):</h4>
+                                <div class="instrucciones-box">
+                                    <pre>${datos.instrucciones}</pre>
+                                </div>
+                                <button class="btn-copiar" onclick="copiarTexto('${datos.instrucciones.replace(/'/g, "\\'")}')">
+                                    <i class="fas fa-copy"></i> Copiar instrucciones
+                                </button>
+                            </div>
+                            
+                            <!-- Sección 3: Plantilla para calcular envío -->
+                            <div class="mensaje-section">
+                                <h4><i class="fas fa-calculator"></i> 3. PLANTILLA PARA RESPONDER:</h4>
+                                <div class="plantilla-box">
+                                    <pre>${datos.plantillaCalculo}</pre>
+                                </div>
+                                <div class="calculadora-rapida">
+                                    <h5><i class="fas fa-bolt"></i> Calculadora rápida:</h5>
+                                    <div class="input-group">
+                                        <input type="number" id="inputDistancia" placeholder="Distancia en km" step="0.1" min="0">
+                                        <button onclick="calcularEnvioRapido()">Calcular ₡650/km</button>
+                                    </div>
+                                    <div id="resultadoCalculo" style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px; display: none;">
+                                        <strong>Resultado:</strong> <span id="textoResultado"></span>
+                                    </div>
+                                </div>
+                                <button class="btn-copiar" onclick="copiarTexto('${datos.plantillaCalculo.replace(/'/g, "\\'")}')">
+                                    <i class="fas fa-copy"></i> Copiar plantilla
+                                </button>
+                            </div>
+                            
+                            <!-- Información del pedido -->
+                            <div class="info-pedido">
+                                <h4><i class="fas fa-receipt"></i> RESUMEN DEL PEDIDO #${datos.pedido.id}</h4>
+                                <p><strong>Cliente:</strong> ${datos.pedido.cliente.recibe.nombre}</p>
+                                <p><strong>Teléfono:</strong> ${datos.pedido.cliente.recibe.telefono}</p>
+                                <p><strong>Subtotal:</strong> ₡${datos.pedido.subtotal.toLocaleString('es-CR')}</p>
+                                <p><strong>Estado:</strong> <span class="estado-pendiente">Pendiente ubicación</span></p>
+                            </div>
+                        </div>
+                        
+                        <div class="modal-mensajes-footer">
+                            <button class="btn-secundario" onclick="cerrarPanelMensajes()">
+                                <i class="fas fa-times"></i> Cerrar
+                            </button>
+                            <button class="btn-guardar" onclick="guardarTodoComoNota()">
+                                <i class="fas fa-save"></i> Guardar como nota
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Agregar al body
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            
+            // Bloquear scroll
+            document.body.style.overflow = 'hidden';
+        }
+
+        function guardarPedido(pedido) {
+            let pedidos = JSON.parse(localStorage.getItem('floristeria_pedidos')) || [];
+            pedidos.push(pedido);
+            localStorage.setItem('floristeria_pedidos', JSON.stringify(pedidos));
+        }
+
+        function copiarMensaje(idElemento) {
+            const elemento = document.getElementById(idElemento);
+            const texto = elemento.querySelector('pre').textContent;
+            
+            navigator.clipboard.writeText(texto)
+                .then(() => {
+                    showNotification('Mensaje copiado al portapapeles ✅', 'success');
+                })
+                .catch(err => {
+                    // Fallback manual
+                    const textArea = document.createElement('textarea');
+                    textArea.value = texto;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    showNotification('Mensaje copiado ✅', 'success');
+                });
+        }
+
+        function copiarTexto(texto) {
+            navigator.clipboard.writeText(texto)
+                .then(() => {
+                    showNotification('Texto copiado ✅', 'success');
+                });
+        }
+
+        function calcularEnvioRapido() {
+            const input = document.getElementById('inputDistancia');
+            const distancia = parseFloat(input.value);
+            
+            if (isNaN(distancia) || distancia <= 0) {
+                showNotification('Ingresa una distancia válida', 'error');
+                return;
+            }
+            
+            const costo = distancia * 650;
+            const redondeado = Math.ceil(costo / 100) * 100;
+            
+            const resultado = document.getElementById('resultadoCalculo');
+            const texto = document.getElementById('textoResultado');
+            
+            texto.innerHTML = `
+                <strong>${distancia} km</strong> × ₡650/km = <strong>₡${costo.toLocaleString('es-CR')}</strong><br>
+                Redondeado: <strong>₡${redondeado.toLocaleString('es-CR')}</strong>
+            `;
+            
+            resultado.style.display = 'block';
+            
+            // Generar plantilla personalizada
+            const plantillaPersonalizada = `✅ *UBICACIÓN RECIBIDA - CÁLCULO DE ENVÍO*
+
+📍 *DISTANCIA CALCULADA:*
+• Desde: Floristería Santa Bárbara, Heredia
+• Hasta: [LUGAR DEL CLIENTE]
+• Distancia: ${distancia} km
+
+🧮 *CÁLCULO:*
+• ${distancia} km × ₡650/km = ₡${costo.toLocaleString('es-CR')}
+• Precio redondeado: *₡${redondeado.toLocaleString('es-CR')}*
+
+📦 *RESUMEN FINAL:*
+• Subtotal productos: ₡[XXXXX]
+• Envío exacto: ₡${redondeado.toLocaleString('es-CR')}
+• *TOTAL A PAGAR: ₡[XXXXX + ${redondeado}]*
+
+¿Confirmas el pedido con este precio exacto? 😊`;
+            
+            // Actualizar botón de copiar
+            const botonCopiar = document.querySelector('.plantilla-box + .btn-copiar');
+            botonCopiar.setAttribute('onclick', `copiarTexto('${plantillaPersonalizada.replace(/'/g, "\\'")}')`);
+            
+            showNotification(`Envío calculado: ₡${redondeado.toLocaleString('es-CR')}`, 'success');
+        }
+
+        function cerrarPanelMensajes() {
+            const overlay = document.getElementById('mensajesOverlay');
+            if (overlay) {
+                overlay.remove();
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        function guardarTodoComoNota() {
+            const fecha = new Date().toISOString().split('T')[0];
+            const contenido = `
+                PEDIDO GUARDADO - ${fecha}
+                
+                =================================
+                MENSAJE PARA CLIENTE:
+                =================================
+                ${document.querySelector('#mensajeInicialBox pre').textContent}
+                
+                =================================
+                PLANTILLA DE CÁLCULO:
+                =================================
+                ${document.querySelector('.plantilla-box pre').textContent}
+            `;
+            
+            // Crear archivo para descargar
+            const blob = new Blob([contenido], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `pedido_${fecha}.txt`;
+            a.click();
+            
+            showNotification('Pedido guardado como archivo 📁', 'success');
         }
 
         // ============================================
@@ -2841,8 +2906,11 @@
         window.nextSlide = nextSlide;
         window.goToSlide = goToSlide;
         window.filterProducts = filterProducts;
-        window.calculateShippingFromAddress = calculateShippingFromAddress;
-        window.toggleAddressField = toggleAddressField;
+        window.copiarMensaje = copiarMensaje;
+        window.copiarTexto = copiarTexto;
+        window.calcularEnvioRapido = calcularEnvioRapido;
+        window.cerrarPanelMensajes = cerrarPanelMensajes;
+        window.guardarTodoComoNota = guardarTodoComoNota;
     </script>
 </body>
 </html>
